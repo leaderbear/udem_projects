@@ -1,0 +1,549 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > TimePeriodValuesCollection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.time</a>
+</div>
+
+<h1>Coverage Summary for Class: TimePeriodValuesCollection (org.jfree.data.time)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">TimePeriodValuesCollection</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    39,1%
+  </span>
+  <span class="absValue">
+    (9/23)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48,7%
+  </span>
+  <span class="absValue">
+    (55/113)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -------------------------------
+&nbsp; * TimePeriodValuesCollection.java
+&nbsp; * -------------------------------
+&nbsp; * (C) Copyright 2003-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.time;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;
+&nbsp;import org.jfree.data.DomainInfo;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.xy.AbstractIntervalXYDataset;
+&nbsp;import org.jfree.data.xy.IntervalXYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A collection of {@link TimePeriodValues} objects.
+&nbsp; * &lt;P&gt;
+&nbsp; * This class implements the {@link org.jfree.data.xy.XYDataset} interface, as
+&nbsp; * well as the extended {@link IntervalXYDataset} interface.  This makes it a
+&nbsp; * convenient dataset for use with the {@link org.jfree.chart.plot.XYPlot}
+&nbsp; * class.
+&nbsp; */
+&nbsp;public class TimePeriodValuesCollection extends AbstractIntervalXYDataset
+&nbsp;        implements IntervalXYDataset, DomainInfo, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -3077934065236454199L;
+&nbsp;
+&nbsp;    /** Storage for the time series. */
+&nbsp;    private List&lt;TimePeriodValues&gt; data;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The position within a time period to return as the x-value (START,
+&nbsp;     * MIDDLE or END).
+&nbsp;     */
+&nbsp;    private TimePeriodAnchor xPosition;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs an empty dataset.
+&nbsp;     */
+&nbsp;    public TimePeriodValuesCollection() {
+<b class="fc">&nbsp;        this((TimePeriodValues) null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a dataset containing a single series.  Additional series can
+&nbsp;     * be added.
+&nbsp;     *
+&nbsp;     * @param series  the series ({@code null} ignored).
+&nbsp;     */
+<b class="fc">&nbsp;    public TimePeriodValuesCollection(TimePeriodValues series) {</b>
+<b class="fc">&nbsp;        this.data = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.xPosition = TimePeriodAnchor.MIDDLE;</b>
+<b class="fc">&nbsp;        if (series != null) {</b>
+<b class="nc">&nbsp;            this.data.add(series);</b>
+<b class="nc">&nbsp;            series.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the position of the X value within each time period.
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setXPosition(TimePeriodAnchor)
+&nbsp;     */
+&nbsp;    public TimePeriodAnchor getXPosition() {
+<b class="nc">&nbsp;        return this.xPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the position of the x axis within each time period.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getXPosition()
+&nbsp;     */
+&nbsp;    public void setXPosition(TimePeriodAnchor position) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(position, &quot;position&quot;);</b>
+<b class="fc">&nbsp;        this.xPosition = position;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of series in the collection.
+&nbsp;     *
+&nbsp;     * @return The series count.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getSeriesCount() {
+<b class="fc">&nbsp;        return this.data.size();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a series.
+&nbsp;     *
+&nbsp;     * @param series  the index of the series (zero-based).
+&nbsp;     *
+&nbsp;     * @return The series.
+&nbsp;     */
+&nbsp;    public TimePeriodValues getSeries(int series) {
+<b class="fc">&nbsp;        Args.requireInRange(series, &quot;series&quot;, 0, getSeriesCount() - 1);</b>
+<b class="fc">&nbsp;        if ((series &lt; 0) || (series &gt;= getSeriesCount())) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Index &#39;series&#39; out of range.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return this.data.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the key for a series.
+&nbsp;     *
+&nbsp;     * @param series  the index of the series (zero-based).
+&nbsp;     *
+&nbsp;     * @return The key for a series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Comparable getSeriesKey(int series) {
+&nbsp;        // defer argument checking
+<b class="nc">&nbsp;        return getSeries(series).getKey();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a series to the collection.  A
+&nbsp;     * {@link org.jfree.data.general.DatasetChangeEvent} is sent to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the time series.
+&nbsp;     */
+&nbsp;    public void addSeries(TimePeriodValues series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="fc">&nbsp;        this.data.add(series);</b>
+<b class="fc">&nbsp;        series.addChangeListener(this);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the specified series from the collection.
+&nbsp;     *
+&nbsp;     * @param series  the series to remove ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void removeSeries(TimePeriodValues series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="fc">&nbsp;        this.data.remove(series);</b>
+<b class="fc">&nbsp;        series.removeChangeListener(this);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a series from the collection.
+&nbsp;     *
+&nbsp;     * @param index  the series index (zero-based).
+&nbsp;     */
+&nbsp;    public void removeSeries(int index) {
+<b class="nc">&nbsp;        TimePeriodValues series = getSeries(index);</b>
+<b class="nc">&nbsp;        if (series != null) {</b>
+<b class="nc">&nbsp;            removeSeries(series);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of items in the specified series.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method is provided for convenience.
+&nbsp;     *
+&nbsp;     * @param series  the index of the series of interest (zero-based).
+&nbsp;     *
+&nbsp;     * @return The number of items in the specified series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount(int series) {
+<b class="nc">&nbsp;        return getSeries(series).getItemCount();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The x-value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getX(int series, int item) {
+<b class="nc">&nbsp;        TimePeriodValues ts = (TimePeriodValues) this.data.get(series);</b>
+<b class="nc">&nbsp;        TimePeriodValue dp = ts.getDataItem(item);</b>
+<b class="nc">&nbsp;        TimePeriod period = dp.getPeriod();</b>
+<b class="nc">&nbsp;        return getX(period);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for a time period.
+&nbsp;     *
+&nbsp;     * @param period  the time period.
+&nbsp;     *
+&nbsp;     * @return The x-value.
+&nbsp;     */
+&nbsp;    private long getX(TimePeriod period) {
+&nbsp;
+<b class="nc">&nbsp;        if (this.xPosition == TimePeriodAnchor.START) {</b>
+<b class="nc">&nbsp;            return period.getStart().getTime();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (this.xPosition == TimePeriodAnchor.MIDDLE) {</b>
+<b class="nc">&nbsp;            return period.getStart().getTime()</b>
+<b class="nc">&nbsp;                / 2 + period.getEnd().getTime() / 2;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (this.xPosition == TimePeriodAnchor.END) {</b>
+<b class="nc">&nbsp;            return period.getEnd().getTime();</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;TimePeriodAnchor unknown.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the starting X value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The starting X value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartX(int series, int item) {
+<b class="nc">&nbsp;        TimePeriodValues ts = (TimePeriodValues) this.data.get(series);</b>
+<b class="nc">&nbsp;        TimePeriodValue dp = ts.getDataItem(item);</b>
+<b class="nc">&nbsp;        return dp.getPeriod().getStart().getTime();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the ending X value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The ending X value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndX(int series, int item) {
+<b class="nc">&nbsp;        TimePeriodValues ts = (TimePeriodValues) this.data.get(series);</b>
+<b class="nc">&nbsp;        TimePeriodValue dp = ts.getDataItem(item);</b>
+<b class="nc">&nbsp;        return dp.getPeriod().getEnd().getTime();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The y-value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getY(int series, int item) {
+<b class="nc">&nbsp;        TimePeriodValues ts = (TimePeriodValues) this.data.get(series);</b>
+<b class="nc">&nbsp;        TimePeriodValue dp = ts.getDataItem(item);</b>
+<b class="nc">&nbsp;        return dp.getValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the starting Y value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The starting Y value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the ending Y value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The ending Y value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The minimum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainLowerBound(boolean includeInterval) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Range r = getDomainBounds(includeInterval);</b>
+<b class="nc">&nbsp;        if (r != null) {</b>
+<b class="nc">&nbsp;            result = r.getLowerBound();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The maximum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainUpperBound(boolean includeInterval) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Range r = getDomainBounds(includeInterval);</b>
+<b class="nc">&nbsp;        if (r != null) {</b>
+<b class="nc">&nbsp;            result = r.getUpperBound();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range of the values in this dataset&#39;s domain.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range getDomainBounds(boolean includeInterval) {
+<b class="fc">&nbsp;        boolean interval = includeInterval;</b>
+<b class="fc">&nbsp;        Range result = null;</b>
+<b class="fc">&nbsp;        Range temp = null;</b>
+<b class="fc">&nbsp;        for (TimePeriodValues series : this.data) {</b>
+<b class="fc">&nbsp;            int count = series.getItemCount();</b>
+<b class="fc">&nbsp;            if (count &gt; 0) {</b>
+<b class="fc">&nbsp;                TimePeriod start = series.getTimePeriod(</b>
+<b class="fc">&nbsp;                        series.getMinStartIndex());</b>
+<b class="fc">&nbsp;                TimePeriod end = series.getTimePeriod(series.getMaxEndIndex());</b>
+<b class="fc">&nbsp;                if (!interval) {</b>
+<b class="fc">&nbsp;                    if (this.xPosition == TimePeriodAnchor.START) {</b>
+<b class="nc">&nbsp;                        TimePeriod maxStart = series.getTimePeriod(</b>
+<b class="nc">&nbsp;                                series.getMaxStartIndex());</b>
+<b class="nc">&nbsp;                        temp = new Range(start.getStart().getTime(),</b>
+<b class="nc">&nbsp;                                maxStart.getStart().getTime());</b>
+<b class="nc">&nbsp;                    }</b>
+<b class="fc">&nbsp;                    else if (this.xPosition == TimePeriodAnchor.MIDDLE) {</b>
+<b class="fc">&nbsp;                        TimePeriod minMiddle = series.getTimePeriod(</b>
+<b class="fc">&nbsp;                                series.getMinMiddleIndex());</b>
+<b class="fc">&nbsp;                        long s1 = minMiddle.getStart().getTime();</b>
+<b class="fc">&nbsp;                        long e1 = minMiddle.getEnd().getTime();</b>
+<b class="fc">&nbsp;                        TimePeriod maxMiddle = series.getTimePeriod(</b>
+<b class="fc">&nbsp;                                series.getMaxMiddleIndex());</b>
+<b class="fc">&nbsp;                        long s2 = maxMiddle.getStart().getTime();</b>
+<b class="fc">&nbsp;                        long e2 = maxMiddle.getEnd().getTime();</b>
+<b class="fc">&nbsp;                        temp = new Range(s1 + (e1 - s1) / 2.0,</b>
+&nbsp;                                s2 + (e2 - s2) / 2.0);
+<b class="fc">&nbsp;                    }</b>
+<b class="nc">&nbsp;                    else if (this.xPosition == TimePeriodAnchor.END) {</b>
+<b class="nc">&nbsp;                        TimePeriod minEnd = series.getTimePeriod(</b>
+<b class="nc">&nbsp;                                series.getMinEndIndex());</b>
+<b class="nc">&nbsp;                        temp = new Range(minEnd.getEnd().getTime(),</b>
+<b class="nc">&nbsp;                                end.getEnd().getTime());</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    temp = new Range(start.getStart().getTime(),</b>
+<b class="fc">&nbsp;                            end.getEnd().getTime());</b>
+&nbsp;                }
+<b class="fc">&nbsp;                result = Range.combine(result, temp);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this instance for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof TimePeriodValuesCollection)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        TimePeriodValuesCollection that = (TimePeriodValuesCollection) obj;</b>
+<b class="fc">&nbsp;        if (this.xPosition != that.xPosition) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.data, that.data)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int hashCode(){
+<b class="nc">&nbsp;        int hash = 3;</b>
+<b class="nc">&nbsp;        hash = 83 * hash + Objects.hashCode(this.data);</b>
+<b class="nc">&nbsp;        hash = 83 * hash + Objects.hashCode(this.xPosition);</b>
+<b class="nc">&nbsp;        return hash;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

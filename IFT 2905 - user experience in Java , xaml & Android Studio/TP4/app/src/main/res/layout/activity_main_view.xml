@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivityView">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    android:id="@+id/main_view_profile_button"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="16dp"
+    android:layout_marginEnd="16dp"
+    android:clickable="true"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:srcCompat="@drawable/human_icon_1" />
+
+
+    <ImageView
+        android:id="@+id/imageView17"
+        android:layout_width="85dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/logo" />
+
+    <TextView
+        android:id="@+id/textView25"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="@string/activity_page_general_progress"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView17" />
+
+
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/general_progress_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:indeterminate="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView25"
+        app:layout_constraintWidth_min="300dp"
+        app:trackCornerRadius="50dp"
+        app:trackThickness="20dp" />
+
+    <TextView
+        android:id="@+id/textView26"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/activity_page_general_progress_pc"
+        app:layout_constraintBottom_toBottomOf="@+id/general_progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/general_progress_bar"
+        app:layout_constraintStart_toStartOf="@+id/general_progress_bar"
+        app:layout_constraintTop_toTopOf="@+id/general_progress_bar" />
+
+    <TextView
+        android:id="@+id/text_view_streak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:text="@string/activity_page_streak"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toStartOf="@+id/text_view_streak_number"
+        app:layout_constraintHorizontal_bias="0.95"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/general_progress_bar" />
+
+    <TextView
+        android:id="@+id/text_view_streak_number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/activity_page_streak_number"
+        android:textSize="12sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/general_progress_bar" />
+
+    <ImageView
+        android:id="@+id/imageView18"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/text_view_streak_number"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toEndOf="@+id/text_view_streak_number"
+        app:layout_constraintTop_toTopOf="@+id/text_view_streak_number"
+        app:srcCompat="@drawable/ic_fire" />
+
+
+    <ImageView
+        android:id="@+id/imageView27"
+        android:layout_width="284dp"
+        android:layout_height="68dp"
+        android:layout_marginTop="5dp"
+        android:backgroundTint="@color/white"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text_view_streak_number"
+        app:srcCompat="@drawable/activity_most_popular_program" />
+
+    <ImageButton
+        android:id="@+id/img_button_resume_activity"
+        android:layout_width="370dp"
+        android:layout_height="296dp"
+        android:backgroundTint="@color/white"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView27"
+        app:srcCompat="@drawable/activity_started_programs" />
+
+    <ImageButton
+        android:id="@+id/image_button_start_new_program"
+        android:layout_width="322dp"
+        android:layout_height="82dp"
+        android:adjustViewBounds="true"
+        android:backgroundTint="@color/white"
+        android:paddingHorizontal="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="15dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/img_button_resume_activity"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/activity_start_activity_img_button" />
+
+
+    <!-- Bottom navigation bar -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_navigation_menu"/>
+
+    <Button
+        android:id="@+id/obs_start"
+        android:layout_width="82dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="66dp"
+        android:layout_marginBottom="183dp"
+        android:text="Start"
+        app:layout_constraintBottom_toTopOf="@+id/image_button_start_new_program"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.948"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView27"
+        app:layout_constraintVertical_bias="1.0"
+        />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

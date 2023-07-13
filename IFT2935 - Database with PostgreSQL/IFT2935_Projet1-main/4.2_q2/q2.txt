@@ -1,0 +1,19 @@
+Algèbre:
+	\begin{align*}
+	R1&\leftarrow \pi_{(isbn, id\_membre)}(Emprunte)\\
+	R2&\leftarrow \pi_{(isbn)}(R1)\\
+	R3&\leftarrow R2 \bowtie Genre\\
+	R4&\leftarrow \rho_{(genre,nb\_emp)}(genre \ \mathscr{A}_{COUNT(isbn)}(R3))\\
+	R5&\leftarrow \rho_{(nb\_emp)}(\mathscr{A}_{MAX(nb\_emp)}(R4))\\
+	R6&\leftarrow \pi_{(genre)}(\sigma_{(nb\_emp\ IN\ R5)}(R4))\\
+	R7&\leftarrow \sigma_{(genre\ IN\ R6)}(Genre)\\
+	R8&\leftarrow \pi_{(id\_membre,genre)}(R1 \bowtie R7)\\
+	R9&\leftarrow \pi_{(id\_membre,date\_naiss)}(Membre)\\
+	R10&\leftarrow \pi_{(date\_naiss,genre)}(R9 \bowtie R8)\\
+	R11&\leftarrow \rho_{(genre,age)}(\pi_{(genre,date\_part('year',\ CURRENT\_DATE)\ -\ date\_part('year', date\_naiss))}(R10))\\
+	&\rho_{(genre,age\_moy)}(genre \ \mathscr{A}_{AVG(age)}(R11))
+	\end{align*}
+
+
+Aspect optimisation: 
+	On peut voir sur le diagramme qu'avant chaque jointure, on effectue une réduction en largeur ou en hauteur de chaque table. Ainsi chaque table résultante a une hauteur et une largeur minimale. La table produite en sortie est donc optimisée au maximum. [diagramme_opt_q2]

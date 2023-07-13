@@ -1,0 +1,33 @@
+On mesure l'instabilité et l'abstraction de chaque paquet : 
+
+1) Systeme 
+	I(Systeme) = 7/7 = 1
+	A(Systeme) = 1/6
+
+2) Controller
+	I(Controller) = 7/(7+7) = 1/2
+	A(Controller) = 1/8
+
+3) Voyage
+	I(Voyage) = 4/(4+4) = 1/2
+	A(Voyage) = 1/4
+
+4) Reservation
+	I(Reservation) = 5/(5+7) = 5/12
+	A(Reservation) = 4/17
+
+5) Compagnie
+	I(Compagnie) = 2/(2+3) = 2/5
+	A(Compagnie) = 1/4
+
+6) Transport
+	I(Transport) = 4/(4+8) = 1/3
+	A(Transport) = 8/17
+
+
+Discussion : 
+	On remarque que tous les paquets, sauf les paquets Système et Controller, ont un degré 
+	d’instabilité entre 0.3 et 0.5; et leur degré d’abstraction est entre 0.2 et 0.5. Ces 
+	paquets sont relativement proches de la ligne. Cependant, les paquets Système et Controller 
+	ont un degré d’instabilité plus forte, car les classes de ces paquets sont du domaine d’application. 
+ 

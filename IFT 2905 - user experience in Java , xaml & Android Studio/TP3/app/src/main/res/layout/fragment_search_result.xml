@@ -1,0 +1,478 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout10"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SearchResultFragment">
+    <!-- Header -->
+    <LinearLayout
+        android:id="@+id/linearLayout1"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:src="@drawable/groups"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:text="@string/search_result_text"
+            android:textSize="45sp" />
+    </LinearLayout>
+
+
+
+    <!-- Divider-->
+    <View
+        android:id="@+id/tile_divider"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="?android:attr/dividerVertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1" />
+
+    <!-- Main content -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
+
+            <RelativeLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider">
+
+                <ImageView
+                    android:id="@+id/imageView1"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView1"
+                    android:layout_alignStart="@+id/imageView1"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName1"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView1"
+                    android:text="@string/search_result_name1"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName1"
+                    android:layout_alignEnd="@+id/textName1"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class1"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider2"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2" />
+
+
+            <RelativeLayout
+                android:id="@+id/linearLayout3"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider2">
+
+                <ImageView
+                    android:id="@+id/imageView2"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView2"
+                    android:layout_alignStart="@+id/imageView2"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName2"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView2"
+                    android:text="@string/search_result_name2"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName2"
+                    android:layout_alignEnd="@+id/textName2"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class2"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider3"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout3" />
+
+
+            <RelativeLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider3">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView3"
+                    android:layout_alignStart="@+id/imageView3"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName3"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView3"
+                    android:text="@string/search_result_name3"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName3"
+                    android:layout_alignEnd="@+id/textName3"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class3"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider4"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+
+
+            <RelativeLayout
+                android:id="@+id/linearLayout5"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider4">
+
+                <ImageView
+                    android:id="@+id/imageView4"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView4"
+                    android:layout_alignStart="@+id/imageView4"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName4"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView4"
+                    android:text="@string/search_result_name4"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName4"
+                    android:layout_alignEnd="@+id/textName4"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class4"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider5"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout5" />
+
+
+            <RelativeLayout
+                android:id="@+id/linearLayout6"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider5">
+
+                <ImageView
+                    android:id="@+id/imageView5"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView5"
+                    android:layout_alignStart="@+id/imageView5"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName5"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView5"
+                    android:text="@string/search_result_name5"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName5"
+                    android:layout_alignEnd="@+id/textName5"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class2"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider6"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout6" />
+
+
+            <RelativeLayout
+                android:id="@+id/linearLayout7"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tile_divider6">
+
+                <ImageView
+                    android:id="@+id/imageView6"
+                    android:layout_width="100dp"
+                    android:layout_height="70dp"
+                    android:layout_marginStart="10dp"
+                    android:src="@drawable/outline_account_circle" />
+
+                <TextView
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/imageView6"
+                    android:layout_alignStart="@+id/imageView6"
+                    android:layout_marginStart="3dp"
+                    android:layout_marginTop="1dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/white"
+                    android:backgroundTintMode="multiply"
+                    android:text="@string/search_result_add_friend_text"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/textName6"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="85dp"
+                    android:layout_toEndOf="@+id/imageView6"
+                    android:text="@string/search_result_name6"
+                    android:textAlignment="viewEnd"
+                    android:textSize="20sp" />
+
+                <TextView
+                    android:layout_width="70dp"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/textName6"
+                    android:layout_alignEnd="@+id/textName6"
+                    android:layout_marginStart="270dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="0dp"
+                    android:background="@drawable/rounded_corner"
+                    android:backgroundTint="@color/grey_400"
+                    android:backgroundTintMode="src_in"
+                    android:text="@string/search_result_class1"
+                    android:textAlignment="center"
+                    android:textColor="@color/white"
+                    android:textSize="13sp" />
+            </RelativeLayout>
+            <!-- Divider-->
+            <View
+                android:id="@+id/tile_divider7"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:background="?android:attr/dividerVertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout7" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

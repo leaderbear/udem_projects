@@ -1,0 +1,557 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Statistics</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.statistics</a>
+</div>
+
+<h1>Coverage Summary for Class: Statistics (org.jfree.data.statistics)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Statistics</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71,4%
+  </span>
+  <span class="absValue">
+    (10/14)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    65,8%
+  </span>
+  <span class="absValue">
+    (96/146)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * Statistics.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2000-2021, by Matthew Wright and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Matthew Wright;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.statistics;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Collection;
+&nbsp;import java.util.Collections;
+&nbsp;import java.util.List;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;
+&nbsp;/**
+&nbsp; * A utility class that provides some common statistical functions.
+&nbsp; */
+<b class="nc">&nbsp;public abstract class Statistics {</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean of an array of numbers.  This is equivalent to calling
+&nbsp;     * {@code calculateMean(values, true)}.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The mean.
+&nbsp;     */
+&nbsp;    public static double calculateMean(Number[] values) {
+<b class="fc">&nbsp;        return calculateMean(values, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean of an array of numbers.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} not permitted).
+&nbsp;     * @param includeNullAndNaN  a flag that controls whether or not
+&nbsp;     *     {@code null} and {@code Double.NaN} values are included
+&nbsp;     *     in the calculation (if either is present in the array, the result is
+&nbsp;     *     {@link Double#NaN}).
+&nbsp;     *
+&nbsp;     * @return The mean.
+&nbsp;     *
+&nbsp;     * @since 1.0.3
+&nbsp;     */
+&nbsp;    public static double calculateMean(Number[] values,
+&nbsp;            boolean includeNullAndNaN) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(values, &quot;values&quot;);</b>
+<b class="fc">&nbsp;        double sum = 0.0;</b>
+&nbsp;        double current;
+<b class="fc">&nbsp;        int counter = 0;</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; values.length; i++) {</b>
+&nbsp;            // treat nulls the same as NaNs
+<b class="fc">&nbsp;            if (values[i] != null) {</b>
+<b class="fc">&nbsp;                current = values[i].doubleValue();</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                current = Double.NaN;</b>
+&nbsp;            }
+&nbsp;            // calculate the sum and count
+<b class="fc">&nbsp;            if (includeNullAndNaN || !Double.isNaN(current)) {</b>
+<b class="fc">&nbsp;                sum = sum + current;</b>
+<b class="fc">&nbsp;                counter++;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        double result = (sum / counter);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean of a collection of {@code Number} objects.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The mean.
+&nbsp;     */
+&nbsp;    public static double calculateMean(Collection values) {
+<b class="fc">&nbsp;        return calculateMean(values, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean of a collection of {@code Number} objects.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} not permitted).
+&nbsp;     * @param includeNullAndNaN  a flag that controls whether or not
+&nbsp;     *     {@code null} and {@code Double.NaN} values are included
+&nbsp;     *     in the calculation (if either is present in the array, the result is
+&nbsp;     *     {@link Double#NaN}).
+&nbsp;     *
+&nbsp;     * @return The mean.
+&nbsp;     *
+&nbsp;     * @since 1.0.3
+&nbsp;     */
+&nbsp;    public static double calculateMean(Collection values,
+&nbsp;            boolean includeNullAndNaN) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(values, &quot;values&quot;);</b>
+<b class="fc">&nbsp;        int count = 0;</b>
+<b class="fc">&nbsp;        double total = 0.0;</b>
+<b class="fc">&nbsp;        for (Object object : values) {</b>
+<b class="fc">&nbsp;            if (object == null) {</b>
+<b class="fc">&nbsp;                if (includeNullAndNaN) {</b>
+<b class="fc">&nbsp;                    return Double.NaN;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                if (object instanceof Number) {</b>
+<b class="fc">&nbsp;                    Number number = (Number) object;</b>
+<b class="fc">&nbsp;                    double value = number.doubleValue();</b>
+<b class="fc">&nbsp;                    if (Double.isNaN(value)) {</b>
+<b class="fc">&nbsp;                        if (includeNullAndNaN) {</b>
+<b class="fc">&nbsp;                            return Double.NaN;</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                    else {
+<b class="fc">&nbsp;                        total = total + number.doubleValue();</b>
+<b class="fc">&nbsp;                        count = count + 1;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return total / count;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the median for a list of values ({@code Number} objects).
+&nbsp;     * The list of values will be copied, and the copy sorted, before
+&nbsp;     * calculating the median.  To avoid this step (if your list of values
+&nbsp;     * is already sorted), use the {@link #calculateMedian(List, boolean)}
+&nbsp;     * method.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The median.
+&nbsp;     */
+&nbsp;    public static double calculateMedian(List values) {
+<b class="fc">&nbsp;        return calculateMedian(values, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the median for a list of values ({@code Number} objects).
+&nbsp;     * If {@code copyAndSort} is {@code false}, the list is assumed
+&nbsp;     * to be presorted in ascending order by value.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} permitted).
+&nbsp;     * @param copyAndSort  a flag that controls whether the list of values is
+&nbsp;     *                     copied and sorted.
+&nbsp;     *
+&nbsp;     * @return The median.
+&nbsp;     */
+&nbsp;    public static double calculateMedian(List values, boolean copyAndSort) {
+&nbsp;
+<b class="fc">&nbsp;        double result = Double.NaN;</b>
+<b class="fc">&nbsp;        if (values != null) {</b>
+<b class="fc">&nbsp;            if (copyAndSort) {</b>
+<b class="fc">&nbsp;                int itemCount = values.size();</b>
+<b class="fc">&nbsp;                List copy = new ArrayList(itemCount);</b>
+<b class="fc">&nbsp;                for (int i = 0; i &lt; itemCount; i++) {</b>
+<b class="fc">&nbsp;                    copy.add(i, values.get(i));</b>
+&nbsp;                }
+<b class="fc">&nbsp;                Collections.sort(copy);</b>
+<b class="fc">&nbsp;                values = copy;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            int count = values.size();</b>
+<b class="fc">&nbsp;            if (count &gt; 0) {</b>
+<b class="fc">&nbsp;                if (count % 2 == 1) {</b>
+<b class="fc">&nbsp;                    if (count &gt; 1) {</b>
+<b class="fc">&nbsp;                        Number value = (Number) values.get((count - 1) / 2);</b>
+<b class="fc">&nbsp;                        result = value.doubleValue();</b>
+<b class="fc">&nbsp;                    }</b>
+&nbsp;                    else {
+<b class="fc">&nbsp;                        Number value = (Number) values.get(0);</b>
+<b class="fc">&nbsp;                        result = value.doubleValue();</b>
+<b class="fc">&nbsp;                    }</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    Number value1 = (Number) values.get(count / 2 - 1);</b>
+<b class="fc">&nbsp;                    Number value2 = (Number) values.get(count / 2);</b>
+<b class="fc">&nbsp;                    result = (value1.doubleValue() + value2.doubleValue())</b>
+&nbsp;                             / 2.0;
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the median for a sublist within a list of values
+&nbsp;     * ({@code Number} objects).
+&nbsp;     *
+&nbsp;     * @param values  the values, in any order ({@code null} not permitted).
+&nbsp;     * @param start  the start index.
+&nbsp;     * @param end  the end index.
+&nbsp;     *
+&nbsp;     * @return The median.
+&nbsp;     */
+&nbsp;    public static double calculateMedian(List values, int start, int end) {
+<b class="fc">&nbsp;        return calculateMedian(values, start, end, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the median for a sublist within a list of values
+&nbsp;     * ({@code Number} objects).  The entire list will be sorted if the
+&nbsp;     * {@code ascending} argument is {@code false}.
+&nbsp;     *
+&nbsp;     * @param values  the values ({@code null} not permitted).
+&nbsp;     * @param start  the start index.
+&nbsp;     * @param end  the end index.
+&nbsp;     * @param copyAndSort  a flag that that controls whether the list of values
+&nbsp;     *                     is copied and sorted.
+&nbsp;     *
+&nbsp;     * @return The median.
+&nbsp;     */
+&nbsp;    public static double calculateMedian(List values, int start, int end,
+&nbsp;                                         boolean copyAndSort) {
+&nbsp;
+<b class="fc">&nbsp;        double result = Double.NaN;</b>
+<b class="fc">&nbsp;        if (copyAndSort) {</b>
+<b class="fc">&nbsp;            List working = new ArrayList(end - start + 1);</b>
+<b class="fc">&nbsp;            for (int i = start; i &lt;= end; i++) {</b>
+<b class="fc">&nbsp;                working.add(values.get(i));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Collections.sort(working);</b>
+<b class="fc">&nbsp;            result = calculateMedian(working, false);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            int count = end - start + 1;</b>
+<b class="nc">&nbsp;            if (count &gt; 0) {</b>
+<b class="nc">&nbsp;                if (count % 2 == 1) {</b>
+<b class="nc">&nbsp;                    if (count &gt; 1) {</b>
+<b class="nc">&nbsp;                        Number value</b>
+<b class="nc">&nbsp;                            = (Number) values.get(start + (count - 1) / 2);</b>
+<b class="nc">&nbsp;                        result = value.doubleValue();</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                    else {
+<b class="nc">&nbsp;                        Number value = (Number) values.get(start);</b>
+<b class="nc">&nbsp;                        result = value.doubleValue();</b>
+<b class="nc">&nbsp;                    }</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    Number value1 = (Number) values.get(start + count / 2 - 1);</b>
+<b class="nc">&nbsp;                    Number value2 = (Number) values.get(start + count / 2);</b>
+<b class="nc">&nbsp;                    result</b>
+<b class="nc">&nbsp;                        = (value1.doubleValue() + value2.doubleValue()) / 2.0;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the standard deviation of a set of numbers.
+&nbsp;     *
+&nbsp;     * @param data  the data ({@code null} or zero length array not
+&nbsp;     *     permitted).
+&nbsp;     *
+&nbsp;     * @return The standard deviation of a set of numbers.
+&nbsp;     */
+&nbsp;    public static double getStdDev(Number[] data) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(data, &quot;data&quot;);</b>
+<b class="fc">&nbsp;        if (data.length == 0) {</b>
+<b class="fc">&nbsp;            throw new IllegalArgumentException(&quot;Zero length &#39;data&#39; array.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double avg = calculateMean(data);</b>
+<b class="fc">&nbsp;        double sum = 0.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int counter = 0; counter &lt; data.length; counter++) {</b>
+<b class="fc">&nbsp;            double diff = data[counter].doubleValue() - avg;</b>
+<b class="fc">&nbsp;            sum = sum + diff * diff;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return Math.sqrt(sum / (data.length - 1));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fits a straight line to a set of (x, y) data, returning the slope and
+&nbsp;     * intercept.
+&nbsp;     *
+&nbsp;     * @param xData  the x-data ({@code null} not permitted).
+&nbsp;     * @param yData  the y-data ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A double array with the intercept in [0] and the slope in [1].
+&nbsp;     */
+&nbsp;    public static double[] getLinearFit(Number[] xData, Number[] yData) {
+&nbsp;
+<b class="nc">&nbsp;        Args.nullNotPermitted(xData, &quot;xData&quot;);</b>
+<b class="nc">&nbsp;        Args.nullNotPermitted(yData, &quot;yData&quot;);</b>
+<b class="nc">&nbsp;        if (xData.length != yData.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;Statistics.getLinearFit(): array lengths must be equal.&quot;);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        double[] result = new double[2];</b>
+&nbsp;        // slope
+<b class="nc">&nbsp;        result[1] = getSlope(xData, yData);</b>
+&nbsp;        // intercept
+<b class="nc">&nbsp;        result[0] = calculateMean(yData) - result[1] * calculateMean(xData);</b>
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds the slope of a regression line using least squares.
+&nbsp;     *
+&nbsp;     * @param xData  the x-values ({@code null} not permitted).
+&nbsp;     * @param yData  the y-values ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The slope.
+&nbsp;     */
+&nbsp;    public static double getSlope(Number[] xData, Number[] yData) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(xData, &quot;xData&quot;);</b>
+<b class="nc">&nbsp;        Args.nullNotPermitted(yData, &quot;yData&quot;);</b>
+<b class="nc">&nbsp;        if (xData.length != yData.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Array lengths must be equal.&quot;);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // ********* stat function for linear slope ********
+&nbsp;        // y = a + bx
+&nbsp;        // a = ybar - b * xbar
+&nbsp;        //     sum(x * y) - (sum (x) * sum(y)) / n
+&nbsp;        // b = ------------------------------------
+&nbsp;        //     sum (x^2) - (sum(x)^2 / n
+&nbsp;        // *************************************************
+&nbsp;
+&nbsp;        // sum of x, x^2, x * y, y
+<b class="nc">&nbsp;        double sx = 0.0, sxx = 0.0, sxy = 0.0, sy = 0.0;</b>
+&nbsp;        int counter;
+<b class="nc">&nbsp;        for (counter = 0; counter &lt; xData.length; counter++) {</b>
+<b class="nc">&nbsp;            sx = sx + xData[counter].doubleValue();</b>
+<b class="nc">&nbsp;            sxx = sxx + Math.pow(xData[counter].doubleValue(), 2);</b>
+<b class="nc">&nbsp;            sxy = sxy + yData[counter].doubleValue()</b>
+<b class="nc">&nbsp;                      * xData[counter].doubleValue();</b>
+<b class="nc">&nbsp;            sy = sy + yData[counter].doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return (sxy - (sx * sy) / counter) / (sxx - (sx * sx) / counter);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the correlation between two datasets.  Both arrays should
+&nbsp;     * contain the same number of items.  Null values are treated as zero.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Information about the correlation calculation was obtained from:
+&nbsp;     *
+&nbsp;     * http://trochim.human.cornell.edu/kb/statcorr.htm
+&nbsp;     *
+&nbsp;     * @param data1  the first dataset.
+&nbsp;     * @param data2  the second dataset.
+&nbsp;     *
+&nbsp;     * @return The correlation.
+&nbsp;     */
+&nbsp;    public static double getCorrelation(Number[] data1, Number[] data2) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(data1, &quot;data1&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(data2, &quot;data2&quot;);</b>
+<b class="fc">&nbsp;        if (data1.length != data2.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;&#39;data1&#39; and &#39;data2&#39; arrays must have same length.&quot;
+&nbsp;            );
+&nbsp;        }
+<b class="fc">&nbsp;        int n = data1.length;</b>
+<b class="fc">&nbsp;        double sumX = 0.0;</b>
+<b class="fc">&nbsp;        double sumY = 0.0;</b>
+<b class="fc">&nbsp;        double sumX2 = 0.0;</b>
+<b class="fc">&nbsp;        double sumY2 = 0.0;</b>
+<b class="fc">&nbsp;        double sumXY = 0.0;</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; n; i++) {</b>
+<b class="fc">&nbsp;            double x = 0.0;</b>
+<b class="fc">&nbsp;            if (data1[i] != null) {</b>
+<b class="fc">&nbsp;                x = data1[i].doubleValue();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            double y = 0.0;</b>
+<b class="fc">&nbsp;            if (data2[i] != null) {</b>
+<b class="fc">&nbsp;                y = data2[i].doubleValue();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            sumX = sumX + x;</b>
+<b class="fc">&nbsp;            sumY = sumY + y;</b>
+<b class="fc">&nbsp;            sumXY = sumXY + (x * y);</b>
+<b class="fc">&nbsp;            sumX2 = sumX2 + (x * x);</b>
+<b class="fc">&nbsp;            sumY2 = sumY2 + (y * y);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return (n * sumXY - sumX * sumY) / Math.pow((n * sumX2 - sumX * sumX)</b>
+&nbsp;                * (n * sumY2 - sumY * sumY), 0.5);
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a data set for a moving average on the data set passed in.
+&nbsp;     *
+&nbsp;     * @param xData  an array of the x data.
+&nbsp;     * @param yData  an array of the y data.
+&nbsp;     * @param period  the number of data points to average
+&nbsp;     *
+&nbsp;     * @return A double[][] the length of the data set in the first dimension,
+&nbsp;     *         with two doubles for x and y in the second dimension
+&nbsp;     */
+&nbsp;    public static double[][] getMovingAverage(Number[] xData, Number[] yData,
+&nbsp;            int period) {
+&nbsp;
+&nbsp;        // check arguments...
+<b class="nc">&nbsp;        if (xData.length != yData.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Array lengths must be equal.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (period &gt; xData.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;Period can&#39;t be longer than dataset.&quot;);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        double[][] result = new double[xData.length - period][2];</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; result.length; i++) {</b>
+<b class="nc">&nbsp;            result[i][0] = xData[i + period].doubleValue();</b>
+&nbsp;            // holds the moving average sum
+<b class="nc">&nbsp;            double sum = 0.0;</b>
+<b class="nc">&nbsp;            for (int j = 0; j &lt; period; j++) {</b>
+<b class="nc">&nbsp;                sum += yData[i + j].doubleValue();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            sum = sum / period;</b>
+<b class="nc">&nbsp;            result[i][1] = sum;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

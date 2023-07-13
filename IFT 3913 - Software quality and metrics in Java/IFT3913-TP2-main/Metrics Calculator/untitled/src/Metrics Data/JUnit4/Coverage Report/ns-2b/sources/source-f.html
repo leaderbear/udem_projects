@@ -1,0 +1,251 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > NormalizedMatrixSeries</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: NormalizedMatrixSeries (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NormalizedMatrixSeries</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/15)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------------
+&nbsp; * NormalizedMatrixSeries.java
+&nbsp; * ---------------------------
+&nbsp; * (C) Copyright 2003-2020, by Barak Naveh and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Barak Naveh;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents a dense normalized matrix M[i,j] where each Mij item of the
+&nbsp; * matrix has a value (default is 0). When a matrix item is observed using
+&nbsp; * {@code getItem()} method, it is normalized, that is, divided by the
+&nbsp; * total sum of all items. It can be also be scaled by setting a scale factor.
+&nbsp; */
+&nbsp;public class NormalizedMatrixSeries extends MatrixSeries {
+&nbsp;
+&nbsp;    /** The default scale factor. */
+&nbsp;    public static final double DEFAULT_SCALE_FACTOR = 1.0;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A factor that multiplies each item in this series when observed using
+&nbsp;     * getItem method.
+&nbsp;     */
+<b class="nc">&nbsp;    private double m_scaleFactor = DEFAULT_SCALE_FACTOR;</b>
+&nbsp;
+&nbsp;    /** The sum of all items in this matrix */
+&nbsp;    private double m_totalSum;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructor for NormalizedMatrixSeries.
+&nbsp;     *
+&nbsp;     * @param name  the series name.
+&nbsp;     * @param rows  the number of rows.
+&nbsp;     * @param columns  the number of columns.
+&nbsp;     */
+&nbsp;    public NormalizedMatrixSeries(String name, int rows, int columns) {
+<b class="nc">&nbsp;        super(name, rows, columns);</b>
+&nbsp;
+&nbsp;        /*
+&nbsp;         * we assum super is always initialized to all-zero matrix, so the
+&nbsp;         * total sum should be 0 upon initialization. However, we set it to
+&nbsp;         * Double.MIN_VALUE to get the same effect and yet avoid division by 0
+&nbsp;         * upon initialization.
+&nbsp;         */
+<b class="nc">&nbsp;        this.m_totalSum = Double.MIN_VALUE;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an item.
+&nbsp;     *
+&nbsp;     * @param itemIndex  the index.
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     *
+&nbsp;     * @see org.jfree.data.xy.MatrixSeries#getItem(int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getItem(int itemIndex) {
+<b class="nc">&nbsp;        int i = getItemRow(itemIndex);</b>
+<b class="nc">&nbsp;        int j = getItemColumn(itemIndex);</b>
+&nbsp;
+<b class="nc">&nbsp;        double mij = get(i, j) * this.m_scaleFactor;</b>
+<b class="nc">&nbsp;        Number n = mij / this.m_totalSum;</b>
+&nbsp;
+<b class="nc">&nbsp;        return n;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the factor that multiplies each item in this series when observed
+&nbsp;     * using getItem mehtod.
+&nbsp;     *
+&nbsp;     * @param factor new factor to set.
+&nbsp;     *
+&nbsp;     * @see #DEFAULT_SCALE_FACTOR
+&nbsp;     */
+&nbsp;    public void setScaleFactor(double factor) {
+<b class="nc">&nbsp;        this.m_scaleFactor = factor;</b>
+&nbsp;        // FIXME: this should generate a series change event
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the factor that multiplies each item in this series when
+&nbsp;     * observed using getItem mehtod.
+&nbsp;     *
+&nbsp;     * @return The factor
+&nbsp;     */
+&nbsp;    public double getScaleFactor() {
+<b class="nc">&nbsp;        return this.m_scaleFactor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the value of the specified item in this matrix series.
+&nbsp;     *
+&nbsp;     * @param i the row of the item.
+&nbsp;     * @param j the column of the item.
+&nbsp;     * @param mij the new value for the item.
+&nbsp;     *
+&nbsp;     * @see #get(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void update(int i, int j, double mij) {
+<b class="nc">&nbsp;        this.m_totalSum -= get(i, j);</b>
+<b class="nc">&nbsp;        this.m_totalSum += mij;</b>
+&nbsp;
+<b class="nc">&nbsp;        super.update(i, j, mij);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * @see org.jfree.data.xy.MatrixSeries#zeroAll()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zeroAll() {
+<b class="nc">&nbsp;        this.m_totalSum = 0;</b>
+<b class="nc">&nbsp;        super.zeroAll();</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

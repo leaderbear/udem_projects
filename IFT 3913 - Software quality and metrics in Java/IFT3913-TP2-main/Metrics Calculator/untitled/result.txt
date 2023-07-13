@@ -1,0 +1,34 @@
+Sommaire des résultats des métriques:
+
+Temps de test et nombre de tests avec le fichier Metrics Data\JUnit4\Test Results - All_in_jfreechart.xml.
+Temps de test :2425ms
+Nombre total de tests : 2275
+La durée est inférieur à 5000ms, donc la note de la question 4 est maintenant :1/2
+Le pmnt est inférieur à 50%, donc la note de la question 3 est maintenant :1/2
+
+PMNT avec le fichier Metrics Data\JUnit4\Coverage Report\index.html
+PMNT :62.8%
+Le cbo est entre 0.0 exclu et 6.75, donc la note de la question 2 est maintenant :2/2
+Le cbo est entre 0.0 exclu et 6.75, donc la note de la question 4 est maintenant :2/2
+Le lcom est inférieur à 0.6 exclu, donc la note de la question 2 est maintenant :2/2
+
+Cbo & Lcom avec  le fichier Metrics Data\ck\outputclass.csv
+cbo moyenne :6.504746835443038
+lcom* moyenne :0.42067215281599984
+La densité de commentaire est entre 0.2 et 0.4, donc la note de la question 1 est maintenant :1/2
+La nombre de commentaire par méthode est entre 0.2 et 0.4, donc la note de la question 1 est maintenant :2/2
+
+Densité de commentaire et nombre de commentaire par méthode avec le fichierMetrics Data\notreOutil\cd.csv
+moyenne densité de commentaire0.34430207819101927Moyenne du nombre de commentaire par fonction: 0.30670676122140406
+
+Âge du projet avec le fichier Metrics Data\notreOutil\creationDate.csv");
+Différence en mois : 4
+La date la plus récente est : 2022-06-18
+La note accordée est : 80 %.
+La note sur l'âge du project est supérieur à 70%, donc la note de la question 3 est maintenant :2/2
+
+Réponses: (Rappel : la note doit être de 2/2 répondre Oui)
+Question 1: Oui.
+Question 2: Oui.
+Question 3: Oui.
+Question 4: Oui.

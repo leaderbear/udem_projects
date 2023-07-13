@@ -1,0 +1,1129 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StandardXYItemRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: StandardXYItemRenderer (org.jfree.chart.renderer.xy)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StandardXYItemRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    73,5%
+  </span>
+  <span class="absValue">
+    (25/34)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    67%
+  </span>
+  <span class="absValue">
+    (154/230)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StandardXYItemRenderer$State</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    20%
+  </span>
+  <span class="absValue">
+    (1/5)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (26/39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66%
+  </span>
+  <span class="absValue">
+    (155/235)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------------
+&nbsp; * StandardXYItemRenderer.java
+&nbsp; * ---------------------------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Mark Watson (www.markwatson.com);
+&nbsp; *                   Jonathan Nash;
+&nbsp; *                   Andreas Schneider;
+&nbsp; *                   Norbert Kiesel (for TBD Networks);
+&nbsp; *                   Christian W. Zuckschwerdt;
+&nbsp; *                   Bill Kelemen;
+&nbsp; *                   Nicolas Brodu (for Astrium and EADS Corporate Research
+&nbsp; *                   Center);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.xy;
+&nbsp;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Image;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Point;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.GeneralPath;
+&nbsp;import java.awt.geom.Line2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.labels.XYToolTipGenerator;
+&nbsp;import org.jfree.chart.plot.CrosshairState;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.urls.XYURLGenerator;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.chart.internal.ShapeUtils;
+&nbsp;import org.jfree.chart.api.UnitType;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * Standard item renderer for an {@link XYPlot}.  This class can draw (a)
+&nbsp; * shapes at each point, or (b) lines between points, or (c) both shapes and
+&nbsp; * lines.
+&nbsp; * &lt;P&gt;
+&nbsp; * This renderer has been retained for historical reasons and, in general, you
+&nbsp; * should use the {@link XYLineAndShapeRenderer} class instead.
+&nbsp; */
+&nbsp;public class StandardXYItemRenderer extends AbstractXYItemRenderer
+&nbsp;        implements XYItemRenderer, Cloneable, PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -3271351259436865995L;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (shapes only). */
+&nbsp;    public static final int SHAPES = 1;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (lines only). */
+&nbsp;    public static final int LINES = 2;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (shapes and lines). */
+&nbsp;    public static final int SHAPES_AND_LINES = SHAPES | LINES;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (images only). */
+&nbsp;    public static final int IMAGES = 4;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (discontinuous lines). */
+&nbsp;    public static final int DISCONTINUOUS = 8;
+&nbsp;
+&nbsp;    /** Constant for the type of rendering (discontinuous lines). */
+&nbsp;    public static final int DISCONTINUOUS_LINES = LINES | DISCONTINUOUS;
+&nbsp;
+&nbsp;    /** A flag indicating whether or not shapes are drawn at each XY point. */
+&nbsp;    private boolean baseShapesVisible;
+&nbsp;
+&nbsp;    /** A flag indicating whether or not lines are drawn between XY points. */
+&nbsp;    private boolean plotLines;
+&nbsp;
+&nbsp;    /** A flag indicating whether or not images are drawn between XY points. */
+&nbsp;    private boolean plotImages;
+&nbsp;
+&nbsp;    /** A flag controlling whether or not discontinuous lines are used. */
+&nbsp;    private boolean plotDiscontinuous;
+&nbsp;
+&nbsp;    /** Specifies how the gap threshold value is interpreted. */
+<b class="fc">&nbsp;    private UnitType gapThresholdType = UnitType.RELATIVE;</b>
+&nbsp;
+&nbsp;    /** Threshold for deciding when to discontinue a line. */
+<b class="fc">&nbsp;    private double gapThreshold = 1.0;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A table of flags that control (per series) whether or not shapes are
+&nbsp;     * filled.
+&nbsp;     */
+&nbsp;    private Map&lt;Integer, Boolean&gt; seriesShapesFilledMap;
+&nbsp;
+&nbsp;    /** The default value returned by the getShapeFilled() method. */
+&nbsp;    private boolean baseShapesFilled;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not each series is drawn as a single
+&nbsp;     * path.
+&nbsp;     */
+&nbsp;    private boolean drawSeriesLineAsPath;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The shape that is used to represent a line in the legend.
+&nbsp;     * This should never be set to {@code null}.
+&nbsp;     */
+&nbsp;    private transient Shape legendLine;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new renderer.
+&nbsp;     */
+&nbsp;    public StandardXYItemRenderer() {
+<b class="fc">&nbsp;        this(LINES, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new renderer.  To specify the type of renderer, use one of
+&nbsp;     * the constants: {@link #SHAPES}, {@link #LINES} or
+&nbsp;     * {@link #SHAPES_AND_LINES}.
+&nbsp;     *
+&nbsp;     * @param type  the type.
+&nbsp;     */
+&nbsp;    public StandardXYItemRenderer(int type) {
+<b class="nc">&nbsp;        this(type, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new renderer.  To specify the type of renderer, use one of
+&nbsp;     * the constants: {@link #SHAPES}, {@link #LINES} or
+&nbsp;     * {@link #SHAPES_AND_LINES}.
+&nbsp;     *
+&nbsp;     * @param type  the type of renderer.
+&nbsp;     * @param toolTipGenerator  the item label generator ({@code null}
+&nbsp;     *                          permitted).
+&nbsp;     */
+&nbsp;    public StandardXYItemRenderer(int type,
+&nbsp;                                  XYToolTipGenerator toolTipGenerator) {
+<b class="fc">&nbsp;        this(type, toolTipGenerator, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new renderer.  To specify the type of renderer, use one of
+&nbsp;     * the constants: {@link #SHAPES}, {@link #LINES} or
+&nbsp;     * {@link #SHAPES_AND_LINES}.
+&nbsp;     *
+&nbsp;     * @param type  the type of renderer.
+&nbsp;     * @param toolTipGenerator  the item label generator ({@code null}
+&nbsp;     *                          permitted).
+&nbsp;     * @param urlGenerator  the URL generator.
+&nbsp;     */
+&nbsp;    public StandardXYItemRenderer(int type, XYToolTipGenerator toolTipGenerator,
+&nbsp;           XYURLGenerator urlGenerator) {
+&nbsp;
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        setDefaultToolTipGenerator(toolTipGenerator);</b>
+<b class="fc">&nbsp;        setURLGenerator(urlGenerator);</b>
+<b class="fc">&nbsp;        if ((type &amp; SHAPES) != 0) {</b>
+<b class="nc">&nbsp;            this.baseShapesVisible = true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if ((type &amp; LINES) != 0) {</b>
+<b class="fc">&nbsp;            this.plotLines = true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if ((type &amp; IMAGES) != 0) {</b>
+<b class="nc">&nbsp;            this.plotImages = true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if ((type &amp; DISCONTINUOUS) != 0) {</b>
+<b class="nc">&nbsp;            this.plotDiscontinuous = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        this.seriesShapesFilledMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.baseShapesFilled = true;</b>
+<b class="fc">&nbsp;        this.legendLine = new Line2D.Double(-7.0, 0.0, 7.0, 0.0);</b>
+<b class="fc">&nbsp;        this.drawSeriesLineAsPath = false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns true if shapes are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @return {@code true} if shapes are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @see #setBaseShapesVisible
+&nbsp;     */
+&nbsp;    public boolean getBaseShapesVisible() {
+<b class="fc">&nbsp;        return this.baseShapesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not a shape is plotted at each
+&nbsp;     * data point.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getBaseShapesVisible
+&nbsp;     */
+&nbsp;    public void setBaseShapesVisible(boolean flag) {
+<b class="fc">&nbsp;        if (this.baseShapesVisible != flag) {</b>
+<b class="fc">&nbsp;            this.baseShapesVisible = flag;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // SHAPES FILLED
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag used to control whether or not the shape for an item is
+&nbsp;     * filled.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation passes control to the
+&nbsp;     * {@code getSeriesShapesFilled()} method.  You can override this method
+&nbsp;     * if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #getSeriesShapesFilled(int)
+&nbsp;     */
+&nbsp;    public boolean getItemShapeFilled(int series, int item) {
+&nbsp;
+&nbsp;        // otherwise look up the paint table
+<b class="fc">&nbsp;        Boolean flag = this.seriesShapesFilledMap.get(series);</b>
+<b class="fc">&nbsp;        if (flag != null) {</b>
+<b class="nc">&nbsp;            return flag;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            return this.baseShapesFilled;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag used to control whether or not the shapes for a series
+&nbsp;     * are filled.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public Boolean getSeriesShapesFilled(int series) {
+<b class="nc">&nbsp;        return this.seriesShapesFilledMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the &#39;shapes filled&#39; flag for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getSeriesShapesFilled(int)
+&nbsp;     */
+&nbsp;    public void setSeriesShapesFilled(int series, Boolean flag) {
+<b class="fc">&nbsp;        this.seriesShapesFilledMap.put(series, flag);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the base &#39;shape filled&#39; attribute.
+&nbsp;     *
+&nbsp;     * @return The base flag.
+&nbsp;     *
+&nbsp;     * @see #setBaseShapesFilled(boolean)
+&nbsp;     */
+&nbsp;    public boolean getBaseShapesFilled() {
+<b class="nc">&nbsp;        return this.baseShapesFilled;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base &#39;shapes filled&#39; flag and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getBaseShapesFilled()
+&nbsp;     */
+&nbsp;    public void setBaseShapesFilled(boolean flag) {
+<b class="fc">&nbsp;        this.baseShapesFilled = flag;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns true if lines are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @return {@code true} if lines are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @see #setPlotLines(boolean)
+&nbsp;     */
+&nbsp;    public boolean getPlotLines() {
+<b class="fc">&nbsp;        return this.plotLines;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not a line is plotted between
+&nbsp;     * each data point and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getPlotLines()
+&nbsp;     */
+&nbsp;    public void setPlotLines(boolean flag) {
+<b class="fc">&nbsp;        if (this.plotLines != flag) {</b>
+<b class="fc">&nbsp;            this.plotLines = flag;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gap threshold type (relative or absolute).
+&nbsp;     *
+&nbsp;     * @return The type.
+&nbsp;     *
+&nbsp;     * @see #setGapThresholdType(UnitType)
+&nbsp;     */
+&nbsp;    public UnitType getGapThresholdType() {
+<b class="nc">&nbsp;        return this.gapThresholdType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gap threshold type and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param thresholdType  the type ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getGapThresholdType()
+&nbsp;     */
+&nbsp;    public void setGapThresholdType(UnitType thresholdType) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(thresholdType, &quot;thresholdType&quot;);</b>
+<b class="fc">&nbsp;        this.gapThresholdType = thresholdType;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gap threshold for discontinuous lines.
+&nbsp;     *
+&nbsp;     * @return The gap threshold.
+&nbsp;     *
+&nbsp;     * @see #setGapThreshold(double)
+&nbsp;     */
+&nbsp;    public double getGapThreshold() {
+<b class="nc">&nbsp;        return this.gapThreshold;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gap threshold for discontinuous lines and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param t  the threshold.
+&nbsp;     *
+&nbsp;     * @see #getGapThreshold()
+&nbsp;     */
+&nbsp;    public void setGapThreshold(double t) {
+<b class="fc">&nbsp;        this.gapThreshold = t;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns true if images are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @return {@code true} if images are being plotted by the renderer.
+&nbsp;     *
+&nbsp;     * @see #setPlotImages(boolean)
+&nbsp;     */
+&nbsp;    public boolean getPlotImages() {
+<b class="fc">&nbsp;        return this.plotImages;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not an image is drawn at each
+&nbsp;     * data point and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getPlotImages()
+&nbsp;     */
+&nbsp;    public void setPlotImages(boolean flag) {
+<b class="fc">&nbsp;        if (this.plotImages != flag) {</b>
+<b class="fc">&nbsp;            this.plotImages = flag;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not the renderer shows
+&nbsp;     * discontinuous lines.
+&nbsp;     *
+&nbsp;     * @return {@code true} if lines should be discontinuous.
+&nbsp;     */
+&nbsp;    public boolean getPlotDiscontinuous() {
+<b class="fc">&nbsp;        return this.plotDiscontinuous;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the renderer shows
+&nbsp;     * discontinuous lines, and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param flag  the new flag value.
+&nbsp;     */
+&nbsp;    public void setPlotDiscontinuous(boolean flag) {
+<b class="fc">&nbsp;        if (this.plotDiscontinuous != flag) {</b>
+<b class="fc">&nbsp;            this.plotDiscontinuous = flag;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not each series is drawn as a
+&nbsp;     * single path.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setDrawSeriesLineAsPath(boolean)
+&nbsp;     */
+&nbsp;    public boolean getDrawSeriesLineAsPath() {
+<b class="nc">&nbsp;        return this.drawSeriesLineAsPath;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not each series is drawn as a
+&nbsp;     * single path.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDrawSeriesLineAsPath()
+&nbsp;     */
+&nbsp;    public void setDrawSeriesLineAsPath(boolean flag) {
+<b class="fc">&nbsp;        this.drawSeriesLineAsPath = flag;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shape used to represent a line in the legend.
+&nbsp;     *
+&nbsp;     * @return The legend line (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendLine(Shape)
+&nbsp;     */
+&nbsp;    public Shape getLegendLine() {
+<b class="nc">&nbsp;        return this.legendLine;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used as a line in each legend item and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param line  the line ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendLine()
+&nbsp;     */
+&nbsp;    public void setLegendLine(Shape line) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(line, &quot;line&quot;);</b>
+<b class="fc">&nbsp;        this.legendLine = line;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a legend item for a series.
+&nbsp;     *
+&nbsp;     * @param datasetIndex  the dataset index (zero-based).
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A legend item for the series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItem getLegendItem(int datasetIndex, int series) {
+<b class="fc">&nbsp;        XYPlot plot = getPlot();</b>
+<b class="fc">&nbsp;        if (plot == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        LegendItem result = null;</b>
+<b class="fc">&nbsp;        XYDataset dataset = plot.getDataset(datasetIndex);</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="fc">&nbsp;            if (getItemVisible(series, 0)) {</b>
+<b class="fc">&nbsp;                String label = getLegendItemLabelGenerator().generateLabel(</b>
+&nbsp;                        dataset, series);
+<b class="fc">&nbsp;                String description = label;</b>
+<b class="fc">&nbsp;                String toolTipText = null;</b>
+<b class="fc">&nbsp;                if (getLegendItemToolTipGenerator() != null) {</b>
+<b class="nc">&nbsp;                    toolTipText = getLegendItemToolTipGenerator().generateLabel(</b>
+&nbsp;                            dataset, series);
+&nbsp;                }
+<b class="fc">&nbsp;                String urlText = null;</b>
+<b class="fc">&nbsp;                if (getLegendItemURLGenerator() != null) {</b>
+<b class="nc">&nbsp;                    urlText = getLegendItemURLGenerator().generateLabel(</b>
+&nbsp;                            dataset, series);
+&nbsp;                }
+<b class="fc">&nbsp;                Shape shape = lookupLegendShape(series);</b>
+<b class="fc">&nbsp;                boolean shapeFilled = getItemShapeFilled(series, 0);</b>
+<b class="fc">&nbsp;                Paint paint = lookupSeriesPaint(series);</b>
+<b class="fc">&nbsp;                Paint linePaint = paint;</b>
+<b class="fc">&nbsp;                Stroke lineStroke = lookupSeriesStroke(series);</b>
+<b class="fc">&nbsp;                result = new LegendItem(label, description, toolTipText,</b>
+&nbsp;                        urlText, this.baseShapesVisible, shape, shapeFilled,
+&nbsp;                        paint, !shapeFilled, paint, lineStroke,
+&nbsp;                        this.plotLines, this.legendLine, lineStroke, linePaint);
+<b class="fc">&nbsp;                result.setLabelFont(lookupLegendTextFont(series));</b>
+<b class="fc">&nbsp;                Paint labelPaint = lookupLegendTextPaint(series);</b>
+<b class="fc">&nbsp;                if (labelPaint != null) {</b>
+<b class="nc">&nbsp;                    result.setLabelPaint(labelPaint);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                result.setDataset(dataset);</b>
+<b class="fc">&nbsp;                result.setDatasetIndex(datasetIndex);</b>
+<b class="fc">&nbsp;                result.setSeriesKey(dataset.getSeriesKey(series));</b>
+<b class="fc">&nbsp;                result.setSeriesIndex(series);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Records the state for the renderer.  This is used to preserve state
+&nbsp;     * information between calls to the drawItem() method for a single chart
+&nbsp;     * drawing.
+&nbsp;     */
+&nbsp;    public static class State extends XYItemRendererState {
+&nbsp;
+&nbsp;        /** The path for the current series. */
+&nbsp;        public GeneralPath seriesPath;
+&nbsp;
+&nbsp;        /** The series index. */
+&nbsp;        private int seriesIndex;
+&nbsp;
+&nbsp;        /**
+&nbsp;         * A flag that indicates if the last (x, y) point was &#39;good&#39;
+&nbsp;         * (non-null).
+&nbsp;         */
+&nbsp;        private boolean lastPointGood;
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Creates a new state instance.
+&nbsp;         *
+&nbsp;         * @param info  the plot rendering info.
+&nbsp;         */
+&nbsp;        public State(PlotRenderingInfo info) {
+<b class="fc">&nbsp;            super(info);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns a flag that indicates if the last point drawn (in the
+&nbsp;         * current series) was &#39;good&#39; (non-null).
+&nbsp;         *
+&nbsp;         * @return A boolean.
+&nbsp;         */
+&nbsp;        public boolean isLastPointGood() {
+<b class="nc">&nbsp;            return this.lastPointGood;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Sets a flag that indicates if the last point drawn (in the current
+&nbsp;         * series) was &#39;good&#39; (non-null).
+&nbsp;         *
+&nbsp;         * @param good  the flag.
+&nbsp;         */
+&nbsp;        public void setLastPointGood(boolean good) {
+<b class="nc">&nbsp;            this.lastPointGood = good;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns the series index for the current path.
+&nbsp;         *
+&nbsp;         * @return The series index for the current path.
+&nbsp;         */
+&nbsp;        public int getSeriesIndex() {
+<b class="nc">&nbsp;            return this.seriesIndex;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Sets the series index for the current path.
+&nbsp;         *
+&nbsp;         * @param index  the index.
+&nbsp;         */
+&nbsp;        public void setSeriesIndex(int index) {
+<b class="nc">&nbsp;            this.seriesIndex = index;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the renderer.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method will be called before the first item is rendered, giving the
+&nbsp;     * renderer an opportunity to initialise any state information it wants to
+&nbsp;     * maintain. The renderer can do nothing if it chooses.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area inside the axes.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param data  the data.
+&nbsp;     * @param info  an optional info collection object to return data back to
+&nbsp;     *              the caller.
+&nbsp;     *
+&nbsp;     * @return The renderer state.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            XYPlot plot, XYDataset data, PlotRenderingInfo info) {
+&nbsp;
+<b class="fc">&nbsp;        State state = new State(info);</b>
+<b class="fc">&nbsp;        state.seriesPath = new GeneralPath();</b>
+<b class="fc">&nbsp;        state.seriesIndex = -1;</b>
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the visual representation of a single data item.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param dataArea  the area within which the data is being drawn.
+&nbsp;     * @param info  collects information about the drawing.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color information
+&nbsp;     *              etc).
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param crosshairState  crosshair information for the plot
+&nbsp;     *                        ({@code null} permitted).
+&nbsp;     * @param pass  the pass index.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void drawItem(Graphics2D g2, XYItemRendererState state,
+&nbsp;            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,
+&nbsp;            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,
+&nbsp;            int series, int item, CrosshairState crosshairState, int pass) {
+&nbsp;
+<b class="fc">&nbsp;        boolean itemVisible = getItemVisible(series, item);</b>
+&nbsp;
+&nbsp;        // setup for collecting optional entity info...
+<b class="fc">&nbsp;        Shape entityArea = null;</b>
+<b class="fc">&nbsp;        EntityCollection entities = null;</b>
+<b class="fc">&nbsp;        if (info != null) {</b>
+<b class="fc">&nbsp;            entities = info.getOwner().getEntityCollection();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        PlotOrientation orientation = plot.getOrientation();</b>
+<b class="fc">&nbsp;        Paint paint = getItemPaint(series, item);</b>
+<b class="fc">&nbsp;        Stroke seriesStroke = getItemStroke(series, item);</b>
+<b class="fc">&nbsp;        g2.setPaint(paint);</b>
+<b class="fc">&nbsp;        g2.setStroke(seriesStroke);</b>
+&nbsp;
+&nbsp;        // get the data point...
+<b class="fc">&nbsp;        double x1 = dataset.getXValue(series, item);</b>
+<b class="fc">&nbsp;        double y1 = dataset.getYValue(series, item);</b>
+<b class="fc">&nbsp;        if (Double.isNaN(x1) || Double.isNaN(y1)) {</b>
+<b class="nc">&nbsp;            itemVisible = false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();</b>
+<b class="fc">&nbsp;        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();</b>
+<b class="fc">&nbsp;        double transX1 = domainAxis.valueToJava2D(x1, dataArea, xAxisLocation);</b>
+<b class="fc">&nbsp;        double transY1 = rangeAxis.valueToJava2D(y1, dataArea, yAxisLocation);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (getPlotLines()) {</b>
+<b class="fc">&nbsp;            if (this.drawSeriesLineAsPath) {</b>
+<b class="nc">&nbsp;                State s = (State) state;</b>
+<b class="nc">&nbsp;                if (s.getSeriesIndex() != series) {</b>
+&nbsp;                    // we are starting a new series path
+<b class="nc">&nbsp;                    s.seriesPath.reset();</b>
+<b class="nc">&nbsp;                    s.lastPointGood = false;</b>
+<b class="nc">&nbsp;                    s.setSeriesIndex(series);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                // update path to reflect latest point
+<b class="nc">&nbsp;                if (itemVisible &amp;&amp; !Double.isNaN(transX1)</b>
+<b class="nc">&nbsp;                        &amp;&amp; !Double.isNaN(transY1)) {</b>
+<b class="nc">&nbsp;                    float x = (float) transX1;</b>
+<b class="nc">&nbsp;                    float y = (float) transY1;</b>
+<b class="nc">&nbsp;                    if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                        x = (float) transY1;</b>
+<b class="nc">&nbsp;                        y = (float) transX1;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    if (s.isLastPointGood()) {</b>
+&nbsp;                        // TODO: check threshold
+<b class="nc">&nbsp;                        s.seriesPath.lineTo(x, y);</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        s.seriesPath.moveTo(x, y);</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    s.setLastPointGood(true);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;                else {
+<b class="nc">&nbsp;                    s.setLastPointGood(false);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (item == dataset.getItemCount(series) - 1) {</b>
+<b class="nc">&nbsp;                    if (s.seriesIndex == series) {</b>
+&nbsp;                        // draw path
+<b class="nc">&nbsp;                        g2.setStroke(lookupSeriesStroke(series));</b>
+<b class="nc">&nbsp;                        g2.setPaint(lookupSeriesPaint(series));</b>
+<b class="nc">&nbsp;                        g2.draw(s.seriesPath);</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;
+<b class="fc">&nbsp;            else if (item != 0 &amp;&amp; itemVisible) {</b>
+&nbsp;                // get the previous data point...
+<b class="fc">&nbsp;                double x0 = dataset.getXValue(series, item - 1);</b>
+<b class="fc">&nbsp;                double y0 = dataset.getYValue(series, item - 1);</b>
+<b class="fc">&nbsp;                if (!Double.isNaN(x0) &amp;&amp; !Double.isNaN(y0)) {</b>
+<b class="fc">&nbsp;                    boolean drawLine = true;</b>
+<b class="fc">&nbsp;                    if (getPlotDiscontinuous()) {</b>
+&nbsp;                        // only draw a line if the gap between the current and
+&nbsp;                        // previous data point is within the threshold
+<b class="nc">&nbsp;                        int numX = dataset.getItemCount(series);</b>
+<b class="nc">&nbsp;                        double minX = dataset.getXValue(series, 0);</b>
+<b class="nc">&nbsp;                        double maxX = dataset.getXValue(series, numX - 1);</b>
+<b class="nc">&nbsp;                        if (this.gapThresholdType == UnitType.ABSOLUTE) {</b>
+<b class="nc">&nbsp;                            drawLine = Math.abs(x1 - x0) &lt;= this.gapThreshold;</b>
+&nbsp;                        }
+&nbsp;                        else {
+<b class="nc">&nbsp;                            drawLine = Math.abs(x1 - x0) &lt;= ((maxX - minX)</b>
+<b class="nc">&nbsp;                                / numX * getGapThreshold());</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (drawLine) {</b>
+<b class="fc">&nbsp;                        double transX0 = domainAxis.valueToJava2D(x0, dataArea,</b>
+&nbsp;                                xAxisLocation);
+<b class="fc">&nbsp;                        double transY0 = rangeAxis.valueToJava2D(y0, dataArea,</b>
+&nbsp;                                yAxisLocation);
+&nbsp;
+&nbsp;                        // only draw if we have good values
+<b class="fc">&nbsp;                        if (Double.isNaN(transX0) || Double.isNaN(transY0)</b>
+<b class="fc">&nbsp;                            || Double.isNaN(transX1) || Double.isNaN(transY1)) {</b>
+&nbsp;                            return;
+&nbsp;                        }
+&nbsp;
+<b class="fc">&nbsp;                        if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                            state.workingLine.setLine(transY0, transX0,</b>
+&nbsp;                                    transY1, transX1);
+&nbsp;                        }
+<b class="fc">&nbsp;                        else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="fc">&nbsp;                            state.workingLine.setLine(transX0, transY0,</b>
+&nbsp;                                    transX1, transY1);
+&nbsp;                        }
+&nbsp;
+<b class="fc">&nbsp;                        if (state.workingLine.intersects(dataArea)) {</b>
+<b class="fc">&nbsp;                            g2.draw(state.workingLine);</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // we needed to get this far even for invisible items, to ensure that
+&nbsp;        // seriesPath updates happened, but now there is nothing more we need
+&nbsp;        // to do for non-visible items...
+<b class="fc">&nbsp;        if (!itemVisible) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (getBaseShapesVisible()) {</b>
+&nbsp;
+<b class="nc">&nbsp;            Shape shape = getItemShape(series, item);</b>
+<b class="nc">&nbsp;            if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                shape = ShapeUtils.createTranslatedShape(shape, transY1,</b>
+&nbsp;                        transX1);
+&nbsp;            }
+<b class="nc">&nbsp;            else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                shape = ShapeUtils.createTranslatedShape(shape, transX1,</b>
+&nbsp;                        transY1);
+&nbsp;            }
+<b class="nc">&nbsp;            if (shape.intersects(dataArea)) {</b>
+<b class="nc">&nbsp;                if (getItemShapeFilled(series, item)) {</b>
+<b class="nc">&nbsp;                    g2.fill(shape);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    g2.draw(shape);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            entityArea = shape;</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (getPlotImages()) {</b>
+<b class="nc">&nbsp;            Image image = getImage(plot, series, item, transX1, transY1);</b>
+<b class="nc">&nbsp;            if (image != null) {</b>
+<b class="nc">&nbsp;                Point hotspot = getImageHotspot(plot, series, item, transX1,</b>
+&nbsp;                        transY1, image);
+<b class="nc">&nbsp;                g2.drawImage(image, (int) (transX1 - hotspot.getX()),</b>
+<b class="nc">&nbsp;                        (int) (transY1 - hotspot.getY()), null);</b>
+<b class="nc">&nbsp;                entityArea = new Rectangle2D.Double(transX1 - hotspot.getX(),</b>
+<b class="nc">&nbsp;                        transY1 - hotspot.getY(), image.getWidth(null),</b>
+<b class="nc">&nbsp;                        image.getHeight(null));</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        double xx = transX1;</b>
+<b class="fc">&nbsp;        double yy = transY1;</b>
+<b class="fc">&nbsp;        if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;            xx = transY1;</b>
+<b class="nc">&nbsp;            yy = transX1;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the item label if there is one...
+<b class="fc">&nbsp;        if (isItemLabelVisible(series, item)) {</b>
+<b class="nc">&nbsp;            drawItemLabel(g2, orientation, dataset, series, item, xx, yy,</b>
+&nbsp;                    (y1 &lt; 0.0));
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int datasetIndex = plot.indexOf(dataset);</b>
+<b class="fc">&nbsp;        updateCrosshairValues(crosshairState, x1, y1, datasetIndex,</b>
+&nbsp;                transX1, transY1, orientation);
+&nbsp;
+&nbsp;        // add an entity for the item...
+<b class="fc">&nbsp;        if (entities != null &amp;&amp; ShapeUtils.isPointInRect(dataArea, xx, yy)) {</b>
+<b class="nc">&nbsp;            addEntity(entities, entityArea, dataset, series, item, xx, yy);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this renderer for equality with another object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+&nbsp;
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof StandardXYItemRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        StandardXYItemRenderer that = (StandardXYItemRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.baseShapesVisible != that.baseShapesVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.plotLines != that.plotLines) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.plotImages != that.plotImages) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.plotDiscontinuous != that.plotDiscontinuous) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.gapThresholdType != that.gapThresholdType) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.gapThreshold != that.gapThreshold) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.seriesShapesFilledMap.equals(that.seriesShapesFilledMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.baseShapesFilled != that.baseShapesFilled) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.drawSeriesLineAsPath != that.drawSeriesLineAsPath) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.legendLine, that.legendLine)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the renderer.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException  if the renderer cannot be cloned.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        StandardXYItemRenderer clone = (StandardXYItemRenderer) super.clone();</b>
+<b class="fc">&nbsp;        clone.seriesShapesFilledMap = new HashMap&lt;&gt;(this.seriesShapesFilledMap);</b>
+<b class="fc">&nbsp;        clone.legendLine = CloneUtils.clone(this.legendLine);</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    ////////////////////////////////////////////////////////////////////////////
+&nbsp;    // PROTECTED METHODS
+&nbsp;    // These provide the opportunity to subclass the standard renderer and
+&nbsp;    // create custom effects.
+&nbsp;    ////////////////////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the image used to draw a single data item.
+&nbsp;     *
+&nbsp;     * @param plot  the plot (can be used to obtain standard color information
+&nbsp;     *              etc).
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param item  the item index.
+&nbsp;     * @param x  the x value of the item.
+&nbsp;     * @param y  the y value of the item.
+&nbsp;     *
+&nbsp;     * @return The image.
+&nbsp;     *
+&nbsp;     * @see #getPlotImages()
+&nbsp;     */
+&nbsp;    protected Image getImage(Plot plot, int series, int item,
+&nbsp;                             double x, double y) {
+&nbsp;        // this method must be overridden if you want to display images
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the hotspot of the image used to draw a single data item.
+&nbsp;     * The hotspot is the point relative to the top left of the image
+&nbsp;     * that should indicate the data item. The default is the center of the
+&nbsp;     * image.
+&nbsp;     *
+&nbsp;     * @param plot  the plot (can be used to obtain standard color information
+&nbsp;     *              etc).
+&nbsp;     * @param image  the image (can be used to get size information about the
+&nbsp;     *               image)
+&nbsp;     * @param series  the series index
+&nbsp;     * @param item  the item index
+&nbsp;     * @param x  the x value of the item
+&nbsp;     * @param y  the y value of the item
+&nbsp;     *
+&nbsp;     * @return The hotspot used to draw the data item.
+&nbsp;     */
+&nbsp;    protected Point getImageHotspot(Plot plot, int series, int item,
+&nbsp;                                    double x, double y, Image image) {
+&nbsp;
+<b class="nc">&nbsp;        int height = image.getHeight(null);</b>
+<b class="nc">&nbsp;        int width = image.getWidth(null);</b>
+<b class="nc">&nbsp;        return new Point(width / 2, height / 2);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;            throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.legendLine = SerialUtils.readShape(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writeShape(this.legendLine, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

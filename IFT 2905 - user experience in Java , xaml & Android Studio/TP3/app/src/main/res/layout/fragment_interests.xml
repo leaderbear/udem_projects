@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout7"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".InterestsFragment">
+
+
+    <!--  BEGIN HEADER  -->
+    <RelativeLayout
+        android:id="@+id/classesRelativeLayout"
+        android:layout_width="319dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iconProfile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconEvent"
+            android:src="@drawable/account_circle"
+            app:tint="@color/design_default_color_on_secondary" />
+
+
+        <ImageView
+            android:id="@+id/iconEvent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconLibrary"
+            android:src="@drawable/event_available"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconLibrary"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconSchool"
+            android:src="@drawable/library"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconSchool"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconBrush"
+            android:src="@drawable/school"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconBrush"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/brush"
+            app:tint="@color/design_default_color_primary" />
+    </RelativeLayout>
+    <!--  END HEADER  -->
+
+    <TextView
+        android:id="@+id/interestsTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/interests_selection_text"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/interestsTextField"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classesRelativeLayout" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/interestsTextField"
+        android:layout_width="300dp"
+        android:layout_height="50dp"
+        android:hint="@string/search"
+        app:startIconDrawable="@drawable/search"
+        app:layout_constraintBottom_toTopOf="@+id/scrollViewInterestsSelection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/classesRelativeLayout"
+        app:layout_constraintVertical_bias="0.7"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:text="@string/interests_search_field_hint"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:singleLine="true"
+            android:padding="0dp"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:id="@+id/interestsSearchResultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/classes_search_result_text"
+        android:textSize="10sp"
+        app:layout_constraintBottom_toTopOf="@+id/scrollViewInterestsSelection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/interestsTextField" />
+    <ScrollView
+        android:id="@+id/scrollViewInterestsSelection"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+        android:paddingVertical="7dp"
+        app:layout_constraintBottom_toTopOf="@+id/interestsEndButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTint="@color/grey_200"
+        android:backgroundTintMode="multiply">
+
+        <LinearLayout
+            android:id="@+id/relativeLayoutInterestsSelection"
+            android:layout_width="300dp"
+            android:layout_height="250dp">
+
+            <RadioGroup
+                android:id="@+id/classesRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="15dp"
+                android:checkedButton="@+id/radio_button_1">
+
+                <CheckBox
+                    android:id="@+id/radio_button_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_1"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_2"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_3"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+
+                <CheckBox
+                    android:id="@+id/radio_button_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_4"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_5"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_5"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_6"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_6"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_7"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_7"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <CheckBox
+                    android:id="@+id/radio_button_8"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:text="@string/interests_8"
+                    app:buttonTint="@color/design_default_color_primary" />
+            </RadioGroup>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/interestsEndButton"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        android:text="@string/end"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

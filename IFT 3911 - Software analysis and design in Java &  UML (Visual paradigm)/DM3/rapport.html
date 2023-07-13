@@ -1,0 +1,207 @@
+<!-- saved from url=(0060)http://www-ens.iro.umontreal.ca/~syriani/courses/rapport.htm -->
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFT3911 | DM3</title>
+    <style type="text/css">
+        body{ margin: 0; padding:2.5em 0 2.5em 5px; }
+        h1{
+            margin:0;
+            width:100%; 
+            text-align: center;
+            background-color: black;
+            color:white;
+            position:fixed;
+            top:0;
+            left:0;
+        }
+        h2{
+            border-radius: 4px;
+            width:calc(100% - 10px); 
+            padding: 2px 0 2px 5px;
+            background-color: black;
+            color:white;
+            margin:0 0 0.15em 0;             
+        }
+        h3{ margin:0 0 0.7em 0;}
+        
+        table{
+            border: outset 3px black;           
+            border-collapse: collapse;     
+        }
+        thead{
+            border-bottom: outset 2px black;
+        }
+        tr{
+            border-bottom: outset 1px black;
+        }    
+        tr td:first-of-type , tr th:first-of-type{
+            border-right: outset 2px black;
+        }
+        td{
+            text-align: center;
+        }
+        td:first-child{
+            text-align:left;
+        }
+        section{
+            padding-left:15px;
+        }
+        h4{
+            margin:0;       
+            
+        } 
+        .membre h4{        
+            width:80px;
+            display: inline-block;
+        }
+        .membre{
+            margin: 5px;
+            padding: 5px;
+            width:calc(32.5% - 10px);
+            min-width: 400px;
+            border-radius: 8px;
+            border: 2px solid black;
+            background: rgba(0,0,0,0.1);
+            float:left;
+        }
+        .clr{ clear: both ; }
+        section{
+            padding-left:15px;
+        }
+        img{
+            padding-top: 5px;
+            max-width: 2000px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IFT 3911 - Devoir 3</h1>
+        <h2>Membres de l'équipe</h2>
+        <div class="membre">
+            <h4>Nom</h4> : Abderrahim Tabta<br>
+            <h4>Matricule</h4> : 3680<br>
+            <h4>Courriel </h4> : abderrahim.tabta@umontreal.ca<br>
+            <h4>Temps mis</h4> : <br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : André-Viet Tran<br>
+            <h4>Matricule</h4> : 1185<br>
+            <h4>Courriel </h4> : andre-viet.tran@umontreal.ca<br>
+            <h4>Temps mis</h4> : <br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : Juan David Zuniga Omen<br>
+            <h4>Matricule</h4> : 20137012<br>
+            <h4>Courriel </h4> : juan.david.zuniga.omen@umontreal.ca<br>
+            <h4>Temps mis</h4> : <br>
+        </div>
+        <div class="clr"></div>
+      
+    </header>
+    <main>
+        <h2>Distribution des tâches</h2>
+        <section>
+            
+        <p><span style="font-weight: bold;">Soumetteur: </span> André-Viet Tran </p>
+        <table cellpadding="7px">
+            <thead>
+                <tr>
+                    <th class="first_col">Tâche</th>
+                    <th>Abderrahim</th>
+                    <th>André</th>
+                    <th>Juan David</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first_col">Design Logiciel</td>
+                    <td>33.3%</td>
+                    <td>33.3%</td>
+                    <td>33.3%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">Discussion et justification de la qualité du design</td>
+                    <td>50%</td>
+                    <td>50%</td>
+                    <td>0%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">Implémentation </td>
+                    <td>50%</td>
+                    <td>50%</td>
+                    <td>0%</td>
+                </tr>
+            </tbody>
+            </table><br> 
+        </section>
+              
+        <h2>Design Logiciel</h2>
+	    
+        <section>
+            <a href="vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe logiciel</h4></a>
+            <img src="./img/ClassDiagram.jpg" alt="Diagramme de classe logiciel">
+
+            <a href="vpp/1. Diagramme de classe (révisé).vpp"><h3>Diagramme de classe pour les Patrons de fabriques et du singleton</h3></a>
+            <img src="./img/ClassDiagramPatron+Singleton.jpg" alt="ClassDiagramPatron+Singleton">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de fabriques</h4></a>
+            <img src="./img/1SequenceFabrique.jpg" alt="1SequenceFabrique">
+
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron d'état</h4></a>
+            <img src="./img/ClassDiagramEtat.jpg" alt="ClassDiagramEtat">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron d'état</h4></a>
+            <img src="./img/3SequenceEtat.jpg" alt="2SequenceEtat">
+
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron de l'observateur</h4></a>
+            <img src="./img/ClassDiagramObservateur.jpg" alt="ClassDiagramObservateur">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de l'observateur</h4></a>
+            <img src="./img/5SequenceObservateur.jpg" alt="5SequenceObservateur">
+            
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron de commande</h4></a>
+            <img src="./img/ClassDiagramCommande.jpg" alt="ClassDiagramCommande">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de commande</h4></a>
+            <img src="./img/4SequenceCommande.jpg" alt="4SequenceCommande">
+
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron de visiteur</h4></a>
+            <img src="./img/ClassDiagramVisiteur.jpg" alt="ClassDiagramVisiteur">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de visiteur</h4></a>
+            <img src="./img/6SequenceVisiteur.jpg" alt="6SequenceVisiteur">
+
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron facade</h4></a>
+            <img src="./img/ClassDiagramFacade.jpg" alt="ClassDiagramFacade">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de facade</h4></a>
+            <img src="./img/7SequenceFacade.jpg" alt="7SequenceFacade">
+
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe pour le patron </h4></a>
+            <img src="./img/" alt="">
+            <a href="./vpp/DiagrammeSequence.vpp"><h4>Diagramme de séquence pour le patron de </h4></a>
+            <img src="./img/" alt="">
+            <br>
+            <a href="./vpp/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de paquet</h4></a>
+            <img src="./img/PackageDiagram.jpg" alt="Diagramme de paquet">
+
+            
+
+
+        </section>
+        <br>
+        <h2>Discussion et justification de la qualité du design</h2>
+        <section>
+            <a href="Discussion et justification de la qualité du design.txt">
+                <h4>Discussion et justification de la qualité du design</h2>
+            </a>
+        </section>
+
+
+        <h2>Génération de code et implémentation du système en Java</h2>
+           <section>
+               Voir Dossier
+           </section>
+        
+        <br> 
+   </main>
+    
+</body></html>

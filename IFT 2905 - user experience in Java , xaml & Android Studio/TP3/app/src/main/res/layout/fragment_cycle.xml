@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout4"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CycleFragment">
+
+    <!--  BEGIN HEADER  -->
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="319dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iconProfile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconEvent"
+            android:src="@drawable/account_circle"
+            app:tint="@color/design_default_color_on_secondary" />
+
+
+        <ImageView
+            android:id="@+id/iconEvent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconLibrary"
+            android:src="@drawable/event_available"
+            app:tint="@color/design_default_color_primary" />
+
+        <ImageView
+            android:id="@+id/iconLibrary"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconSchool"
+            android:src="@drawable/library"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconSchool"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconBrush"
+            android:src="@drawable/school"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconBrush"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/brush"
+            app:tint="@color/design_default_color_on_secondary" />
+    </RelativeLayout>
+    <!--  END HEADER  -->
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/cycle_selection_text"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/relativeLayoutCycleSelection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
+
+    <LinearLayout
+        android:id="@+id/relativeLayoutCycleSelection"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTint="@color/grey_200"
+        android:backgroundTintMode="multiply"
+        app:layout_constraintBottom_toTopOf="@+id/cycleNextButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.9">
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="15dp"
+            android:checkedButton="@+id/radio_button_1">
+
+            <RadioButton
+                android:id="@+id/radio_button_1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/cycle_1"
+                app:buttonTint="@color/design_default_color_primary" />
+
+            <RadioButton
+                android:id="@+id/radio_button_2"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/cycle_2"
+                app:buttonTint="@color/design_default_color_primary" />
+
+            <RadioButton
+                android:id="@+id/radio_button_3"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="@string/cycle_3"
+                app:buttonTint="@color/design_default_color_primary" />
+        </RadioGroup>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/cycleNextButton"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        android:text="@string/next"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

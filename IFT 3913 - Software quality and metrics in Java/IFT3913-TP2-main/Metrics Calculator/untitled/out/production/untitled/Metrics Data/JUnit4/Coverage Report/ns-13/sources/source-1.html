@@ -1,0 +1,3188 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AbstractRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer</a>
+</div>
+
+<h1>Coverage Summary for Class: AbstractRenderer (org.jfree.chart.renderer)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AbstractRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,1%
+  </span>
+  <span class="absValue">
+    (129/159)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82,2%
+  </span>
+  <span class="absValue">
+    (514/625)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">AbstractRenderer$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    80,6%
+  </span>
+  <span class="absValue">
+    (129/160)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    82,1%
+  </span>
+  <span class="absValue">
+    (514/626)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------
+&nbsp; * AbstractRenderer.java
+&nbsp; * ---------------------
+&nbsp; * (C) Copyright 2002-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Nicolas Brodu;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer;
+&nbsp;
+&nbsp;import java.awt.BasicStroke;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.EventListener;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import javax.swing.event.EventListenerList;
+&nbsp;import org.jfree.chart.ChartElement;
+&nbsp;import org.jfree.chart.ChartElementVisitor;
+&nbsp;
+&nbsp;import org.jfree.chart.ChartHints;
+&nbsp;import org.jfree.chart.JFreeChart;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.event.RendererChangeListener;
+&nbsp;import org.jfree.chart.labels.ItemLabelAnchor;
+&nbsp;import org.jfree.chart.labels.ItemLabelPosition;
+&nbsp;import org.jfree.chart.legend.LegendTitle;
+&nbsp;import org.jfree.chart.plot.DrawingSupplier;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.chart.internal.HashUtils;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.chart.text.TextAnchor;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.ShapeUtils;
+&nbsp;import org.jfree.data.ItemKey;
+&nbsp;
+&nbsp;/**
+&nbsp; * Base class providing common services for renderers.  Most methods that update
+&nbsp; * attributes of the renderer will fire a {@link RendererChangeEvent}, which
+&nbsp; * normally means the plot that owns the renderer will receive notification that
+&nbsp; * the renderer has been changed (the plot will, in turn, notify the chart).
+&nbsp; * 
+&nbsp; * &lt;b&gt;Subclassing&lt;/b&gt;
+&nbsp; * If you create your own renderer that is a subclass of this, you should take
+&nbsp; * care to ensure that the renderer implements cloning correctly, to ensure
+&nbsp; * that {@link JFreeChart} instances that use your renderer are also
+&nbsp; * cloneable.  It is recommended that you also implement the 
+&nbsp; * {@link PublicCloneable} interface to provide simple access to the clone 
+&nbsp; * method.
+&nbsp; */
+&nbsp;public abstract class AbstractRenderer implements ChartElement, Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -828267569428206075L;
+&nbsp;
+&nbsp;    /** Zero represented as a {@code double}. */
+<b class="fc">&nbsp;    public static final Double ZERO = 0.0;</b>
+&nbsp;
+&nbsp;    /** The default paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_PAINT = Color.BLUE;</b>
+&nbsp;
+&nbsp;    /** The default outline paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_OUTLINE_PAINT = Color.GRAY;</b>
+&nbsp;
+&nbsp;    /** The default stroke. */
+<b class="fc">&nbsp;    public static final Stroke DEFAULT_STROKE = new BasicStroke(1.0f);</b>
+&nbsp;
+&nbsp;    /** The default outline stroke. */
+<b class="fc">&nbsp;    public static final Stroke DEFAULT_OUTLINE_STROKE = new BasicStroke(1.0f);</b>
+&nbsp;
+&nbsp;    /** The default shape. */
+<b class="fc">&nbsp;    public static final Shape DEFAULT_SHAPE</b>
+&nbsp;            = new Rectangle2D.Double(-3.0, -3.0, 6.0, 6.0);
+&nbsp;
+&nbsp;    /** The default value label font. */
+<b class="fc">&nbsp;    public static final Font DEFAULT_VALUE_LABEL_FONT</b>
+&nbsp;            = new Font(&quot;SansSerif&quot;, Font.PLAIN, 10);
+&nbsp;
+&nbsp;    /** The default value label paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_VALUE_LABEL_PAINT = Color.BLACK;</b>
+&nbsp;
+&nbsp;    /** A list of flags that controls whether or not each series is visible. */
+&nbsp;    private Map&lt;Integer, Boolean&gt; seriesVisibleMap;
+&nbsp;
+&nbsp;    /** The default visibility for all series. */
+&nbsp;    private boolean defaultSeriesVisible;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A list of flags that controls whether or not each series is visible in
+&nbsp;     * the legend.
+&nbsp;     */
+&nbsp;    private Map&lt;Integer, Boolean&gt; seriesVisibleInLegendMap;
+&nbsp;
+&nbsp;    /** The default visibility for each series in the legend. */
+&nbsp;    private boolean defaultSeriesVisibleInLegend;
+&nbsp;
+&nbsp;    /** The paint for each series. */
+&nbsp;    private transient Map&lt;Integer, Paint&gt; seriesPaintMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the paintList is auto-populated
+&nbsp;     * in the {@link #lookupSeriesPaint(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesPaint;
+&nbsp;
+&nbsp;    /** The default paint, used when there is no paint assigned for a series. */
+&nbsp;    private transient Paint defaultPaint;
+&nbsp;
+&nbsp;    /** The fill paint list. */
+&nbsp;    private transient Map&lt;Integer, Paint&gt; seriesFillPaintMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the fillPaintList is auto-populated
+&nbsp;     * in the {@link #lookupSeriesFillPaint(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesFillPaint;
+&nbsp;
+&nbsp;    /** The base fill paint. */
+&nbsp;    private transient Paint defaultFillPaint;
+&nbsp;
+&nbsp;    /** The outline paint list. */
+&nbsp;    private transient Map&lt;Integer, Paint&gt; seriesOutlinePaintMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the outlinePaintList is
+&nbsp;     * auto-populated in the {@link #lookupSeriesOutlinePaint(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesOutlinePaint;
+&nbsp;
+&nbsp;    /** The base outline paint. */
+&nbsp;    private transient Paint defaultOutlinePaint;
+&nbsp;
+&nbsp;    /** The stroke list. */
+&nbsp;    private transient Map&lt;Integer, Stroke&gt; seriesStrokeMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the strokeList is auto-populated
+&nbsp;     * in the {@link #lookupSeriesStroke(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesStroke;
+&nbsp;
+&nbsp;    /** The base stroke. */
+&nbsp;    private transient Stroke defaultStroke;
+&nbsp;
+&nbsp;    /** The outline stroke list. */
+&nbsp;    private transient Map&lt;Integer, Stroke&gt; seriesOutlineStrokeMap;
+&nbsp;
+&nbsp;    /** The base outline stroke. */
+&nbsp;    private transient Stroke defaultOutlineStroke;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the outlineStrokeList is
+&nbsp;     * auto-populated in the {@link #lookupSeriesOutlineStroke(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesOutlineStroke;
+&nbsp;
+&nbsp;    /** The shapes to use for specific series. */
+&nbsp;    private Map&lt;Integer, Shape&gt; seriesShapeMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the series shapes are auto-populated
+&nbsp;     * in the {@link #lookupSeriesShape(int)} method.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSeriesShape;
+&nbsp;
+&nbsp;    /** The base shape. */
+&nbsp;    private transient Shape defaultShape;
+&nbsp;
+&nbsp;    /** Visibility of the item labels PER series. */
+&nbsp;    private Map&lt;Integer, Boolean&gt; seriesItemLabelsVisibleMap;
+&nbsp;
+&nbsp;    /** The base item labels visible. */
+&nbsp;    private boolean defaultItemLabelsVisible;
+&nbsp;
+&nbsp;    /** The item label font list (one font per series). */
+&nbsp;    private Map&lt;Integer, Font&gt; itemLabelFontMap;
+&nbsp;
+&nbsp;    /** The base item label font. */
+&nbsp;    private Font defaultItemLabelFont;
+&nbsp;
+&nbsp;    /** The item label paint list (one paint per series). */
+&nbsp;    private transient Map&lt;Integer, Paint&gt; itemLabelPaints;
+&nbsp;
+&nbsp;    /** The base item label paint. */
+&nbsp;    private transient Paint defaultItemLabelPaint;
+&nbsp;
+&nbsp;    /** The positive item label position (per series). */
+&nbsp;    private Map&lt;Integer, ItemLabelPosition&gt; positiveItemLabelPositionMap;
+&nbsp;
+&nbsp;    /** The fallback positive item label position. */
+&nbsp;    private ItemLabelPosition defaultPositiveItemLabelPosition;
+&nbsp;
+&nbsp;    /** The negative item label position (per series). */
+&nbsp;    private Map&lt;Integer, ItemLabelPosition&gt; negativeItemLabelPositionMap;
+&nbsp;
+&nbsp;    /** The fallback negative item label position. */
+&nbsp;    private ItemLabelPosition defaultNegativeItemLabelPosition;
+&nbsp;
+&nbsp;    /** The item label anchor offset. */
+<b class="fc">&nbsp;    private double itemLabelAnchorOffset = 2.0;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Flags that control whether or not entities are generated for each
+&nbsp;     * series.  This will be overridden by &#39;createEntities&#39;.
+&nbsp;     */
+&nbsp;    private Map&lt;Integer, Boolean&gt; seriesCreateEntitiesMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default flag that controls whether or not entities are generated.
+&nbsp;     * This flag is used when both the above flags return null.
+&nbsp;     */
+&nbsp;    private boolean defaultCreateEntities;
+&nbsp;
+&nbsp;    /** The per-series legend shape settings. */
+&nbsp;    private Map&lt;Integer, Shape&gt; seriesLegendShapes;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The base shape for legend items.  If this is {@code null}, the
+&nbsp;     * series shape will be used.
+&nbsp;     */
+&nbsp;    private transient Shape defaultLegendShape;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A special flag that, if true, will cause the getLegendItem() method
+&nbsp;     * to configure the legend shape as if it were a line.
+&nbsp;     */
+&nbsp;    private boolean treatLegendShapeAsLine;
+&nbsp;
+&nbsp;    /** The per-series legend text font. */
+&nbsp;    private Map&lt;Integer, Font&gt; legendTextFontMap;
+&nbsp;
+&nbsp;    /** The base legend font. */
+&nbsp;    private Font defaultLegendTextFont;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The per series legend text paint settings.
+&nbsp;     */
+&nbsp;    private transient Map&lt;Integer, Paint&gt; legendTextPaints;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default paint for the legend text items (if this is
+&nbsp;     * {@code null}, the {@link LegendTitle} class will determine the
+&nbsp;     * text paint to use.
+&nbsp;     */
+&nbsp;    private transient Paint defaultLegendTextPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the renderer will include the
+&nbsp;     * non-visible series when calculating the data bounds.
+&nbsp;     */
+<b class="fc">&nbsp;    private boolean dataBoundsIncludesVisibleSeriesOnly = true;</b>
+&nbsp;
+&nbsp;    /** The default radius for the entity &#39;hotspot&#39; */
+&nbsp;    private int defaultEntityRadius;
+&nbsp;
+&nbsp;    /** Storage for registered change listeners. */
+&nbsp;    private transient EventListenerList listenerList;
+&nbsp;
+&nbsp;    /** An event for re-use. */
+&nbsp;    private transient RendererChangeEvent event;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor.
+&nbsp;     */
+<b class="fc">&nbsp;    public AbstractRenderer() {</b>
+<b class="fc">&nbsp;        this.seriesVisibleMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultSeriesVisible = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesVisibleInLegendMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultSeriesVisibleInLegend = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesPaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultPaint = DEFAULT_PAINT;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesPaint = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesFillPaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultFillPaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesFillPaint = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesOutlinePaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultOutlinePaint = DEFAULT_OUTLINE_PAINT;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesOutlinePaint = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesStrokeMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultStroke = DEFAULT_STROKE;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesStroke = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesOutlineStrokeMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultOutlineStroke = DEFAULT_OUTLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesOutlineStroke = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesShapeMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultShape = DEFAULT_SHAPE;</b>
+<b class="fc">&nbsp;        this.autoPopulateSeriesShape = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesItemLabelsVisibleMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultItemLabelsVisible = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.itemLabelFontMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultItemLabelFont = new Font(&quot;SansSerif&quot;, Font.PLAIN, 10);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.itemLabelPaints = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultItemLabelPaint = Color.BLACK;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.positiveItemLabelPositionMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultPositiveItemLabelPosition = new ItemLabelPosition(</b>
+&nbsp;                ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
+&nbsp;
+<b class="fc">&nbsp;        this.negativeItemLabelPositionMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultNegativeItemLabelPosition = new ItemLabelPosition(</b>
+&nbsp;                ItemLabelAnchor.OUTSIDE6, TextAnchor.TOP_CENTER);
+&nbsp;
+<b class="fc">&nbsp;        this.seriesCreateEntitiesMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultCreateEntities = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.defaultEntityRadius = 3;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.seriesLegendShapes = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultLegendShape = null;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.treatLegendShapeAsLine = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.legendTextFontMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultLegendTextFont = null;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.legendTextPaints = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultLegendTextPaint = null;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.listenerList = new EventListenerList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives a chart element visitor.
+&nbsp;     * 
+&nbsp;     * @param visitor  the visitor ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void receive(ChartElementVisitor visitor) {
+<b class="nc">&nbsp;        visitor.visit(this);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the drawing supplier from the plot.
+&nbsp;     *
+&nbsp;     * @return The drawing supplier.
+&nbsp;     */
+&nbsp;    public abstract DrawingSupplier getDrawingSupplier();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a {@code KEY_BEGIN_ELEMENT} hint to the graphics target.  This
+&nbsp;     * hint is recognised by &lt;b&gt;JFreeSVG&lt;/b&gt; (in theory it could be used by 
+&nbsp;     * other {@code Graphics2D} implementations also).
+&nbsp;     * 
+&nbsp;     * @param g2  the graphics target ({@code null} not permitted).
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @see #endElementGroup(java.awt.Graphics2D)
+&nbsp;     */
+&nbsp;    protected void beginElementGroup(Graphics2D g2, ItemKey key) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(key, &quot;key&quot;);</b>
+<b class="nc">&nbsp;        Map&lt;String, String&gt; m = new HashMap&lt;&gt;(1);</b>
+<b class="nc">&nbsp;        m.put(&quot;ref&quot;, key.toJSONString());</b>
+<b class="nc">&nbsp;        g2.setRenderingHint(ChartHints.KEY_BEGIN_ELEMENT, m);        </b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Adds a {@code KEY_END_ELEMENT} hint to the graphics target.
+&nbsp;     * 
+&nbsp;     * @param g2  the graphics target ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @see #beginElementGroup(java.awt.Graphics2D, org.jfree.data.ItemKey)
+&nbsp;     */
+&nbsp;    protected void endElementGroup(Graphics2D g2) {
+<b class="nc">&nbsp;        g2.setRenderingHint(ChartHints.KEY_END_ELEMENT, Boolean.TRUE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // SERIES VISIBLE (not yet respected by all renderers)
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a boolean that indicates whether or not the specified item
+&nbsp;     * should be drawn.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param item  the item index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getItemVisible(int series, int item) {
+<b class="fc">&nbsp;        return isSeriesVisible(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a boolean that indicates whether or not the specified series
+&nbsp;     * should be drawn.  In fact this method should be named 
+&nbsp;     * lookupSeriesVisible() to be consistent with the other series
+&nbsp;     * attributes and avoid confusion with the getSeriesVisible() method.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isSeriesVisible(int series) {
+<b class="fc">&nbsp;        boolean result = this.defaultSeriesVisible;</b>
+<b class="fc">&nbsp;        Boolean b = this.seriesVisibleMap.get(series);</b>
+<b class="fc">&nbsp;        if (b != null) {</b>
+<b class="fc">&nbsp;            result = b;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether a series is visible.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesVisible(int, Boolean)
+&nbsp;     */
+&nbsp;    public Boolean getSeriesVisible(int series) {
+<b class="nc">&nbsp;        return this.seriesVisibleMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisible(int)
+&nbsp;     */
+&nbsp;    public void setSeriesVisible(int series, Boolean visible) {
+<b class="fc">&nbsp;        setSeriesVisible(series, visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible and, if
+&nbsp;     * requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisible(int)
+&nbsp;     */
+&nbsp;    public void setSeriesVisible(int series, Boolean visible, boolean notify) {
+<b class="fc">&nbsp;        this.seriesVisibleMap.put(series, visible);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+&nbsp;            // we create an event with a special flag set...the purpose of
+&nbsp;            // this is to communicate to the plot (the default receiver of
+&nbsp;            // the event) that series visibility has changed so the axis
+&nbsp;            // ranges might need updating...
+<b class="fc">&nbsp;            RendererChangeEvent e = new RendererChangeEvent(this, true);</b>
+<b class="fc">&nbsp;            notifyListeners(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default visibility for all series.
+&nbsp;     *
+&nbsp;     * @return The default visibility.
+&nbsp;     *
+&nbsp;     * @see #setDefaultSeriesVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean getDefaultSeriesVisible() {
+<b class="nc">&nbsp;        return this.defaultSeriesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default series visibility and sends a 
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisible()
+&nbsp;     */
+&nbsp;    public void setDefaultSeriesVisible(boolean visible) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultSeriesVisible(visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default series visibility and, if requested, sends
+&nbsp;     * a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the visibility.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisible()
+&nbsp;     */
+&nbsp;    public void setDefaultSeriesVisible(boolean visible, boolean notify) {
+<b class="fc">&nbsp;        this.defaultSeriesVisible = visible;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+&nbsp;            // we create an event with a special flag set...the purpose of
+&nbsp;            // this is to communicate to the plot (the default receiver of
+&nbsp;            // the event) that series visibility has changed so the axis
+&nbsp;            // ranges might need updating...
+<b class="fc">&nbsp;            RendererChangeEvent e = new RendererChangeEvent(this, true);</b>
+<b class="fc">&nbsp;            notifyListeners(e);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // SERIES VISIBLE IN LEGEND (not yet respected by all renderers)
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the series should be shown in the legend,
+&nbsp;     * and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isSeriesVisibleInLegend(int series) {
+<b class="fc">&nbsp;        boolean result = this.defaultSeriesVisibleInLegend;</b>
+<b class="fc">&nbsp;        Boolean b = this.seriesVisibleInLegendMap.get(series);</b>
+<b class="fc">&nbsp;        if (b != null) {</b>
+<b class="fc">&nbsp;            result = b;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether a series is visible in the
+&nbsp;     * legend.  This method returns only the &quot;per series&quot; settings - to
+&nbsp;     * incorporate the default settings as well, you need to use the
+&nbsp;     * {@link #isSeriesVisibleInLegend(int)} method.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesVisibleInLegend(int, Boolean)
+&nbsp;     */
+&nbsp;    public Boolean getSeriesVisibleInLegend(int series) {
+<b class="nc">&nbsp;        return this.seriesVisibleInLegendMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible in the legend
+&nbsp;     * and sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisibleInLegend(int)
+&nbsp;     */
+&nbsp;    public void setSeriesVisibleInLegend(int series, Boolean visible) {
+<b class="fc">&nbsp;        setSeriesVisibleInLegend(series, visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible in the legend
+&nbsp;     * and, if requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisibleInLegend(int)
+&nbsp;     */
+&nbsp;    public void setSeriesVisibleInLegend(int series, Boolean visible, boolean notify) {
+<b class="fc">&nbsp;        this.seriesVisibleInLegendMap.put(series, visible);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default visibility in the legend for all series.
+&nbsp;     *
+&nbsp;     * @return The default visibility.
+&nbsp;     *
+&nbsp;     * @see #setDefaultSeriesVisibleInLegend(boolean)
+&nbsp;     */
+&nbsp;    public boolean getDefaultSeriesVisibleInLegend() {
+<b class="nc">&nbsp;        return this.defaultSeriesVisibleInLegend;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility in the legend and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisibleInLegend()
+&nbsp;     */
+&nbsp;    public void setDefaultSeriesVisibleInLegend(boolean visible) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultSeriesVisibleInLegend(visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility in the legend and, if requested, sends
+&nbsp;     * a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the visibility.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisibleInLegend()
+&nbsp;     */
+&nbsp;    public void setDefaultSeriesVisibleInLegend(boolean visible, 
+&nbsp;            boolean notify) {
+<b class="fc">&nbsp;        this.defaultSeriesVisibleInLegend = visible;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // PAINT
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill data items as they are drawn.
+&nbsp;     * (this is typically the same for an entire series).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation passes control to the
+&nbsp;     * {@code lookupSeriesPaint()} method. You can override this method
+&nbsp;     * if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint getItemPaint(int row, int column) {
+<b class="fc">&nbsp;        return lookupSeriesPaint(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint lookupSeriesPaint(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Paint seriesPaint = getSeriesPaint(series);</b>
+<b class="fc">&nbsp;        if (seriesPaint == null &amp;&amp; this.autoPopulateSeriesPaint) {</b>
+<b class="fc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (supplier != null) {</b>
+<b class="fc">&nbsp;                seriesPaint = supplier.getNextPaint();</b>
+<b class="fc">&nbsp;                setSeriesPaint(series, seriesPaint, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (seriesPaint == null) {</b>
+<b class="fc">&nbsp;            seriesPaint = this.defaultPaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return seriesPaint;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesPaint(int, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSeriesPaint(int series) {
+<b class="fc">&nbsp;        return this.seriesPaintMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesPaint(int series, Paint paint) {
+<b class="fc">&nbsp;        setSeriesPaint(series, paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesPaint(int series, Paint paint, boolean notify) {
+<b class="fc">&nbsp;        this.seriesPaintMap.put(series, paint);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the series paint settings for this renderer and, if requested,
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     */
+&nbsp;    public void clearSeriesPaints(boolean notify) {
+<b class="fc">&nbsp;        this.seriesPaintMap.clear();</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default paint.
+&nbsp;     *
+&nbsp;     * @return The default paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultPaint() {
+<b class="fc">&nbsp;        return this.defaultPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultPaint(Paint paint) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultPaint(paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default series paint and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultPaint(Paint paint, boolean notify) {
+<b class="fc">&nbsp;        this.defaultPaint = paint;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series paint list is
+&nbsp;     * automatically populated when {@link #lookupSeriesPaint(int)} is called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesPaint(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesPaint() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series paint list is
+&nbsp;     * automatically populated when {@link #lookupSeriesPaint(int)} is called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesPaint()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesPaint(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesPaint = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //// FILL PAINT //////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill data items as they are drawn.  The
+&nbsp;     * default implementation passes control to the
+&nbsp;     * {@link #lookupSeriesFillPaint(int)} method - you can override this
+&nbsp;     * method if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint getItemFillPaint(int row, int column) {
+<b class="nc">&nbsp;        return lookupSeriesFillPaint(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint lookupSeriesFillPaint(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Paint seriesFillPaint = getSeriesFillPaint(series);</b>
+<b class="fc">&nbsp;        if (seriesFillPaint == null &amp;&amp; this.autoPopulateSeriesFillPaint) {</b>
+<b class="fc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (supplier != null) {</b>
+<b class="fc">&nbsp;                seriesFillPaint = supplier.getNextFillPaint();</b>
+<b class="fc">&nbsp;                setSeriesFillPaint(series, seriesFillPaint, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (seriesFillPaint == null) {</b>
+<b class="fc">&nbsp;            seriesFillPaint = this.defaultFillPaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return seriesFillPaint;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesFillPaint(int, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSeriesFillPaint(int series) {
+<b class="fc">&nbsp;        return this.seriesFillPaintMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series fill and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesFillPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesFillPaint(int series, Paint paint) {
+<b class="fc">&nbsp;        setSeriesFillPaint(series, paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used to fill a series and, if requested,
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesFillPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesFillPaint(int series, Paint paint, boolean notify) {
+<b class="fc">&nbsp;        this.seriesFillPaintMap.put(series, paint);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default fill paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultFillPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultFillPaint() {
+<b class="fc">&nbsp;        return this.defaultFillPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default fill paint and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultFillPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultFillPaint(Paint paint) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultFillPaint(paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default fill paint and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultFillPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultFillPaint(Paint paint, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.defaultFillPaint = paint;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series fill paint list
+&nbsp;     * is automatically populated when {@link #lookupSeriesFillPaint(int)} is
+&nbsp;     * called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesFillPaint(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesFillPaint() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesFillPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series fill paint list is
+&nbsp;     * automatically populated when {@link #lookupSeriesFillPaint(int)} is
+&nbsp;     * called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesFillPaint()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesFillPaint(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesFillPaint = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // OUTLINE PAINT //////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to outline data items as they are drawn.
+&nbsp;     * (this is typically the same for an entire series).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation passes control to the
+&nbsp;     * {@link #lookupSeriesOutlinePaint} method.  You can override this method
+&nbsp;     * if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint getItemOutlinePaint(int row, int column) {
+<b class="fc">&nbsp;        return lookupSeriesOutlinePaint(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to outline an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint lookupSeriesOutlinePaint(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Paint seriesOutlinePaint = getSeriesOutlinePaint(series);</b>
+<b class="fc">&nbsp;        if (seriesOutlinePaint == null &amp;&amp; this.autoPopulateSeriesOutlinePaint) {</b>
+<b class="fc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (supplier != null) {</b>
+<b class="fc">&nbsp;                seriesOutlinePaint = supplier.getNextOutlinePaint();</b>
+<b class="fc">&nbsp;                setSeriesOutlinePaint(series, seriesOutlinePaint, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (seriesOutlinePaint == null) {</b>
+<b class="fc">&nbsp;            seriesOutlinePaint = this.defaultOutlinePaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return seriesOutlinePaint;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to outline an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesOutlinePaint(int, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSeriesOutlinePaint(int series) {
+<b class="fc">&nbsp;        return this.seriesOutlinePaintMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series outline and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlinePaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesOutlinePaint(int series, Paint paint) {
+<b class="fc">&nbsp;        setSeriesOutlinePaint(series, paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used to draw the outline for a series and, if requested,
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlinePaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesOutlinePaint(int series, Paint paint, boolean notify) {
+<b class="fc">&nbsp;        this.seriesOutlinePaintMap.put(series, paint);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default outline paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultOutlinePaint() {
+<b class="fc">&nbsp;        return this.defaultOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline paint and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setDefaultOutlinePaint(Paint paint) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultOutlinePaint(paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline paint and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setDefaultOutlinePaint(Paint paint, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.defaultOutlinePaint = paint;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series outline paint
+&nbsp;     * list is automatically populated when
+&nbsp;     * {@link #lookupSeriesOutlinePaint(int)} is called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesOutlinePaint(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesOutlinePaint() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series outline paint list
+&nbsp;     * is automatically populated when {@link #lookupSeriesOutlinePaint(int)}
+&nbsp;     * is called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesOutlinePaint(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesOutlinePaint = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // STROKE
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to draw data items.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation passes control to the getSeriesStroke method.
+&nbsp;     * You can override this method if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    public Stroke getItemStroke(int row, int column) {
+<b class="fc">&nbsp;        return lookupSeriesStroke(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to draw the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    public Stroke lookupSeriesStroke(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Stroke result = getSeriesStroke(series);</b>
+<b class="fc">&nbsp;        if (result == null &amp;&amp; this.autoPopulateSeriesStroke) {</b>
+<b class="fc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (supplier != null) {</b>
+<b class="fc">&nbsp;                result = supplier.getNextStroke();</b>
+<b class="fc">&nbsp;                setSeriesStroke(series, result, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            result = this.defaultStroke;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to draw the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesStroke(int, Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getSeriesStroke(int series) {
+<b class="fc">&nbsp;        return this.seriesStrokeMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesStroke(int)
+&nbsp;     */
+&nbsp;    public void setSeriesStroke(int series, Stroke stroke) {
+<b class="fc">&nbsp;        setSeriesStroke(series, stroke, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesStroke(int)
+&nbsp;     */
+&nbsp;    public void setSeriesStroke(int series, Stroke stroke, boolean notify) {
+<b class="fc">&nbsp;        this.seriesStrokeMap.put(series, stroke);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the series stroke settings for this renderer and, if requested,
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     */
+&nbsp;    public void clearSeriesStrokes(boolean notify) {
+<b class="fc">&nbsp;        this.seriesStrokeMap.clear();</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default stroke.
+&nbsp;     *
+&nbsp;     * @return The default stroke (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getDefaultStroke() {
+<b class="nc">&nbsp;        return this.defaultStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default stroke and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultStroke()
+&nbsp;     */
+&nbsp;    public void setDefaultStroke(Stroke stroke) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultStroke(stroke, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base stroke and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultStroke()
+&nbsp;     */
+&nbsp;    public void setDefaultStroke(Stroke stroke, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(stroke, &quot;stroke&quot;);</b>
+<b class="fc">&nbsp;        this.defaultStroke = stroke;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series stroke list is
+&nbsp;     * automatically populated when {@link #lookupSeriesStroke(int)} is called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesStroke(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesStroke() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series stroke list is
+&nbsp;     * automatically populated when {@link #lookupSeriesStroke(int)} is called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesStroke()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesStroke(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesStroke = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // OUTLINE STROKE
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline data items.  The default
+&nbsp;     * implementation passes control to the
+&nbsp;     * {@link #lookupSeriesOutlineStroke(int)} method. You can override this
+&nbsp;     * method if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    public Stroke getItemOutlineStroke(int row, int column) {
+<b class="fc">&nbsp;        return lookupSeriesOutlineStroke(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    public Stroke lookupSeriesOutlineStroke(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Stroke result = getSeriesOutlineStroke(series);</b>
+<b class="fc">&nbsp;        if (result == null &amp;&amp; this.autoPopulateSeriesOutlineStroke) {</b>
+<b class="nc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="nc">&nbsp;            if (supplier != null) {</b>
+<b class="nc">&nbsp;                result = supplier.getNextOutlineStroke();</b>
+<b class="nc">&nbsp;                setSeriesOutlineStroke(series, result, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = this.defaultOutlineStroke;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesOutlineStroke(int, Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getSeriesOutlineStroke(int series) {
+<b class="fc">&nbsp;        return this.seriesOutlineStrokeMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline stroke used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlineStroke(int)
+&nbsp;     */
+&nbsp;    public void setSeriesOutlineStroke(int series, Stroke stroke) {
+<b class="fc">&nbsp;        setSeriesOutlineStroke(series, stroke, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline stroke for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlineStroke(int)
+&nbsp;     */
+&nbsp;    public void setSeriesOutlineStroke(int series, Stroke stroke, boolean notify) {
+<b class="fc">&nbsp;        this.seriesOutlineStrokeMap.put(series, stroke);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default outline stroke.
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultOutlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getDefaultOutlineStroke() {
+<b class="nc">&nbsp;        return this.defaultOutlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline stroke and sends a {@link RendererChangeEvent} 
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setDefaultOutlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        setDefaultOutlineStroke(stroke, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline stroke and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setDefaultOutlineStroke(Stroke stroke, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(stroke, &quot;stroke&quot;);</b>
+<b class="fc">&nbsp;        this.defaultOutlineStroke = stroke;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series outline stroke
+&nbsp;     * list is automatically populated when
+&nbsp;     * {@link #lookupSeriesOutlineStroke(int)} is called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesOutlineStroke(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesOutlineStroke() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesOutlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series outline stroke list
+&nbsp;     * is automatically populated when {@link #lookupSeriesOutlineStroke(int)}
+&nbsp;     * is called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesOutlineStroke(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesOutlineStroke = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // SHAPE
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a shape used to represent a data item.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The default implementation passes control to the 
+&nbsp;     * {@link #lookupSeriesShape(int)} method. You can override this method if 
+&nbsp;     * you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     */
+&nbsp;    public Shape getItemShape(int row, int column) {
+<b class="fc">&nbsp;        return lookupSeriesShape(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a shape used to represent the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     */
+&nbsp;    public Shape lookupSeriesShape(int series) {
+&nbsp;
+<b class="fc">&nbsp;        Shape result = getSeriesShape(series);</b>
+<b class="fc">&nbsp;        if (result == null &amp;&amp; this.autoPopulateSeriesShape) {</b>
+<b class="fc">&nbsp;            DrawingSupplier supplier = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (supplier != null) {</b>
+<b class="fc">&nbsp;                result = supplier.getNextShape();</b>
+<b class="fc">&nbsp;                setSeriesShape(series, result, false);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            result = this.defaultShape;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a shape used to represent the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The shape (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesShape(int, Shape)
+&nbsp;     */
+&nbsp;    public Shape getSeriesShape(int series) {
+<b class="fc">&nbsp;        return this.seriesShapeMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesShape(int)
+&nbsp;     */
+&nbsp;    public void setSeriesShape(int series, Shape shape) {
+<b class="fc">&nbsp;        setSeriesShape(series, shape, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesShape(int)
+&nbsp;     */
+&nbsp;    public void setSeriesShape(int series, Shape shape, boolean notify) {
+<b class="fc">&nbsp;        this.seriesShapeMap.put(series, shape);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default shape.
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultShape(Shape)
+&nbsp;     */
+&nbsp;    public Shape getDefaultShape() {
+<b class="nc">&nbsp;        return this.defaultShape;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default shape and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultShape()
+&nbsp;     */
+&nbsp;    public void setDefaultShape(Shape shape) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultShape(shape, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default shape and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultShape()
+&nbsp;     */
+&nbsp;    public void setDefaultShape(Shape shape, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(shape, &quot;shape&quot;);</b>
+<b class="fc">&nbsp;        this.defaultShape = shape;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the series shape list is
+&nbsp;     * automatically populated when {@link #lookupSeriesShape(int)} is called.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAutoPopulateSeriesShape(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSeriesShape() {
+<b class="fc">&nbsp;        return this.autoPopulateSeriesShape;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the series shape list is
+&nbsp;     * automatically populated when {@link #lookupSeriesShape(int)} is called.
+&nbsp;     *
+&nbsp;     * @param auto  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getAutoPopulateSeriesShape()
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSeriesShape(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSeriesShape = auto;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // ITEM LABEL VISIBILITY...
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if an item label is visible, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isItemLabelVisible(int row, int column) {
+<b class="fc">&nbsp;        return isSeriesItemLabelsVisible(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the item labels for a series are visible,
+&nbsp;     * and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isSeriesItemLabelsVisible(int series) {
+<b class="fc">&nbsp;        Boolean b = this.seriesItemLabelsVisibleMap.get(series);</b>
+<b class="fc">&nbsp;        if (b == null) {</b>
+<b class="fc">&nbsp;            return this.defaultItemLabelsVisible;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return b;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls the visibility of the item labels for a series,
+&nbsp;     * and sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag.
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelsVisible(int series, boolean visible) {
+<b class="nc">&nbsp;        setSeriesItemLabelsVisible(series, Boolean.valueOf(visible));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the visibility of the item labels for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelsVisible(int series, Boolean visible) {
+<b class="fc">&nbsp;        setSeriesItemLabelsVisible(series, visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the visibility of item labels for a series and, if requested, sends
+&nbsp;     * a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the visible flag.
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelsVisible(int series, Boolean visible, boolean notify) {
+<b class="fc">&nbsp;        this.seriesItemLabelsVisibleMap.put(series, visible);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the base setting for item label visibility.  A {@code null}
+&nbsp;     * result should be interpreted as equivalent to {@code Boolean.FALSE}.
+&nbsp;     *
+&nbsp;     * @return A flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelsVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean getDefaultItemLabelsVisible() {
+<b class="fc">&nbsp;        return this.defaultItemLabelsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base flag that controls whether or not item labels are visible,
+&nbsp;     * and sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelsVisible()
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelsVisible(boolean visible) {
+<b class="fc">&nbsp;        setDefaultItemLabelsVisible(visible, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base visibility for item labels and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag ({@code null} is permitted, and viewed
+&nbsp;     *     as equivalent to {@code Boolean.FALSE}).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelsVisible() 
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelsVisible(boolean visible, boolean notify) {
+<b class="fc">&nbsp;        this.defaultItemLabelsVisible = visible;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //// ITEM LABEL FONT //////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for an item label.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     */
+&nbsp;    public Font getItemLabelFont(int row, int column) {
+<b class="nc">&nbsp;        Font result = getSeriesItemLabelFont(row);</b>
+<b class="nc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            result = this.defaultItemLabelFont;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for all the item labels in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The font (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesItemLabelFont(int, Font)
+&nbsp;     */
+&nbsp;    public Font getSeriesItemLabelFont(int series) {
+<b class="nc">&nbsp;        return this.itemLabelFontMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label font for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelFont(int)
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelFont(int series, Font font) {
+<b class="fc">&nbsp;        setSeriesItemLabelFont(series, font, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label font for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelFont(int)
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelFont(int series, Font font, boolean notify) {
+<b class="fc">&nbsp;        this.itemLabelFontMap.put(series, font);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label font (this is used when no other font
+&nbsp;     * setting is available).
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelFont(Font)
+&nbsp;     */
+&nbsp;    public Font getDefaultItemLabelFont() {
+<b class="nc">&nbsp;        return this.defaultItemLabelFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label font and sends a {@link RendererChangeEvent} 
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelFont()
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        setDefaultItemLabelFont(font, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base item label font and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelFont()
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelFont(Font font, boolean notify) {
+<b class="fc">&nbsp;        this.defaultItemLabelFont = font;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    //// ITEM LABEL PAINT  ////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to draw an item label.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero based).
+&nbsp;     * @param column  the column index (zero based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint getItemLabelPaint(int row, int column) {
+<b class="nc">&nbsp;        Paint result = getSeriesItemLabelPaint(row);</b>
+<b class="nc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            result = this.defaultItemLabelPaint;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to draw the item labels for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesItemLabelPaint(int, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSeriesItemLabelPaint(int series) {
+<b class="nc">&nbsp;        return this.itemLabelPaints.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label paint for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero based index).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelPaint(int series, Paint paint) {
+<b class="fc">&nbsp;        setSeriesItemLabelPaint(series, paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label paint for a series and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelPaint(int)
+&nbsp;     */
+&nbsp;    public void setSeriesItemLabelPaint(int series, Paint paint, boolean notify) {
+<b class="fc">&nbsp;        this.itemLabelPaints.put(series, paint);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultItemLabelPaint() {
+<b class="nc">&nbsp;        return this.defaultItemLabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label paint and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelPaint(Paint paint) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultItemLabelPaint(paint, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label paint and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners..
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultItemLabelPaint(Paint paint, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.defaultItemLabelPaint = paint;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // POSITIVE ITEM LABEL POSITION...
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for positive values.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #getNegativeItemLabelPosition(int, int)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getPositiveItemLabelPosition(int row, int column) {
+<b class="nc">&nbsp;        return getSeriesPositiveItemLabelPosition(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for all positive values in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesPositiveItemLabelPosition(int, ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getSeriesPositiveItemLabelPosition(int series) {
+&nbsp;        // otherwise look up the position table
+<b class="nc">&nbsp;        ItemLabelPosition position = this.positiveItemLabelPositionMap.get(series);</b>
+<b class="nc">&nbsp;        if (position == null) {</b>
+<b class="nc">&nbsp;            position = this.defaultPositiveItemLabelPosition;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return position;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for all positive values in a series and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesPositiveItemLabelPosition(int)
+&nbsp;     */
+&nbsp;    public void setSeriesPositiveItemLabelPosition(int series,
+&nbsp;                                                   ItemLabelPosition position) {
+<b class="fc">&nbsp;        setSeriesPositiveItemLabelPosition(series, position, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for all positive values in a series and (if
+&nbsp;     * requested) sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesPositiveItemLabelPosition(int)
+&nbsp;     */
+&nbsp;    public void setSeriesPositiveItemLabelPosition(int series,
+&nbsp;            ItemLabelPosition position, boolean notify) {
+<b class="fc">&nbsp;        this.positiveItemLabelPositionMap.put(series, position);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default positive item label position.
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultPositiveItemLabelPosition(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getDefaultPositiveItemLabelPosition() {
+<b class="nc">&nbsp;        return this.defaultPositiveItemLabelPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default positive item label position.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultPositiveItemLabelPosition()
+&nbsp;     */
+&nbsp;    public void setDefaultPositiveItemLabelPosition(
+&nbsp;            ItemLabelPosition position) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultPositiveItemLabelPosition(position, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default positive item label position and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultPositiveItemLabelPosition()
+&nbsp;     */
+&nbsp;    public void setDefaultPositiveItemLabelPosition(ItemLabelPosition position,
+&nbsp;            boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(position, &quot;position&quot;);</b>
+<b class="fc">&nbsp;        this.defaultPositiveItemLabelPosition = position;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    // NEGATIVE ITEM LABEL POSITION...
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for negative values.  This method can be
+&nbsp;     * overridden to provide customisation of the item label position for
+&nbsp;     * individual data items.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #getPositiveItemLabelPosition(int, int)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getNegativeItemLabelPosition(int row, int column) {
+<b class="nc">&nbsp;        return getSeriesNegativeItemLabelPosition(row);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for all negative values in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesNegativeItemLabelPosition(int, ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getSeriesNegativeItemLabelPosition(int series) {
+&nbsp;        // otherwise look up the position list
+<b class="nc">&nbsp;        ItemLabelPosition position </b>
+<b class="nc">&nbsp;                = this.negativeItemLabelPositionMap.get(series);</b>
+<b class="nc">&nbsp;        if (position == null) {</b>
+<b class="nc">&nbsp;            position = this.defaultNegativeItemLabelPosition;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return position;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for negative values in a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesNegativeItemLabelPosition(int)
+&nbsp;     */
+&nbsp;    public void setSeriesNegativeItemLabelPosition(int series,
+&nbsp;                                                   ItemLabelPosition position) {
+<b class="fc">&nbsp;        setSeriesNegativeItemLabelPosition(series, position, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for negative values in a series and (if
+&nbsp;     * requested) sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesNegativeItemLabelPosition(int)
+&nbsp;     */
+&nbsp;    public void setSeriesNegativeItemLabelPosition(int series,
+&nbsp;            ItemLabelPosition position, boolean notify) {
+<b class="fc">&nbsp;        this.negativeItemLabelPositionMap.put(series, position);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the base item label position for negative values.
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultNegativeItemLabelPosition(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getDefaultNegativeItemLabelPosition() {
+<b class="nc">&nbsp;        return this.defaultNegativeItemLabelPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label position for negative values and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultNegativeItemLabelPosition()
+&nbsp;     */
+&nbsp;    public void setDefaultNegativeItemLabelPosition(
+&nbsp;            ItemLabelPosition position) {
+<b class="fc">&nbsp;        setDefaultNegativeItemLabelPosition(position, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default negative item label position and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultNegativeItemLabelPosition()
+&nbsp;     */
+&nbsp;    public void setDefaultNegativeItemLabelPosition(ItemLabelPosition position,
+&nbsp;            boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(position, &quot;position&quot;);</b>
+<b class="fc">&nbsp;        this.defaultNegativeItemLabelPosition = position;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label anchor offset.
+&nbsp;     *
+&nbsp;     * @return The offset.
+&nbsp;     *
+&nbsp;     * @see #setItemLabelAnchorOffset(double)
+&nbsp;     */
+&nbsp;    public double getItemLabelAnchorOffset() {
+<b class="nc">&nbsp;        return this.itemLabelAnchorOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label anchor offset.
+&nbsp;     *
+&nbsp;     * @param offset  the offset.
+&nbsp;     *
+&nbsp;     * @see #getItemLabelAnchorOffset()
+&nbsp;     */
+&nbsp;    public void setItemLabelAnchorOffset(double offset) {
+<b class="fc">&nbsp;        this.itemLabelAnchorOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a boolean that indicates whether or not the specified item
+&nbsp;     * should have a chart entity created for it.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param item  the item index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getItemCreateEntity(int series, int item) {
+<b class="fc">&nbsp;        Boolean b = getSeriesCreateEntities(series);</b>
+<b class="fc">&nbsp;        if (b != null) {</b>
+<b class="nc">&nbsp;            return b;</b>
+&nbsp;        }
+&nbsp;        // otherwise...
+<b class="fc">&nbsp;        return this.defaultCreateEntities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether entities are created for a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesCreateEntities(int, Boolean)
+&nbsp;     */
+&nbsp;    public Boolean getSeriesCreateEntities(int series) {
+<b class="fc">&nbsp;        return this.seriesCreateEntitiesMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether entities are created for a series,
+&nbsp;     * and sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param create  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesCreateEntities(int)
+&nbsp;     */
+&nbsp;    public void setSeriesCreateEntities(int series, Boolean create) {
+<b class="fc">&nbsp;        setSeriesCreateEntities(series, create, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether entities are created for a series
+&nbsp;     * and, if requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param create  the flag ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesCreateEntities(int)
+&nbsp;     */
+&nbsp;    public void setSeriesCreateEntities(int series, Boolean create,
+&nbsp;                                        boolean notify) {
+<b class="fc">&nbsp;        this.seriesCreateEntitiesMap.put(series, create);</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default flag for creating entities.
+&nbsp;     *
+&nbsp;     * @return The default flag for creating entities.
+&nbsp;     *
+&nbsp;     * @see #setDefaultCreateEntities(boolean)
+&nbsp;     */
+&nbsp;    public boolean getDefaultCreateEntities() {
+<b class="fc">&nbsp;        return this.defaultCreateEntities;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default flag that controls whether entities are created
+&nbsp;     * for a series, and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param create  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultCreateEntities()
+&nbsp;     */
+&nbsp;    public void setDefaultCreateEntities(boolean create) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setDefaultCreateEntities(create, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default flag that controls whether entities are created and,
+&nbsp;     * if requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param create  the visibility.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultCreateEntities()
+&nbsp;     */
+&nbsp;    public void setDefaultCreateEntities(boolean create, boolean notify) {
+<b class="fc">&nbsp;        this.defaultCreateEntities = create;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the radius of the circle used for the default entity area
+&nbsp;     * when no area is specified.
+&nbsp;     *
+&nbsp;     * @return A radius.
+&nbsp;     *
+&nbsp;     * @see #setDefaultEntityRadius(int)
+&nbsp;     */
+&nbsp;    public int getDefaultEntityRadius() {
+<b class="nc">&nbsp;        return this.defaultEntityRadius;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the radius of the circle used for the default entity area
+&nbsp;     * when no area is specified.
+&nbsp;     *
+&nbsp;     * @param radius  the radius.
+&nbsp;     *
+&nbsp;     * @see #getDefaultEntityRadius()
+&nbsp;     */
+&nbsp;    public void setDefaultEntityRadius(int radius) {
+<b class="fc">&nbsp;        this.defaultEntityRadius = radius;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a lookup for the legend shape.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The shape (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public Shape lookupLegendShape(int series) {
+<b class="fc">&nbsp;        Shape result = getLegendShape(series);</b>
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = this.defaultLegendShape;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = lookupSeriesShape(series);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend shape defined for the specified series (possibly
+&nbsp;     * {@code null}).
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The shape (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #lookupLegendShape(int)
+&nbsp;     */
+&nbsp;    public Shape getLegendShape(int series) {
+<b class="fc">&nbsp;        return this.seriesLegendShapes.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used for the legend item for the specified series, and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setLegendShape(int series, Shape shape) {
+<b class="fc">&nbsp;        this.seriesLegendShapes.put(series, shape);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default legend shape, which may be {@code null}.
+&nbsp;     *
+&nbsp;     * @return The default legend shape.
+&nbsp;     */
+&nbsp;    public Shape getDefaultLegendShape() {
+<b class="nc">&nbsp;        return this.defaultLegendShape;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default legend shape and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setDefaultLegendShape(Shape shape) {
+<b class="fc">&nbsp;        this.defaultLegendShape = shape;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the legend shape is
+&nbsp;     * treated as a line when creating legend items.
+&nbsp;     * 
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    protected boolean getTreatLegendShapeAsLine() {
+<b class="fc">&nbsp;        return this.treatLegendShapeAsLine;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the legend shape is
+&nbsp;     * treated as a line when creating legend items.
+&nbsp;     *
+&nbsp;     * @param treatAsLine  the new flag value.
+&nbsp;     */
+&nbsp;    protected void setTreatLegendShapeAsLine(boolean treatAsLine) {
+<b class="fc">&nbsp;        if (this.treatLegendShapeAsLine != treatAsLine) {</b>
+<b class="fc">&nbsp;            this.treatLegendShapeAsLine = treatAsLine;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a lookup for the legend text font.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The font (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public Font lookupLegendTextFont(int series) {
+<b class="fc">&nbsp;        Font result = getLegendTextFont(series);</b>
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = this.defaultLegendTextFont;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend text font defined for the specified series (possibly
+&nbsp;     * {@code null}).
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The font (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #lookupLegendTextFont(int)
+&nbsp;     */
+&nbsp;    public Font getLegendTextFont(int series) {
+<b class="fc">&nbsp;        return this.legendTextFontMap.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the font used for the legend text for the specified series, and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setLegendTextFont(int series, Font font) {
+<b class="fc">&nbsp;        this.legendTextFontMap.put(series, font);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default legend text font, which may be {@code null}.
+&nbsp;     *
+&nbsp;     * @return The default legend text font.
+&nbsp;     */
+&nbsp;    public Font getDefaultLegendTextFont() {
+<b class="nc">&nbsp;        return this.defaultLegendTextFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default legend text font and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setDefaultLegendTextFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.defaultLegendTextFont = font;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a lookup for the legend text paint.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public Paint lookupLegendTextPaint(int series) {
+<b class="fc">&nbsp;        Paint result = getLegendTextPaint(series);</b>
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = this.defaultLegendTextPaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend text paint defined for the specified series (possibly
+&nbsp;     * {@code null}).
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #lookupLegendTextPaint(int)
+&nbsp;     */
+&nbsp;    public Paint getLegendTextPaint(int series) {
+<b class="fc">&nbsp;        return this.legendTextPaints.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for the legend text for the specified series, and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setLegendTextPaint(int series, Paint paint) {
+<b class="fc">&nbsp;        this.legendTextPaints.put(series, paint);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default legend text paint, which may be {@code null}.
+&nbsp;     *
+&nbsp;     * @return The default legend text paint.
+&nbsp;     */
+&nbsp;    public Paint getDefaultLegendTextPaint() {
+<b class="nc">&nbsp;        return this.defaultLegendTextPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default legend text paint and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setDefaultLegendTextPaint(Paint paint) {
+<b class="fc">&nbsp;        this.defaultLegendTextPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the data bounds reported
+&nbsp;     * by this renderer will exclude non-visible series.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getDataBoundsIncludesVisibleSeriesOnly() {
+<b class="fc">&nbsp;        return this.dataBoundsIncludesVisibleSeriesOnly;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the data bounds reported
+&nbsp;     * by this renderer will exclude non-visible series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visibleOnly  include only visible series.
+&nbsp;     */
+&nbsp;    public void setDataBoundsIncludesVisibleSeriesOnly(boolean visibleOnly) {
+<b class="fc">&nbsp;        this.dataBoundsIncludesVisibleSeriesOnly = visibleOnly;</b>
+<b class="fc">&nbsp;        notifyListeners(new RendererChangeEvent(this, true));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** The adjacent offset. */
+<b class="fc">&nbsp;    private static final double ADJ = Math.cos(Math.PI / 6.0);</b>
+&nbsp;
+&nbsp;    /** The opposite offset. */
+<b class="fc">&nbsp;    private static final double OPP = Math.sin(Math.PI / 6.0);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the item label anchor point.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor.
+&nbsp;     * @param x  the x coordinate.
+&nbsp;     * @param y  the y coordinate.
+&nbsp;     * @param orientation  the plot orientation.
+&nbsp;     *
+&nbsp;     * @return The anchor point (never {@code null}).
+&nbsp;     */
+&nbsp;    protected Point2D calculateLabelAnchorPoint(ItemLabelAnchor anchor,
+&nbsp;            double x, double y, PlotOrientation orientation) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(anchor, &quot;anchor&quot;);</b>
+<b class="nc">&nbsp;        Point2D result = null;</b>
+<b class="nc">&nbsp;        switch (anchor) {</b>
+&nbsp;            case CENTER:
+<b class="nc">&nbsp;                result = new Point2D.Double(x, y);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE1:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + OPP * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y - ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE2:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + ADJ * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y - OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE3:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + this.itemLabelAnchorOffset, y);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE4:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + ADJ * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y + OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE5:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + OPP * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y + ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE6:
+<b class="nc">&nbsp;                result = new Point2D.Double(x, y + this.itemLabelAnchorOffset);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE7:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - OPP * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y + ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE8:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - ADJ * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y + OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE9:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - this.itemLabelAnchorOffset, y);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE10:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - ADJ * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y - OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE11:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - OPP * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y - ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case INSIDE12:
+<b class="nc">&nbsp;                result = new Point2D.Double(x, y - this.itemLabelAnchorOffset);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE1:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x + 2.0 * OPP * this.itemLabelAnchorOffset,
+&nbsp;                        y - 2.0 * ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE2:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x + 2.0 * ADJ * this.itemLabelAnchorOffset,
+&nbsp;                        y - 2.0 * OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE3:
+<b class="nc">&nbsp;                result = new Point2D.Double(x + 2.0 * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE4:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x + 2.0 * ADJ * this.itemLabelAnchorOffset,
+&nbsp;                        y + 2.0 * OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE5:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x + 2.0 * OPP * this.itemLabelAnchorOffset,
+&nbsp;                        y + 2.0 * ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE6:
+<b class="nc">&nbsp;                result = new Point2D.Double(x,</b>
+&nbsp;                        y + 2.0 * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE7:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x - 2.0 * OPP * this.itemLabelAnchorOffset,
+&nbsp;                        y + 2.0 * ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE8:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x - 2.0 * ADJ * this.itemLabelAnchorOffset,
+&nbsp;                        y + 2.0 * OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE9:
+<b class="nc">&nbsp;                result = new Point2D.Double(x - 2.0 * this.itemLabelAnchorOffset,</b>
+&nbsp;                        y);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE10:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x - 2.0 * ADJ * this.itemLabelAnchorOffset,
+&nbsp;                        y - 2.0 * OPP * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE11:
+<b class="nc">&nbsp;                result = new Point2D.Double(</b>
+&nbsp;                        x - 2.0 * OPP * this.itemLabelAnchorOffset,
+&nbsp;                        y - 2.0 * ADJ * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case OUTSIDE12:
+<b class="nc">&nbsp;                result = new Point2D.Double(x,</b>
+&nbsp;                        y - 2.0 * this.itemLabelAnchorOffset);
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                throw new IllegalStateException(&quot;Unexpected anchor value.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers an object to receive notification of changes to the renderer.
+&nbsp;     *
+&nbsp;     * @param listener  the listener ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #removeChangeListener(RendererChangeListener)
+&nbsp;     */
+&nbsp;    public void addChangeListener(RendererChangeListener listener) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(listener, &quot;listener&quot;);</b>
+<b class="fc">&nbsp;        this.listenerList.add(RendererChangeListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deregisters an object so that it no longer receives
+&nbsp;     * notification of changes to the renderer.
+&nbsp;     *
+&nbsp;     * @param listener  the object ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #addChangeListener(RendererChangeListener)
+&nbsp;     */
+&nbsp;    public void removeChangeListener(RendererChangeListener listener) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(listener, &quot;listener&quot;);</b>
+<b class="fc">&nbsp;        this.listenerList.remove(RendererChangeListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the specified object is registered with
+&nbsp;     * the dataset as a listener.  Most applications won&#39;t need to call this
+&nbsp;     * method, it exists mainly for use by unit testing code.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean hasListener(EventListener listener) {
+<b class="fc">&nbsp;        List&lt;Object&gt; list = Arrays.asList(this.listenerList.getListenerList());</b>
+<b class="fc">&nbsp;        return list.contains(listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     */
+&nbsp;    protected void fireChangeEvent() {
+<b class="fc">&nbsp;        notifyListeners(new RendererChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Notifies all registered listeners that the renderer has been modified.
+&nbsp;     *
+&nbsp;     * @param event  information about the change event.
+&nbsp;     */
+&nbsp;    public void notifyListeners(RendererChangeEvent event) {
+<b class="fc">&nbsp;        Object[] ls = this.listenerList.getListenerList();</b>
+<b class="fc">&nbsp;        for (int i = ls.length - 2; i &gt;= 0; i -= 2) {</b>
+<b class="fc">&nbsp;            if (ls[i] == RendererChangeListener.class) {</b>
+<b class="fc">&nbsp;                ((RendererChangeListener) ls[i + 1]).rendererChanged(event);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this renderer for equality with another object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof AbstractRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        AbstractRenderer that = (AbstractRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.dataBoundsIncludesVisibleSeriesOnly</b>
+&nbsp;                != that.dataBoundsIncludesVisibleSeriesOnly) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.treatLegendShapeAsLine != that.treatLegendShapeAsLine) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.defaultEntityRadius != that.defaultEntityRadius) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.seriesVisibleMap.equals(that.seriesVisibleMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.defaultSeriesVisible != that.defaultSeriesVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.seriesVisibleInLegendMap.equals(that.seriesVisibleInLegendMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.defaultSeriesVisibleInLegend</b>
+&nbsp;                != that.defaultSeriesVisibleInLegend) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.seriesPaintMap, that.seriesPaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesPaint != that.autoPopulateSeriesPaint) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultPaint, that.defaultPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.seriesFillPaintMap, that.seriesFillPaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesFillPaint != that.autoPopulateSeriesFillPaint) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultFillPaint, that.defaultFillPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.seriesOutlinePaintMap, that.seriesOutlinePaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesOutlinePaint != that.autoPopulateSeriesOutlinePaint) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultOutlinePaint, that.defaultOutlinePaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.seriesStrokeMap, that.seriesStrokeMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesStroke != that.autoPopulateSeriesStroke) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultStroke, that.defaultStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.seriesOutlineStrokeMap, that.seriesOutlineStrokeMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesOutlineStroke != that.autoPopulateSeriesOutlineStroke) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultOutlineStroke, that.defaultOutlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.seriesShapeMap, that.seriesShapeMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSeriesShape != that.autoPopulateSeriesShape) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.defaultShape, that.defaultShape)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.seriesItemLabelsVisibleMap, that.seriesItemLabelsVisibleMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultItemLabelsVisible, that.defaultItemLabelsVisible)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.itemLabelFontMap, that.itemLabelFontMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultItemLabelFont, that.defaultItemLabelFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.itemLabelPaints, that.itemLabelPaints)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultItemLabelPaint,</b>
+&nbsp;                that.defaultItemLabelPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (!Objects.equals(this.positiveItemLabelPositionMap, that.positiveItemLabelPositionMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultPositiveItemLabelPosition, that.defaultPositiveItemLabelPosition)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (!Objects.equals(this.negativeItemLabelPositionMap, that.negativeItemLabelPositionMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultNegativeItemLabelPosition, that.defaultNegativeItemLabelPosition)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.itemLabelAnchorOffset != that.itemLabelAnchorOffset) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.seriesCreateEntitiesMap, that.seriesCreateEntitiesMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.defaultCreateEntities != that.defaultCreateEntities) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.seriesLegendShapes, that.seriesLegendShapes)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.defaultLegendShape, that.defaultLegendShape)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.legendTextFontMap, that.legendTextFontMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultLegendTextFont, that.defaultLegendTextFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.legendTextPaints, that.legendTextPaints)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultLegendTextPaint,</b>
+&nbsp;                that.defaultLegendTextPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hashcode for the renderer.
+&nbsp;     *
+&nbsp;     * @return The hashcode.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        int result = 193;</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesVisibleMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultSeriesVisible);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesVisibleInLegendMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultSeriesVisibleInLegend);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesPaintMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultPaint);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesFillPaintMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultFillPaint);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesOutlinePaintMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultOutlinePaint);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesStrokeMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultStroke);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesOutlineStrokeMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultOutlineStroke);</b>
+&nbsp;        // shapeList
+&nbsp;        // baseShape
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.seriesItemLabelsVisibleMap);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.defaultItemLabelsVisible);</b>
+&nbsp;        // itemLabelFontList
+&nbsp;        // baseItemLabelFont
+&nbsp;        // itemLabelPaintList
+&nbsp;        // baseItemLabelPaint
+&nbsp;        // positiveItemLabelPositionList
+&nbsp;        // basePositiveItemLabelPosition
+&nbsp;        // negativeItemLabelPositionList
+&nbsp;        // baseNegativeItemLabelPosition
+&nbsp;        // itemLabelAnchorOffset
+&nbsp;        // createEntityList
+&nbsp;        // baseCreateEntities
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an independent copy of the renderer.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the renderer
+&nbsp;     *         does not support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        AbstractRenderer clone = (AbstractRenderer) super.clone();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesVisibleMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesVisibleMap = new HashMap&lt;&gt;(this.seriesVisibleMap);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesVisibleInLegendMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesVisibleInLegendMap = new HashMap&lt;&gt;(this.seriesVisibleInLegendMap);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // &#39;paint&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.seriesPaintMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesPaintMap = new HashMap&lt;&gt;(this.seriesPaintMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;basePaint&#39; : immutable, no need to clone reference
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesFillPaintMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesFillPaintMap = new HashMap&lt;&gt;(this.seriesFillPaintMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;outlinePaint&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.seriesOutlinePaintMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesOutlinePaintMap = new HashMap&lt;&gt;(this.seriesOutlinePaintMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;baseOutlinePaint&#39; : immutable, no need to clone reference
+&nbsp;
+&nbsp;        // &#39;stroke&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.seriesStrokeMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesStrokeMap = CloneUtils.cloneMapValues(this.seriesStrokeMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;baseStroke&#39; : immutable, no need to clone reference
+&nbsp;
+&nbsp;        // &#39;outlineStroke&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.seriesOutlineStrokeMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesOutlineStrokeMap = CloneUtils.cloneMapValues(this.seriesOutlineStrokeMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;baseOutlineStroke&#39; : immutable, no need to clone reference
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesShapeMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesShapeMap = ShapeUtils.cloneMap(this.seriesShapeMap);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        clone.defaultShape = CloneUtils.clone(this.defaultShape);</b>
+&nbsp;
+&nbsp;
+&nbsp;        // &#39;seriesItemLabelsVisibleMap&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.seriesItemLabelsVisibleMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesItemLabelsVisibleMap = new HashMap&lt;&gt;(this.seriesItemLabelsVisibleMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;basePaint&#39; : immutable, no need to clone reference
+&nbsp;
+&nbsp;        // &#39;itemLabelFont&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.itemLabelFontMap != null) {</b>
+<b class="fc">&nbsp;            clone.itemLabelFontMap = new HashMap&lt;&gt;(this.itemLabelFontMap);</b>
+&nbsp;        }
+&nbsp;        // &#39;baseItemLabelFont&#39; : immutable, no need to clone reference
+&nbsp;
+&nbsp;        // &#39;itemLabelPaint&#39; : immutable, no need to clone reference
+<b class="fc">&nbsp;        if (this.itemLabelPaints != null) {</b>
+<b class="fc">&nbsp;            clone.itemLabelPaints  = new HashMap&lt;&gt;(this.itemLabelPaints);</b>
+&nbsp;        }
+&nbsp;        // &#39;baseItemLabelPaint&#39; : immutable, no need to clone reference
+&nbsp;
+<b class="fc">&nbsp;        if (this.positiveItemLabelPositionMap != null) {</b>
+<b class="fc">&nbsp;            clone.positiveItemLabelPositionMap </b>
+&nbsp;                    = new HashMap&lt;&gt;(this.positiveItemLabelPositionMap);
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (this.negativeItemLabelPositionMap != null) {</b>
+<b class="fc">&nbsp;            clone.negativeItemLabelPositionMap </b>
+&nbsp;                    = new HashMap&lt;&gt;(this.negativeItemLabelPositionMap);
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesCreateEntitiesMap != null) {</b>
+<b class="fc">&nbsp;            clone.seriesCreateEntitiesMap = new HashMap&lt;&gt;(this.seriesCreateEntitiesMap);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (this.seriesLegendShapes != null) {</b>
+<b class="fc">&nbsp;            clone.seriesLegendShapes = ShapeUtils.cloneMap(this.seriesLegendShapes);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.legendTextFontMap != null) {</b>
+&nbsp;            // Font objects are immutable so just shallow copy the map
+<b class="fc">&nbsp;            clone.legendTextFontMap = new HashMap&lt;&gt;(this.legendTextFontMap);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.legendTextPaints != null) {</b>
+<b class="fc">&nbsp;            clone.legendTextPaints = new HashMap&lt;&gt;(this.legendTextPaints);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        clone.listenerList = new EventListenerList();</b>
+<b class="fc">&nbsp;        clone.event = null;</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfPaint(this.seriesPaintMap, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfPaint(this.seriesFillPaintMap, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultFillPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfPaint(this.seriesOutlinePaintMap, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultOutlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfStroke(this.seriesStrokeMap, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.defaultStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfStroke(this.seriesOutlineStrokeMap, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.defaultOutlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeShape(this.defaultShape, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfPaint(this.itemLabelPaints, stream);        </b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultItemLabelPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeShape(this.defaultLegendShape, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeMapOfPaint(this.legendTextPaints, stream);        </b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultLegendTextPaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream) throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.seriesPaintMap = SerialUtils.readMapOfPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.seriesFillPaintMap = SerialUtils.readMapOfPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultFillPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.seriesOutlinePaintMap = SerialUtils.readMapOfPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultOutlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.seriesStrokeMap = SerialUtils.readMapOfStroke(stream);</b>
+<b class="fc">&nbsp;        this.defaultStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.seriesOutlineStrokeMap = SerialUtils.readMapOfStroke(stream);</b>
+<b class="fc">&nbsp;        this.defaultOutlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.defaultShape = SerialUtils.readShape(stream);</b>
+<b class="fc">&nbsp;        this.itemLabelPaints = SerialUtils.readMapOfPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultItemLabelPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultLegendShape = SerialUtils.readShape(stream);</b>
+<b class="fc">&nbsp;        this.legendTextPaints = SerialUtils.readMapOfPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultLegendTextPaint = SerialUtils.readPaint(stream);</b>
+&nbsp;
+&nbsp;        // listeners are not restored automatically, but storage must be
+&nbsp;        // provided...
+<b class="fc">&nbsp;        this.listenerList = new EventListenerList();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

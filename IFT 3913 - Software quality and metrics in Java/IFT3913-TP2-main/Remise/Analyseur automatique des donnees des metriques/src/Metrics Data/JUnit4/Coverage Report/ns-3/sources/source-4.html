@@ -1,0 +1,275 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > RectangleAlignment</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.api</a>
+</div>
+
+<h1>Coverage Summary for Class: RectangleAlignment (org.jfree.chart.api)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RectangleAlignment</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (3/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,3%
+  </span>
+  <span class="absValue">
+    (59/60)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">RectangleAlignment$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (4/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    98,4%
+  </span>
+  <span class="absValue">
+    (60/61)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.api;
+&nbsp;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;    
+&nbsp;/**
+&nbsp; * Used to indicate how to align one rectangle with another rectangle.
+&nbsp; */
+<b class="fc">&nbsp;public enum RectangleAlignment {</b>
+&nbsp;
+&nbsp;    /** Fill the frame */
+<b class="fc">&nbsp;    FILL,</b>
+&nbsp;    
+&nbsp;    /** Fill the height of the frame. */
+<b class="fc">&nbsp;    FILL_VERTICAL,</b>
+&nbsp;    
+&nbsp;    /** Fill the width of the frame. */
+<b class="fc">&nbsp;    FILL_HORIZONTAL,</b>
+&nbsp;    
+&nbsp;    /** Align to the top left of the frame. */
+<b class="fc">&nbsp;    TOP_LEFT,</b>
+&nbsp;    
+&nbsp;    /** Align to the top of the frame. */
+<b class="fc">&nbsp;    TOP_CENTER, </b>
+&nbsp;    
+&nbsp;    /** Align to the top right of the frame. */
+<b class="fc">&nbsp;    TOP_RIGHT, </b>
+&nbsp;    
+&nbsp;    /** Align to the left side of the frame, centered vertically. */
+<b class="fc">&nbsp;    CENTER_LEFT,</b>
+&nbsp;
+&nbsp;    /** Align to the center of the frame. */
+<b class="fc">&nbsp;    CENTER,</b>
+&nbsp;
+&nbsp;    /** Align to the right side of the frame, centered vertically. */    
+<b class="fc">&nbsp;    CENTER_RIGHT,</b>
+&nbsp;    
+&nbsp;    /** Align to the bottom left of the frame. */    
+<b class="fc">&nbsp;    BOTTOM_LEFT,</b>
+&nbsp;    
+&nbsp;    /** Align to the bottom of the frame. */    
+<b class="fc">&nbsp;    BOTTOM_CENTER,</b>
+&nbsp;    
+&nbsp;    /** Align to the bottom right of the frame. */    
+<b class="fc">&nbsp;    BOTTOM_RIGHT;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the anchor point relative to the specified rectangle.
+&nbsp;     * 
+&nbsp;     * @param rect  the rectangle to align ({@code null} not permitted).
+&nbsp;     * @param frame  the frame to align with ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void align(Rectangle2D rect, Rectangle2D frame) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(rect, &quot;rect&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(frame, &quot;frame&quot;);</b>
+<b class="fc">&nbsp;        double x = rect.getX();</b>
+<b class="fc">&nbsp;        double y = rect.getY();</b>
+<b class="fc">&nbsp;        double w = rect.getWidth();</b>
+<b class="fc">&nbsp;        double h = rect.getHeight();</b>
+&nbsp;
+<b class="fc">&nbsp;        switch (this) {</b>
+&nbsp;            case BOTTOM_CENTER:
+<b class="fc">&nbsp;                x = frame.getCenterX() - rect.getWidth() / 2.0;</b>
+<b class="fc">&nbsp;                y = frame.getMaxY() - h;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case BOTTOM_LEFT:
+<b class="fc">&nbsp;                x = frame.getX();</b>
+<b class="fc">&nbsp;                y = frame.getMaxY() - h;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case BOTTOM_RIGHT:
+<b class="fc">&nbsp;                x = frame.getMaxX() - w;</b>
+<b class="fc">&nbsp;                y = frame.getMaxY() - h;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case CENTER:
+<b class="fc">&nbsp;                x = frame.getCenterX() - rect.getWidth() / 2.0;</b>
+<b class="fc">&nbsp;                y = frame.getCenterY() - rect.getHeight() / 2.0;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case FILL:
+<b class="fc">&nbsp;                x = frame.getX();</b>
+<b class="fc">&nbsp;                y = frame.getY();</b>
+<b class="fc">&nbsp;                w = frame.getWidth();</b>
+<b class="fc">&nbsp;                h = frame.getHeight();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case FILL_HORIZONTAL:
+<b class="fc">&nbsp;                x = frame.getX();</b>
+<b class="fc">&nbsp;                w = frame.getWidth();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case FILL_VERTICAL:
+<b class="fc">&nbsp;                y = frame.getY();</b>
+<b class="fc">&nbsp;                h = frame.getHeight();</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case CENTER_LEFT:
+<b class="fc">&nbsp;                x = frame.getX(); </b>
+<b class="fc">&nbsp;                y = frame.getCenterY() - rect.getHeight() / 2.0;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case CENTER_RIGHT:
+<b class="fc">&nbsp;                x = frame.getMaxX() - w;                </b>
+<b class="fc">&nbsp;                y = frame.getCenterY() - rect.getHeight() / 2.0;</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case TOP_CENTER:
+<b class="fc">&nbsp;                x = frame.getCenterX() - rect.getWidth() / 2.0;</b>
+<b class="fc">&nbsp;                y = frame.getY();                </b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case TOP_LEFT:
+<b class="fc">&nbsp;                x = frame.getX();</b>
+<b class="fc">&nbsp;                y = frame.getY();                </b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case TOP_RIGHT:
+<b class="fc">&nbsp;                x = frame.getMaxX() - w; </b>
+<b class="fc">&nbsp;                y = frame.getY();                </b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                throw new IllegalStateException(&quot;Unexpected RectangleAlignment value&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        rect.setRect(x, y, w, h);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

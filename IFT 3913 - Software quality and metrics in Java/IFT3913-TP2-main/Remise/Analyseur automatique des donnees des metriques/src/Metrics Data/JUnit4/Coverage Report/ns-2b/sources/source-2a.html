@@ -1,0 +1,229 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > OHLCDataset</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: OHLCDataset (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">OHLCDataset</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------------
+&nbsp; * OHLCDataset.java
+&nbsp; * ----------------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Sylvain Vieujot;
+&nbsp; *
+&nbsp; * Changes (from 18-Sep-2001)
+&nbsp; * --------------------------
+&nbsp; * 18-Sep-2001 : Updated header info (DG);
+&nbsp; * 16-Oct-2001 : Moved to package com.jrefinery.data.* (DG);
+&nbsp; * 22-Oct-2001 : Renamed DataSource.java --&gt; Dataset.java etc. (DG);
+&nbsp; * 05-Feb-2002 : Added getVolumeValue() method, as requested by Sylvain
+&nbsp; *               Vieujot (DG);
+&nbsp; * 05-May-2004 : Added methods that return double primitives (DG);
+&nbsp; * 26-Jul-2004 : Switched names of methods that return Number vs
+&nbsp; *               primitives (DG);
+&nbsp; * 06-Sep-2004 : Renamed HighLowDataset --&gt; OHLCDataset (DG);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;/**
+&nbsp; * An interface that defines data in the form of (x, high, low, open, close)
+&nbsp; * tuples.
+&nbsp; */
+&nbsp;public interface OHLCDataset extends XYDataset {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the high-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    Number getHigh(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the high-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The high-value.
+&nbsp;     */
+&nbsp;    double getHighValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the low-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    Number getLow(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the low-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The low-value.
+&nbsp;     */
+&nbsp;    double getLowValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the open-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    Number getOpen(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the open-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The open-value.
+&nbsp;     */
+&nbsp;    double getOpenValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    Number getClose(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the close-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The close-value.
+&nbsp;     */
+&nbsp;    double getCloseValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the volume for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    Number getVolume(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the volume-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The volume-value.
+&nbsp;     */
+&nbsp;    double getVolumeValue(int series, int item);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

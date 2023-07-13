@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Analyseur automatique des donnees des metriques:jar">
+    <output-path>$PROJECT_DIR$/../../..</output-path>
+    <root id="archive" name="Analyseur automatique des donnees des metriques.jar">
+      <element id="module-output" name="Analyseur automatique des donnees des metriques" />
+    </root>
+  </artifact>
+</component>

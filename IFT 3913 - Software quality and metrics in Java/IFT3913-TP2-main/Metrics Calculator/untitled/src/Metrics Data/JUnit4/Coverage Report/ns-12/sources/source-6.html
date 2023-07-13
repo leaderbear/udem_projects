@@ -1,0 +1,3321 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PiePlot</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.plot.pie</a>
+</div>
+
+<h1>Coverage Summary for Class: PiePlot (org.jfree.chart.plot.pie)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PiePlot</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    69,9%
+  </span>
+  <span class="absValue">
+    (93/133)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    71,1%
+  </span>
+  <span class="absValue">
+    (660/928)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ------------
+&nbsp; * PiePlot.java
+&nbsp; * ------------
+&nbsp; * (C) Copyright 2000-2021, by Andrzej Porebski and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Andrzej Porebski;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *                   Martin Cordova (percentages in labels);
+&nbsp; *                   Richard Atkinson (URL support for image maps);
+&nbsp; *                   Christian W. Zuckschwerdt;
+&nbsp; *                   Arnaud Lelievre;
+&nbsp; *                   Martin Hilpert (patch 1891849);
+&nbsp; *                   Andreas Schroeder (very minor);
+&nbsp; *                   Christoph Beck (bug 2121818);
+&nbsp; *                   Tracy Hiltbrand (Added generics for bug fix);
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.plot.pie;
+&nbsp;
+&nbsp;import org.jfree.chart.JFreeChart;
+&nbsp;import org.jfree.chart.api.RectangleAnchor;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.api.Rotation;
+&nbsp;import org.jfree.chart.api.UnitType;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.entity.PieSectionEntity;
+&nbsp;import org.jfree.chart.event.PlotChangeEvent;
+&nbsp;import org.jfree.chart.internal.*;
+&nbsp;import org.jfree.chart.labels.PieSectionLabelGenerator;
+&nbsp;import org.jfree.chart.labels.PieToolTipGenerator;
+&nbsp;import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.legend.LegendItemCollection;
+&nbsp;import org.jfree.chart.plot.*;
+&nbsp;import org.jfree.chart.text.*;
+&nbsp;import org.jfree.chart.urls.PieURLGenerator;
+&nbsp;import org.jfree.chart.util.ShadowGenerator;
+&nbsp;import org.jfree.data.DefaultKeyedValues;
+&nbsp;import org.jfree.data.KeyedValues;
+&nbsp;import org.jfree.data.general.DatasetChangeEvent;
+&nbsp;import org.jfree.data.general.DatasetUtils;
+&nbsp;import org.jfree.data.general.PieDataset;
+&nbsp;
+&nbsp;import java.awt.*;
+&nbsp;import java.awt.geom.*;
+&nbsp;import java.awt.image.BufferedImage;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.List;
+&nbsp;import java.util.*;
+&nbsp;
+&nbsp;/**
+&nbsp; * A plot that displays data in the form of a pie chart, using data from any
+&nbsp; * class that implements the {@link PieDataset} interface.
+&nbsp; * The example shown here is generated by the {@code PieChartDemo2.java}
+&nbsp; * program included in the JFreeChart Demo Collection:
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * &lt;img src=&quot;doc-files/PieChartDemo2.svg&quot; alt=&quot;PieChartDemo2.svg&quot;&gt;
+&nbsp; * &lt;P&gt;
+&nbsp; * Special notes:
+&nbsp; * &lt;ol&gt;
+&nbsp; * &lt;li&gt;the default starting point is 12 o&#39;clock and the pie sections proceed
+&nbsp; * in a clockwise direction, but these settings can be changed;&lt;/li&gt;
+&nbsp; * &lt;li&gt;negative values in the dataset are ignored;&lt;/li&gt;
+&nbsp; * &lt;li&gt;there are utility methods for creating a {@link PieDataset} from a
+&nbsp; * {@link org.jfree.data.category.CategoryDataset};&lt;/li&gt;
+&nbsp; * &lt;/ol&gt;
+&nbsp; *
+&nbsp; * @param &lt;K&gt; Key type for PieDataset
+&nbsp; * 
+&nbsp; * @see Plot
+&nbsp; * @see PieDataset
+&nbsp; */
+&nbsp;public class PiePlot&lt;K extends Comparable&lt;K&gt;&gt; extends Plot implements Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -795612466005590431L;
+&nbsp;
+&nbsp;    /** The default interior gap. */
+&nbsp;    public static final double DEFAULT_INTERIOR_GAP = 0.08;
+&nbsp;
+&nbsp;    /** The maximum interior gap (currently 40%). */
+&nbsp;    public static final double MAX_INTERIOR_GAP = 0.40;
+&nbsp;
+&nbsp;    /** The default starting angle for the pie chart. */
+&nbsp;    public static final double DEFAULT_START_ANGLE = 90.0;
+&nbsp;
+&nbsp;    /** The default section label font. */
+<b class="fc">&nbsp;    public static final Font DEFAULT_LABEL_FONT = new Font(&quot;SansSerif&quot;,</b>
+&nbsp;            Font.PLAIN, 10);
+&nbsp;
+&nbsp;    /** The default section label paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_LABEL_PAINT = Color.BLACK;</b>
+&nbsp;
+&nbsp;    /** The default section label background paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_LABEL_BACKGROUND_PAINT = new Color(255,</b>
+&nbsp;            255, 192);
+&nbsp;
+&nbsp;    /** The default section label outline paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_LABEL_OUTLINE_PAINT = Color.BLACK;</b>
+&nbsp;
+&nbsp;    /** The default section label outline stroke. */
+<b class="fc">&nbsp;    public static final Stroke DEFAULT_LABEL_OUTLINE_STROKE = new BasicStroke(</b>
+&nbsp;            0.5f);
+&nbsp;
+&nbsp;    /** The default section label shadow paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_LABEL_SHADOW_PAINT = new Color(151, 151,</b>
+&nbsp;            151, 128);
+&nbsp;
+&nbsp;    /** The default minimum arc angle to draw. */
+&nbsp;    public static final double DEFAULT_MINIMUM_ARC_ANGLE_TO_DRAW = 0.00001;
+&nbsp;
+&nbsp;    /** The dataset for the pie chart. */
+&nbsp;    private PieDataset&lt;K&gt; dataset;
+&nbsp;
+&nbsp;    /** The pie index (used by the {@link MultiplePiePlot} class). */
+&nbsp;    private int pieIndex;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The amount of space left around the outside of the pie plot, expressed
+&nbsp;     * as a percentage of the plot area width and height.
+&nbsp;     */
+&nbsp;    private double interiorGap;
+&nbsp;
+&nbsp;    /** Flag determining whether to draw an ellipse or a perfect circle. */
+&nbsp;    private boolean circular;
+&nbsp;
+&nbsp;    /** The starting angle. */
+&nbsp;    private double startAngle;
+&nbsp;
+&nbsp;    /** The direction for the pie segments. */
+&nbsp;    private Rotation direction;
+&nbsp;
+&nbsp;    /** The section paint map. */
+&nbsp;    private Map&lt;K, Paint&gt; sectionPaintMap;
+&nbsp;
+&nbsp;    /** The default section paint (fallback). */
+&nbsp;    private transient Paint defaultSectionPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the section paint is auto-populated
+&nbsp;     * from the drawing supplier.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSectionPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not an outline is drawn for each
+&nbsp;     * section in the plot.
+&nbsp;     */
+&nbsp;    private boolean sectionOutlinesVisible;
+&nbsp;
+&nbsp;    /** The section outline paint map. */
+&nbsp;    private Map&lt;K, Paint&gt; sectionOutlinePaintMap;
+&nbsp;
+&nbsp;    /** The default section outline paint (fallback). */
+&nbsp;    private transient Paint defaultSectionOutlinePaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the section outline paint is
+&nbsp;     * auto-populated from the drawing supplier.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSectionOutlinePaint;
+&nbsp;
+&nbsp;    /** The section outline stroke map. */
+&nbsp;    private Map&lt;K, Stroke&gt; sectionOutlineStrokeMap;
+&nbsp;
+&nbsp;    /** The default section outline stroke (fallback). */
+&nbsp;    private transient Stroke defaultSectionOutlineStroke;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the section outline stroke is
+&nbsp;     * auto-populated from the drawing supplier.
+&nbsp;     */
+&nbsp;    private boolean autoPopulateSectionOutlineStroke;
+&nbsp;
+&nbsp;    /** The shadow paint. */
+<b class="fc">&nbsp;    private transient Paint shadowPaint = Color.GRAY;</b>
+&nbsp;
+&nbsp;    /** The x-offset for the shadow effect. */
+<b class="fc">&nbsp;    private double shadowXOffset = 4.0f;</b>
+&nbsp;
+&nbsp;    /** The y-offset for the shadow effect. */
+<b class="fc">&nbsp;    private double shadowYOffset = 4.0f;</b>
+&nbsp;
+&nbsp;    /** The percentage amount to explode each pie section. */
+&nbsp;    private Map&lt;K, Double&gt; explodePercentages;
+&nbsp;
+&nbsp;    /** The section label generator. */
+&nbsp;    private PieSectionLabelGenerator labelGenerator;
+&nbsp;
+&nbsp;    /** The font used to display the section labels. */
+&nbsp;    private Font labelFont;
+&nbsp;
+&nbsp;    /** The color used to draw the section labels. */
+&nbsp;    private transient Paint labelPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The color used to draw the background of the section labels.  If this
+&nbsp;     * is {@code null}, the background is not filled.
+&nbsp;     */
+&nbsp;    private transient Paint labelBackgroundPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The paint used to draw the outline of the section labels
+&nbsp;     * ({@code null} permitted).
+&nbsp;     */
+&nbsp;    private transient Paint labelOutlinePaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The stroke used to draw the outline of the section labels
+&nbsp;     * ({@code null} permitted).
+&nbsp;     */
+&nbsp;    private transient Stroke labelOutlineStroke;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The paint used to draw the shadow for the section labels
+&nbsp;     * ({@code null} permitted).
+&nbsp;     */
+&nbsp;    private transient Paint labelShadowPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether simple or extended labels are used.
+&nbsp;     */
+<b class="fc">&nbsp;    private boolean simpleLabels = true;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The padding between the labels and the label outlines.  This is not
+&nbsp;     * allowed to be {@code null}.
+&nbsp;     */
+&nbsp;    private RectangleInsets labelPadding;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The simple label offset.
+&nbsp;     */
+&nbsp;    private RectangleInsets simpleLabelOffset;
+&nbsp;
+&nbsp;    /** The maximum label width as a percentage of the plot width. */
+<b class="fc">&nbsp;    private double maximumLabelWidth = 0.14;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The gap between the labels and the link corner, as a percentage of the
+&nbsp;     * plot width.
+&nbsp;     */
+<b class="fc">&nbsp;    private double labelGap = 0.025;</b>
+&nbsp;
+&nbsp;    /** A flag that controls whether or not the label links are drawn. */
+&nbsp;    private boolean labelLinksVisible;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The label link style.
+&nbsp;     */
+<b class="fc">&nbsp;    private PieLabelLinkStyle labelLinkStyle = PieLabelLinkStyle.STANDARD;</b>
+&nbsp;
+&nbsp;    /** The link margin. */
+<b class="fc">&nbsp;    private double labelLinkMargin = 0.025;</b>
+&nbsp;
+&nbsp;    /** The paint used for the label linking lines. */
+<b class="fc">&nbsp;    private transient Paint labelLinkPaint = Color.BLACK;</b>
+&nbsp;
+&nbsp;    /** The stroke used for the label linking lines. */
+<b class="fc">&nbsp;    private transient Stroke labelLinkStroke = new BasicStroke(0.5f);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The pie section label distributor.
+&nbsp;     */
+&nbsp;    private AbstractPieLabelDistributor labelDistributor;
+&nbsp;
+&nbsp;    /** The tooltip generator. */
+&nbsp;    private PieToolTipGenerator toolTipGenerator;
+&nbsp;
+&nbsp;    /** The URL generator. */
+&nbsp;    private PieURLGenerator urlGenerator;
+&nbsp;
+&nbsp;    /** The legend label generator. */
+&nbsp;    private PieSectionLabelGenerator legendLabelGenerator;
+&nbsp;
+&nbsp;    /** A tool tip generator for the legend. */
+&nbsp;    private PieSectionLabelGenerator legendLabelToolTipGenerator;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A URL generator for the legend items (optional).
+&nbsp;     */
+&nbsp;    private PieURLGenerator legendLabelURLGenerator;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether {@code null} values are ignored.
+&nbsp;     */
+&nbsp;    private boolean ignoreNullValues;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether zero values are ignored.
+&nbsp;     */
+&nbsp;    private boolean ignoreZeroValues;
+&nbsp;
+&nbsp;    /** The legend item shape. */
+&nbsp;    private transient Shape legendItemShape;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The smallest arc angle that will get drawn (this is to avoid a bug in
+&nbsp;     * various Java implementations that causes the JVM to crash).  See this
+&nbsp;     * link for details:
+&nbsp;     *
+&nbsp;     * http://www.jfree.org/phpBB2/viewtopic.php?t=2707
+&nbsp;     *
+&nbsp;     * ...and this bug report in the Java Bug Parade:
+&nbsp;     *
+&nbsp;     * http://developer.java.sun.com/developer/bugParade/bugs/4836495.html
+&nbsp;     */
+&nbsp;    private double minimumArcAngleToDraw;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The shadow generator for the plot ({@code null} permitted).
+&nbsp;     */
+&nbsp;    private ShadowGenerator shadowGenerator;
+&nbsp;
+&nbsp;    /** The resourceBundle for the localization. */
+<b class="fc">&nbsp;    protected static ResourceBundle localizationResources</b>
+<b class="fc">&nbsp;            = ResourceBundle.getBundle(&quot;org.jfree.chart.plot.LocalizationBundle&quot;);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This debug flag controls whether or not an outline is drawn showing the
+&nbsp;     * interior of the plot region.  This is drawn as a lightGray rectangle
+&nbsp;     * showing the padding provided by the &#39;interiorGap&#39; setting.
+&nbsp;     */
+&nbsp;    static final boolean DEBUG_DRAW_INTERIOR = false;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This debug flag controls whether or not an outline is drawn showing the
+&nbsp;     * link area (in blue) and link ellipse (in yellow).  This controls where
+&nbsp;     * the label links have &#39;elbow&#39; points.
+&nbsp;     */
+&nbsp;    static final boolean DEBUG_DRAW_LINK_AREA = false;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This debug flag controls whether or not an outline is drawn showing
+&nbsp;     * the pie area (in green).
+&nbsp;     */
+&nbsp;    static final boolean DEBUG_DRAW_PIE_AREA = false;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new plot.  The dataset is initially set to {@code null}.
+&nbsp;     */
+&nbsp;    public PiePlot() {
+<b class="fc">&nbsp;        this(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a plot that will draw a pie chart for the specified dataset.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public PiePlot(PieDataset&lt;K&gt; dataset) {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        this.dataset = dataset;</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="fc">&nbsp;            dataset.addChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.pieIndex = 0;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.interiorGap = DEFAULT_INTERIOR_GAP;</b>
+<b class="fc">&nbsp;        this.circular = true;</b>
+<b class="fc">&nbsp;        this.startAngle = DEFAULT_START_ANGLE;</b>
+<b class="fc">&nbsp;        this.direction = Rotation.CLOCKWISE;</b>
+<b class="fc">&nbsp;        this.minimumArcAngleToDraw = DEFAULT_MINIMUM_ARC_ANGLE_TO_DRAW;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.sectionPaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultSectionPaint = Color.GRAY;</b>
+<b class="fc">&nbsp;        this.autoPopulateSectionPaint = true;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.sectionOutlinesVisible = true;</b>
+<b class="fc">&nbsp;        this.sectionOutlinePaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlinePaint = DEFAULT_OUTLINE_PAINT;</b>
+<b class="fc">&nbsp;        this.autoPopulateSectionOutlinePaint = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.sectionOutlineStrokeMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlineStroke = DEFAULT_OUTLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.autoPopulateSectionOutlineStroke = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.explodePercentages = new TreeMap&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        this.labelGenerator = new StandardPieSectionLabelGenerator();</b>
+<b class="fc">&nbsp;        this.labelFont = DEFAULT_LABEL_FONT;</b>
+<b class="fc">&nbsp;        this.labelPaint = DEFAULT_LABEL_PAINT;</b>
+<b class="fc">&nbsp;        this.labelBackgroundPaint = DEFAULT_LABEL_BACKGROUND_PAINT;</b>
+<b class="fc">&nbsp;        this.labelOutlinePaint = DEFAULT_LABEL_OUTLINE_PAINT;</b>
+<b class="fc">&nbsp;        this.labelOutlineStroke = DEFAULT_LABEL_OUTLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.labelShadowPaint = DEFAULT_LABEL_SHADOW_PAINT;</b>
+<b class="fc">&nbsp;        this.labelLinksVisible = true;</b>
+<b class="fc">&nbsp;        this.labelDistributor = new PieLabelDistributor(0);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.simpleLabels = false;</b>
+<b class="fc">&nbsp;        this.simpleLabelOffset = new RectangleInsets(UnitType.RELATIVE, 0.18,</b>
+&nbsp;                0.18, 0.18, 0.18);
+<b class="fc">&nbsp;        this.labelPadding = new RectangleInsets(2, 2, 2, 2);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.toolTipGenerator = null;</b>
+<b class="fc">&nbsp;        this.urlGenerator = null;</b>
+<b class="fc">&nbsp;        this.legendLabelGenerator = new StandardPieSectionLabelGenerator();</b>
+<b class="fc">&nbsp;        this.legendLabelToolTipGenerator = null;</b>
+<b class="fc">&nbsp;        this.legendLabelURLGenerator = null;</b>
+<b class="fc">&nbsp;        this.legendItemShape = Plot.DEFAULT_LEGEND_ITEM_CIRCLE;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.ignoreNullValues = false;</b>
+<b class="fc">&nbsp;        this.ignoreZeroValues = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.shadowGenerator = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the dataset.
+&nbsp;     *
+&nbsp;     * @return The dataset (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDataset(PieDataset)
+&nbsp;     */
+&nbsp;    public PieDataset&lt;K&gt; getDataset() {
+<b class="fc">&nbsp;        return this.dataset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the dataset and sends a {@link DatasetChangeEvent} to &#39;this&#39;.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getDataset()
+&nbsp;     */
+&nbsp;    public void setDataset(PieDataset&lt;K&gt; dataset) {
+&nbsp;        // if there is an existing dataset, remove the plot from the list of
+&nbsp;        // change listeners...
+<b class="fc">&nbsp;        PieDataset&lt;K&gt; existing = this.dataset;</b>
+<b class="fc">&nbsp;        if (existing != null) {</b>
+<b class="fc">&nbsp;            existing.removeChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // set the new dataset, and register the chart as a change listener...
+<b class="fc">&nbsp;        this.dataset = dataset;</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="nc">&nbsp;            dataset.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // send a dataset change event to self...
+<b class="fc">&nbsp;        DatasetChangeEvent event = new DatasetChangeEvent(this, dataset);</b>
+<b class="fc">&nbsp;        datasetChanged(event);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the pie index (this is used by the {@link MultiplePiePlot} class
+&nbsp;     * to track subplots).
+&nbsp;     *
+&nbsp;     * @return The pie index.
+&nbsp;     *
+&nbsp;     * @see #setPieIndex(int)
+&nbsp;     */
+&nbsp;    public int getPieIndex() {
+<b class="nc">&nbsp;        return this.pieIndex;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the pie index (this is used by the {@link MultiplePiePlot} class to
+&nbsp;     * track subplots).
+&nbsp;     *
+&nbsp;     * @param index  the index.
+&nbsp;     *
+&nbsp;     * @see #getPieIndex()
+&nbsp;     */
+&nbsp;    public void setPieIndex(int index) {
+<b class="fc">&nbsp;        this.pieIndex = index;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the start angle for the first pie section.  This is measured in
+&nbsp;     * degrees starting from 3 o&#39;clock and measuring anti-clockwise.
+&nbsp;     *
+&nbsp;     * @return The start angle.
+&nbsp;     *
+&nbsp;     * @see #setStartAngle(double)
+&nbsp;     */
+&nbsp;    public double getStartAngle() {
+<b class="fc">&nbsp;        return this.startAngle;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the starting angle and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.  The initial default value is 90 degrees, which
+&nbsp;     * corresponds to 12 o&#39;clock.  A value of zero corresponds to 3 o&#39;clock...
+&nbsp;     * this is the encoding used by Java&#39;s Arc2D class.
+&nbsp;     *
+&nbsp;     * @param angle  the angle (in degrees).
+&nbsp;     *
+&nbsp;     * @see #getStartAngle()
+&nbsp;     */
+&nbsp;    public void setStartAngle(double angle) {
+<b class="fc">&nbsp;        this.startAngle = angle;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the direction in which the pie sections are drawn (clockwise or
+&nbsp;     * anti-clockwise).
+&nbsp;     *
+&nbsp;     * @return The direction (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDirection(Rotation)
+&nbsp;     */
+&nbsp;    public Rotation getDirection() {
+<b class="nc">&nbsp;        return this.direction;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the direction in which the pie sections are drawn and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param direction  the direction ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDirection()
+&nbsp;     */
+&nbsp;    public void setDirection(Rotation direction) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(direction, &quot;direction&quot;);</b>
+<b class="fc">&nbsp;        this.direction = direction;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the interior gap, measured as a percentage of the available
+&nbsp;     * drawing space.
+&nbsp;     *
+&nbsp;     * @return The gap (as a percentage of the available drawing space).
+&nbsp;     *
+&nbsp;     * @see #setInteriorGap(double)
+&nbsp;     */
+&nbsp;    public double getInteriorGap() {
+<b class="fc">&nbsp;        return this.interiorGap;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the interior gap and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.  This controls the space between the edges of the
+&nbsp;     * pie plot and the plot area itself (the region where the section labels
+&nbsp;     * appear).
+&nbsp;     *
+&nbsp;     * @param percent  the gap (as a percentage of the available drawing space).
+&nbsp;     *
+&nbsp;     * @see #getInteriorGap()
+&nbsp;     */
+&nbsp;    public void setInteriorGap(double percent) {
+&nbsp;
+<b class="fc">&nbsp;        if ((percent &lt; 0.0) || (percent &gt; MAX_INTERIOR_GAP)) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;Invalid &#39;percent&#39; (&quot; + percent + &quot;) argument.&quot;);
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (this.interiorGap != percent) {</b>
+<b class="fc">&nbsp;            this.interiorGap = percent;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag indicating whether the pie chart is circular, or
+&nbsp;     * stretched into an elliptical shape.
+&nbsp;     *
+&nbsp;     * @return A flag indicating whether the pie chart is circular.
+&nbsp;     *
+&nbsp;     * @see #setCircular(boolean)
+&nbsp;     */
+&nbsp;    public boolean isCircular() {
+<b class="fc">&nbsp;        return this.circular;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag indicating whether the pie chart is circular, or stretched into
+&nbsp;     * an elliptical shape.
+&nbsp;     *
+&nbsp;     * @param flag  the new value.
+&nbsp;     *
+&nbsp;     * @see #isCircular()
+&nbsp;     */
+&nbsp;    public void setCircular(boolean flag) {
+<b class="fc">&nbsp;        setCircular(flag, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the circular attribute and, if requested, sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param circular  the new value of the flag.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #isCircular()
+&nbsp;     */
+&nbsp;    public void setCircular(boolean circular, boolean notify) {
+<b class="fc">&nbsp;        this.circular = circular;</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether {@code null} values in the
+&nbsp;     * dataset are ignored.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setIgnoreNullValues(boolean)
+&nbsp;     */
+&nbsp;    public boolean getIgnoreNullValues() {
+<b class="nc">&nbsp;        return this.ignoreNullValues;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls whether {@code null} values are ignored,
+&nbsp;     * and sends a {@link PlotChangeEvent} to all registered listeners.  At
+&nbsp;     * present, this only affects whether or not the key is presented in the
+&nbsp;     * legend.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getIgnoreNullValues()
+&nbsp;     * @see #setIgnoreZeroValues(boolean)
+&nbsp;     */
+&nbsp;    public void setIgnoreNullValues(boolean flag) {
+<b class="fc">&nbsp;        this.ignoreNullValues = flag;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether zero values in the
+&nbsp;     * dataset are ignored.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setIgnoreZeroValues(boolean)
+&nbsp;     */
+&nbsp;    public boolean getIgnoreZeroValues() {
+<b class="nc">&nbsp;        return this.ignoreZeroValues;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls whether zero values are ignored,
+&nbsp;     * and sends a {@link PlotChangeEvent} to all registered listeners.  This
+&nbsp;     * only affects whether or not a label appears for the non-visible
+&nbsp;     * pie section.
+&nbsp;     *
+&nbsp;     * @param flag  the flag.
+&nbsp;     *
+&nbsp;     * @see #getIgnoreZeroValues()
+&nbsp;     * @see #setIgnoreNullValues(boolean)
+&nbsp;     */
+&nbsp;    public void setIgnoreZeroValues(boolean flag) {
+<b class="fc">&nbsp;        this.ignoreZeroValues = flag;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //// SECTION PAINT ////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the specified section.  This is equivalent to
+&nbsp;     * {@code lookupSectionPaint(section, getAutoPopulateSectionPaint())}.
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     *
+&nbsp;     * @return The paint for the specified section.
+&nbsp;     *
+&nbsp;     * @see #lookupSectionPaint(K, boolean)
+&nbsp;     */
+&nbsp;    protected Paint lookupSectionPaint(K key) {
+<b class="fc">&nbsp;        return lookupSectionPaint(key, getAutoPopulateSectionPaint());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the specified section.  The lookup involves these
+&nbsp;     * steps:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionPaint(K)} is non-{@code null} return it;&lt;/li&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionPaint(K)} is {@code null} but
+&nbsp;     *         {@code autoPopulate} is {@code true}, attempt to fetch
+&nbsp;     *         a new paint from the drawing supplier
+&nbsp;     *         ({@link #getDrawingSupplier()});
+&nbsp;     * &lt;li&gt;if all else fails, return {@link #getDefaultSectionPaint()}.
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     * @param autoPopulate  a flag that controls whether the drawing supplier
+&nbsp;     *     is used to auto-populate the section paint settings.
+&nbsp;     *
+&nbsp;     * @return The paint.
+&nbsp;     */
+&nbsp;    protected Paint lookupSectionPaint(K key, boolean autoPopulate) { 
+&nbsp;
+&nbsp;        // if not, check if there is a paint defined for the specified key
+<b class="fc">&nbsp;        Paint result = this.sectionPaintMap.get(key);</b>
+<b class="fc">&nbsp;        if (result != null) {</b>
+<b class="fc">&nbsp;            return result;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // nothing defined - do we autoPopulate?
+<b class="fc">&nbsp;        if (autoPopulate) {</b>
+<b class="fc">&nbsp;            DrawingSupplier ds = getDrawingSupplier();</b>
+<b class="fc">&nbsp;            if (ds != null) {</b>
+<b class="fc">&nbsp;                result = ds.getNextPaint();</b>
+<b class="fc">&nbsp;                this.sectionPaintMap.put(key, result);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                result = this.defaultSectionPaint;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        } else {</b>
+<b class="nc">&nbsp;            result = this.defaultSectionPaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a key for the specified section. The preferred way of doing this
+&nbsp;     * now is to link the attributes directly to the section key (there are new
+&nbsp;     * methods for this, starting from version 1.0.3).
+&nbsp;     *
+&nbsp;     * @param section  the section index.
+&nbsp;     *
+&nbsp;     * @return The key.
+&nbsp;     */
+&nbsp;    protected K getSectionKey(int section) {
+<b class="fc">&nbsp;        K key = null;</b>
+<b class="fc">&nbsp;        if (this.dataset != null) {</b>
+<b class="fc">&nbsp;            if (section &gt;= 0 &amp;&amp; section &lt; this.dataset.getItemCount()) {</b>
+<b class="fc">&nbsp;                key = this.dataset.getKey(section);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return key;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint associated with the specified key, or
+&nbsp;     * {@code null} if there is no paint associated with the key.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The paint associated with the specified key, or
+&nbsp;     *     {@code null}.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is
+&nbsp;     *     {@code null}.
+&nbsp;     *
+&nbsp;     * @see #setSectionPaint(K, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSectionPaint(K key) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        return this.sectionPaintMap.get(key);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint associated with the specified key, and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     * @param paint  the paint.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is
+&nbsp;     *     {@code null}.
+&nbsp;     *
+&nbsp;     * @see #getSectionPaint(K)
+&nbsp;     */
+&nbsp;    public void setSectionPaint(K key, Paint paint) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        this.sectionPaintMap.put(key, paint);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the section paint settings for this plot and, if requested, sends
+&nbsp;     * a {@link PlotChangeEvent} to all registered listeners.  Be aware that
+&nbsp;     * if the {@code autoPopulateSectionPaint} flag is set, the section
+&nbsp;     * paints may be repopulated using the same colours as before.
+&nbsp;     *
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #autoPopulateSectionPaint
+&nbsp;     */
+&nbsp;    public void clearSectionPaints(boolean notify) {
+<b class="fc">&nbsp;        this.sectionPaintMap.clear();</b>
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default section paint.  This is used when no other paint is
+&nbsp;     * defined, which is rare.  The default value is {@code Color.GRAY}.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultSectionPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultSectionPaint() {
+<b class="fc">&nbsp;        return this.defaultSectionPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default section paint and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultSectionPaint()
+&nbsp;     */
+&nbsp;    public void setDefaultSectionPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.defaultSectionPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the section paint is
+&nbsp;     * auto-populated by the {@link #lookupSectionPaint(K)} method.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSectionPaint() {
+<b class="fc">&nbsp;        return this.autoPopulateSectionPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the section paint is
+&nbsp;     * auto-populated by the {@link #lookupSectionPaint(K)} method,
+&nbsp;     * and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param auto  auto-populate?
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSectionPaint(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSectionPaint = auto;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //// SECTION OUTLINE PAINT ////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the outline is drawn for
+&nbsp;     * each pie section.
+&nbsp;     *
+&nbsp;     * @return The flag that controls whether or not the outline is drawn for
+&nbsp;     *         each pie section.
+&nbsp;     *
+&nbsp;     * @see #setSectionOutlinesVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean getSectionOutlinesVisible() {
+<b class="nc">&nbsp;        return this.sectionOutlinesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the outline is drawn for
+&nbsp;     * each pie section, and sends a {@link PlotChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getSectionOutlinesVisible()
+&nbsp;     */
+&nbsp;    public void setSectionOutlinesVisible(boolean visible) {
+<b class="fc">&nbsp;        this.sectionOutlinesVisible = visible;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline paint for the specified section.  This is equivalent
+&nbsp;     * to {@code lookupSectionPaint(section, 
+&nbsp;     * getAutoPopulateSectionOutlinePaint())}.
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     *
+&nbsp;     * @return The paint for the specified section.
+&nbsp;     *
+&nbsp;     * @see #lookupSectionOutlinePaint(K, boolean)
+&nbsp;     */
+&nbsp;    protected Paint lookupSectionOutlinePaint(K key) {
+<b class="fc">&nbsp;        return lookupSectionOutlinePaint(key, getAutoPopulateSectionOutlinePaint());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline paint for the specified section.  The lookup
+&nbsp;     * involves these steps:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionOutlinePaint(K)} is non-{@code null} return it;&lt;/li&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionOutlinePaint(K)} is {@code null} but
+&nbsp;     *         {@code autoPopulate} is {@code true}, attempt to fetch
+&nbsp;     *         a new outline paint from the drawing supplier
+&nbsp;     *         ({@link #getDrawingSupplier()});
+&nbsp;     * &lt;li&gt;if all else fails, return {@link #getDefaultSectionOutlinePaint()}.
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     * @param autoPopulate  a flag that controls whether the drawing supplier
+&nbsp;     *     is used to auto-populate the section outline paint settings.
+&nbsp;     *
+&nbsp;     * @return The paint.
+&nbsp;     */
+&nbsp;    protected Paint lookupSectionOutlinePaint(K key, boolean autoPopulate) {
+&nbsp;
+&nbsp;        // if not, check if there is a paint defined for the specified key
+<b class="fc">&nbsp;        Paint result = this.sectionOutlinePaintMap.get(key);</b>
+<b class="fc">&nbsp;        if (result != null) {</b>
+<b class="nc">&nbsp;            return result;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // nothing defined - do we autoPopulate?
+<b class="fc">&nbsp;        if (autoPopulate) {</b>
+<b class="nc">&nbsp;            DrawingSupplier ds = getDrawingSupplier();</b>
+<b class="nc">&nbsp;            if (ds != null) {</b>
+<b class="nc">&nbsp;                result = ds.getNextOutlinePaint();</b>
+<b class="nc">&nbsp;                this.sectionOutlinePaintMap.put(key, result);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                result = this.defaultSectionOutlinePaint;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } else {</b>
+<b class="fc">&nbsp;            result = this.defaultSectionOutlinePaint;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline paint associated with the specified key, or
+&nbsp;     * {@code null} if there is no paint associated with the key.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The paint associated with the specified key, or {@code null}.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is {@code null}.
+&nbsp;     *
+&nbsp;     * @see #setSectionOutlinePaint(K, Paint)
+&nbsp;     */
+&nbsp;    public Paint getSectionOutlinePaint(K key) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        return this.sectionOutlinePaintMap.get(key);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline paint associated with the specified key, and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     * @param paint  the paint.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is {@code null}.
+&nbsp;     *
+&nbsp;     * @see #getSectionOutlinePaint(K)
+&nbsp;     */
+&nbsp;    public void setSectionOutlinePaint(K key, Paint paint) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        this.sectionOutlinePaintMap.put(key, paint);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the section outline paint settings for this plot and, if
+&nbsp;     * requested, sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * Be aware that if the {@code autoPopulateSectionPaint} flag is set,
+&nbsp;     * the section paints may be repopulated using the same colours as before.
+&nbsp;     *
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #autoPopulateSectionOutlinePaint
+&nbsp;     */
+&nbsp;    public void clearSectionOutlinePaints(boolean notify) {
+<b class="nc">&nbsp;        this.sectionOutlinePaintMap.clear();</b>
+<b class="nc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default section paint.  This is used when no other paint is
+&nbsp;     * available.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultSectionOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDefaultSectionOutlinePaint() {
+<b class="nc">&nbsp;        return this.defaultSectionOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default section paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultSectionOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setDefaultSectionOutlinePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlinePaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the section outline paint
+&nbsp;     * is auto-populated by the {@link #lookupSectionOutlinePaint(K)}
+&nbsp;     * method.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSectionOutlinePaint() {
+<b class="fc">&nbsp;        return this.autoPopulateSectionOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the section outline paint is
+&nbsp;     * auto-populated by the {@link #lookupSectionOutlinePaint(K)}
+&nbsp;     * method, and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param auto  auto-populate?
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSectionOutlinePaint(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSectionOutlinePaint = auto;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //// SECTION OUTLINE STROKE ///////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline stroke for the specified section.  This is
+&nbsp;     * equivalent to {@code lookupSectionOutlineStroke(section,
+&nbsp;     * getAutoPopulateSectionOutlineStroke())}.
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     *
+&nbsp;     * @return The stroke for the specified section.
+&nbsp;     *
+&nbsp;     * @see #lookupSectionOutlineStroke(K, boolean)
+&nbsp;     */
+&nbsp;    protected Stroke lookupSectionOutlineStroke(K key) {
+<b class="fc">&nbsp;        return lookupSectionOutlineStroke(key, getAutoPopulateSectionOutlineStroke());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline stroke for the specified section.  The lookup
+&nbsp;     * involves these steps:
+&nbsp;     * &lt;ul&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionOutlineStroke(K)} is non-{@code null} return it;&lt;/li&gt;
+&nbsp;     * &lt;li&gt;if {@link #getSectionOutlineStroke(K)} is {@code null} but
+&nbsp;     *         {@code autoPopulate} is {@code true}, attempt to fetch
+&nbsp;     *         a new outline stroke from the drawing supplier
+&nbsp;     *         ({@link #getDrawingSupplier()});
+&nbsp;     * &lt;li&gt;if all else fails, return {@link #getDefaultSectionOutlineStroke()}.
+&nbsp;     * &lt;/ul&gt;
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     * @param autoPopulate  a flag that controls whether the drawing supplier
+&nbsp;     *     is used to auto-populate the section outline stroke settings.
+&nbsp;     *
+&nbsp;     * @return The stroke.
+&nbsp;     */
+&nbsp;    protected Stroke lookupSectionOutlineStroke(K key, boolean autoPopulate) {
+&nbsp;
+&nbsp;        // if not, check if there is a stroke defined for the specified key
+<b class="fc">&nbsp;        Stroke result = this.sectionOutlineStrokeMap.get(key);</b>
+<b class="fc">&nbsp;        if (result != null) {</b>
+<b class="nc">&nbsp;            return result;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // nothing defined - do we autoPopulate?
+<b class="fc">&nbsp;        if (autoPopulate) {</b>
+<b class="nc">&nbsp;            DrawingSupplier ds = getDrawingSupplier();</b>
+<b class="nc">&nbsp;            if (ds != null) {</b>
+<b class="nc">&nbsp;                result = ds.getNextOutlineStroke();</b>
+<b class="nc">&nbsp;                this.sectionOutlineStrokeMap.put(key, result);</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                result = this.defaultSectionOutlineStroke;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        } else {</b>
+<b class="fc">&nbsp;            result = this.defaultSectionOutlineStroke;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the outline stroke associated with the specified key, or
+&nbsp;     * {@code null} if there is no stroke associated with the key.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The stroke associated with the specified key, or {@code null}.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is
+&nbsp;     *     {@code null}.
+&nbsp;     *
+&nbsp;     * @see #setSectionOutlineStroke(K, Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getSectionOutlineStroke(K key) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        return this.sectionOutlineStrokeMap.get(key);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline stroke associated with the specified key, and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     * @param stroke  the stroke.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is
+&nbsp;     *     {@code null}.
+&nbsp;     *
+&nbsp;     * @see #getSectionOutlineStroke(K)
+&nbsp;     */
+&nbsp;    public void setSectionOutlineStroke(K key, Stroke stroke) {
+&nbsp;        // null argument check delegated...
+<b class="fc">&nbsp;        this.sectionOutlineStrokeMap.put(key, stroke);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the section outline stroke settings for this plot and, if
+&nbsp;     * requested, sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * Be aware that if the {@code autoPopulateSectionPaint} flag is set,
+&nbsp;     * the section paints may be repopulated using the same colours as before.
+&nbsp;     *
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #autoPopulateSectionOutlineStroke
+&nbsp;     */
+&nbsp;    public void clearSectionOutlineStrokes(boolean notify) {
+<b class="nc">&nbsp;        this.sectionOutlineStrokeMap.clear();</b>
+<b class="nc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default section stroke.  This is used when no other stroke is
+&nbsp;     * available.
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultSectionOutlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getDefaultSectionOutlineStroke() {
+<b class="nc">&nbsp;        return this.defaultSectionOutlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default section stroke.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultSectionOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setDefaultSectionOutlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(stroke, &quot;stroke&quot;);</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlineStroke = stroke;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the section outline stroke
+&nbsp;     * is auto-populated by the {@link #lookupSectionOutlinePaint(K)}
+&nbsp;     * method.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getAutoPopulateSectionOutlineStroke() {
+<b class="fc">&nbsp;        return this.autoPopulateSectionOutlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the section outline stroke is
+&nbsp;     * auto-populated by the {@link #lookupSectionOutlineStroke(K)}
+&nbsp;     * method, and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param auto  auto-populate?
+&nbsp;     */
+&nbsp;    public void setAutoPopulateSectionOutlineStroke(boolean auto) {
+<b class="fc">&nbsp;        this.autoPopulateSectionOutlineStroke = auto;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow paint.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setShadowPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getShadowPaint() {
+<b class="nc">&nbsp;        return this.shadowPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shadow paint and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getShadowPaint()
+&nbsp;     */
+&nbsp;    public void setShadowPaint(Paint paint) {
+<b class="fc">&nbsp;        this.shadowPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-offset for the shadow effect.
+&nbsp;     *
+&nbsp;     * @return The offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #setShadowXOffset(double)
+&nbsp;     */
+&nbsp;    public double getShadowXOffset() {
+<b class="nc">&nbsp;        return this.shadowXOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the x-offset for the shadow effect and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #getShadowXOffset()
+&nbsp;     */
+&nbsp;    public void setShadowXOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowXOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-offset for the shadow effect.
+&nbsp;     *
+&nbsp;     * @return The offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #setShadowYOffset(double)
+&nbsp;     */
+&nbsp;    public double getShadowYOffset() {
+<b class="nc">&nbsp;        return this.shadowYOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the y-offset for the shadow effect and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #getShadowYOffset()
+&nbsp;     */
+&nbsp;    public void setShadowYOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowYOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the amount that the section with the specified key should be
+&nbsp;     * exploded.
+&nbsp;     *
+&nbsp;     * @param key  the key ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The amount that the section with the specified key should be
+&nbsp;     *     exploded.
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code key} is {@code null}.
+&nbsp;     *
+&nbsp;     * @see #setExplodePercent(K, double)
+&nbsp;     */
+&nbsp;    public double getExplodePercent(K key) {
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        if (this.explodePercentages != null) {</b>
+<b class="fc">&nbsp;            Number percent = (Number) this.explodePercentages.get(key);</b>
+<b class="fc">&nbsp;            if (percent != null) {</b>
+<b class="fc">&nbsp;                result = percent.doubleValue();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the amount that a pie section should be exploded and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param key  the section key ({@code null} not permitted).
+&nbsp;     * @param percent  the explode percentage (0.30 = 30 percent).
+&nbsp;     *
+&nbsp;     * @see #getExplodePercent(K)
+&nbsp;     */
+&nbsp;    public void setExplodePercent(K key, double percent) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(key, &quot;key&quot;);</b>
+<b class="fc">&nbsp;        if (this.explodePercentages == null) {</b>
+<b class="nc">&nbsp;            this.explodePercentages = new TreeMap&lt;&gt;();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.explodePercentages.put(key, percent);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum explode percent.
+&nbsp;     *
+&nbsp;     * @return The percent.
+&nbsp;     */
+&nbsp;    public double getMaximumExplodePercent() {
+<b class="fc">&nbsp;        if (this.dataset == null) {</b>
+<b class="nc">&nbsp;            return 0.0;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        for (K key : this.dataset.getKeys()) {</b>
+<b class="fc">&nbsp;            Double explode = this.explodePercentages.get(key);</b>
+<b class="fc">&nbsp;            if (explode != null) {</b>
+<b class="nc">&nbsp;                result = Math.max(result, explode);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label generator.
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelGenerator(PieSectionLabelGenerator)
+&nbsp;     */
+&nbsp;    public PieSectionLabelGenerator getLabelGenerator() {
+<b class="fc">&nbsp;        return this.labelGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label generator and sends a {@link PlotChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelGenerator()
+&nbsp;     */
+&nbsp;    public void setLabelGenerator(PieSectionLabelGenerator generator) {
+<b class="fc">&nbsp;        this.labelGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gap between the edge of the pie and the labels, expressed as
+&nbsp;     * a percentage of the plot width.
+&nbsp;     *
+&nbsp;     * @return The gap (a percentage, where 0.05 = five percent).
+&nbsp;     *
+&nbsp;     * @see #setLabelGap(double)
+&nbsp;     */
+&nbsp;    public double getLabelGap() {
+<b class="nc">&nbsp;        return this.labelGap;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gap between the edge of the pie and the labels (expressed as a
+&nbsp;     * percentage of the plot width) and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param gap  the gap (a percentage, where 0.05 = five percent).
+&nbsp;     *
+&nbsp;     * @see #getLabelGap()
+&nbsp;     */
+&nbsp;    public void setLabelGap(double gap) {
+<b class="fc">&nbsp;        this.labelGap = gap;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum label width as a percentage of the plot width.
+&nbsp;     *
+&nbsp;     * @return The width (a percentage, where 0.20 = 20 percent).
+&nbsp;     *
+&nbsp;     * @see #setMaximumLabelWidth(double)
+&nbsp;     */
+&nbsp;    public double getMaximumLabelWidth() {
+<b class="nc">&nbsp;        return this.maximumLabelWidth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum label width as a percentage of the plot width and sends
+&nbsp;     * a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param width  the width (a percentage, where 0.20 = 20 percent).
+&nbsp;     *
+&nbsp;     * @see #getMaximumLabelWidth()
+&nbsp;     */
+&nbsp;    public void setMaximumLabelWidth(double width) {
+<b class="fc">&nbsp;        this.maximumLabelWidth = width;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not label linking lines are
+&nbsp;     * visible.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setLabelLinksVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean getLabelLinksVisible() {
+<b class="nc">&nbsp;        return this.labelLinksVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not label linking lines are
+&nbsp;     * visible and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * Please take care when hiding the linking lines - depending on the data
+&nbsp;     * values, the labels can be displayed some distance away from the
+&nbsp;     * corresponding pie section.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getLabelLinksVisible()
+&nbsp;     */
+&nbsp;    public void setLabelLinksVisible(boolean visible) {
+<b class="fc">&nbsp;        this.labelLinksVisible = visible;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the label link style.
+&nbsp;     *
+&nbsp;     * @return The label link style (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkStyle(PieLabelLinkStyle)
+&nbsp;     */
+&nbsp;    public PieLabelLinkStyle getLabelLinkStyle() {
+<b class="fc">&nbsp;        return this.labelLinkStyle;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the label link style and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param style  the new style ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkStyle()
+&nbsp;     */
+&nbsp;    public void setLabelLinkStyle(PieLabelLinkStyle style) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(style, &quot;style&quot;);</b>
+<b class="fc">&nbsp;        this.labelLinkStyle = style;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the margin (expressed as a percentage of the width or height)
+&nbsp;     * between the edge of the pie and the link point.
+&nbsp;     *
+&nbsp;     * @return The link margin (as a percentage, where 0.05 is five percent).
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkMargin(double)
+&nbsp;     */
+&nbsp;    public double getLabelLinkMargin() {
+<b class="nc">&nbsp;        return this.labelLinkMargin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the link margin and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param margin  the margin.
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkMargin()
+&nbsp;     */
+&nbsp;    public void setLabelLinkMargin(double margin) {
+<b class="fc">&nbsp;        this.labelLinkMargin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used for the lines that connect pie sections to their
+&nbsp;     * corresponding labels.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelLinkPaint() {
+<b class="nc">&nbsp;        return this.labelLinkPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for the lines that connect pie sections to their
+&nbsp;     * corresponding labels, and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkPaint()
+&nbsp;     */
+&nbsp;    public void setLabelLinkPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.labelLinkPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used for the label linking lines.
+&nbsp;     *
+&nbsp;     * @return The stroke.
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getLabelLinkStroke() {
+<b class="nc">&nbsp;        return this.labelLinkStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the link stroke and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke.
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkStroke()
+&nbsp;     */
+&nbsp;    public void setLabelLinkStroke(Stroke stroke) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(stroke, &quot;stroke&quot;);</b>
+<b class="fc">&nbsp;        this.labelLinkStroke = stroke;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the distance that the end of the label link is embedded into
+&nbsp;     * the plot, expressed as a percentage of the plot&#39;s radius.
+&nbsp;     * &lt;br&gt;&lt;br&gt;
+&nbsp;     * This method is overridden in the {@link RingPlot} class to resolve
+&nbsp;     * bug 2121818.
+&nbsp;     *
+&nbsp;     * @return {@code 0.10}.
+&nbsp;     */
+&nbsp;    protected double getLabelLinkDepth() {
+<b class="fc">&nbsp;        return 0.1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label font.
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelFont(Font)
+&nbsp;     */
+&nbsp;    public Font getLabelFont() {
+<b class="fc">&nbsp;        return this.labelFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label font and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelFont()
+&nbsp;     */
+&nbsp;    public void setLabelFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.labelFont = font;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelPaint() {
+<b class="nc">&nbsp;        return this.labelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label paint and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelPaint()
+&nbsp;     */
+&nbsp;    public void setLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.labelPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label background paint.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelBackgroundPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelBackgroundPaint() {
+<b class="nc">&nbsp;        return this.labelBackgroundPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label background paint and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelBackgroundPaint()
+&nbsp;     */
+&nbsp;    public void setLabelBackgroundPaint(Paint paint) {
+<b class="fc">&nbsp;        this.labelBackgroundPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label outline paint.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelOutlinePaint() {
+<b class="nc">&nbsp;        return this.labelOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label outline paint and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setLabelOutlinePaint(Paint paint) {
+<b class="fc">&nbsp;        this.labelOutlinePaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label outline stroke.
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelOutlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getLabelOutlineStroke() {
+<b class="nc">&nbsp;        return this.labelOutlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label outline stroke and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setLabelOutlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        this.labelOutlineStroke = stroke;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the section label shadow paint.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelShadowPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelShadowPaint() {
+<b class="nc">&nbsp;        return this.labelShadowPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the section label shadow paint and sends a {@link PlotChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelShadowPaint()
+&nbsp;     */
+&nbsp;    public void setLabelShadowPaint(Paint paint) {
+<b class="fc">&nbsp;        this.labelShadowPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the label padding.
+&nbsp;     *
+&nbsp;     * @return The label padding (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelPadding(RectangleInsets)
+&nbsp;     */
+&nbsp;    public RectangleInsets getLabelPadding() {
+<b class="nc">&nbsp;        return this.labelPadding;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the padding between each label and its outline and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param padding  the padding ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelPadding()
+&nbsp;     */
+&nbsp;    public void setLabelPadding(RectangleInsets padding) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(padding, &quot;padding&quot;);</b>
+<b class="nc">&nbsp;        this.labelPadding = padding;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether simple or extended labels are
+&nbsp;     * displayed on the plot.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getSimpleLabels() {
+<b class="nc">&nbsp;        return this.simpleLabels;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether simple or extended labels are
+&nbsp;     * displayed on the plot, and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param simple  the new flag value.
+&nbsp;     */
+&nbsp;    public void setSimpleLabels(boolean simple) {
+<b class="nc">&nbsp;        this.simpleLabels = simple;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the offset used for the simple labels, if they are displayed.
+&nbsp;     *
+&nbsp;     * @return The offset (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSimpleLabelOffset(RectangleInsets)
+&nbsp;     */
+&nbsp;    public RectangleInsets getSimpleLabelOffset() {
+<b class="nc">&nbsp;        return this.simpleLabelOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the offset for the simple labels and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getSimpleLabelOffset()
+&nbsp;     */
+&nbsp;    public void setSimpleLabelOffset(RectangleInsets offset) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(offset, &quot;offset&quot;);</b>
+<b class="nc">&nbsp;        this.simpleLabelOffset = offset;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the object responsible for the vertical layout of the pie
+&nbsp;     * section labels.
+&nbsp;     *
+&nbsp;     * @return The label distributor (never {@code null}).
+&nbsp;     */
+&nbsp;    public AbstractPieLabelDistributor getLabelDistributor() {
+<b class="nc">&nbsp;        return this.labelDistributor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the label distributor and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param distributor  the distributor ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setLabelDistributor(AbstractPieLabelDistributor distributor) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(distributor, &quot;distributor&quot;);</b>
+<b class="nc">&nbsp;        this.labelDistributor = distributor;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tool tip generator, an object that is responsible for
+&nbsp;     * generating the text items used for tool tips by the plot.  If the
+&nbsp;     * generator is {@code null}, no tool tips will be created.
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setToolTipGenerator(PieToolTipGenerator)
+&nbsp;     */
+&nbsp;    public PieToolTipGenerator getToolTipGenerator() {
+<b class="nc">&nbsp;        return this.toolTipGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tool tip generator and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.  Set the generator to {@code null} if you
+&nbsp;     * don&#39;t want any tool tips.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getToolTipGenerator()
+&nbsp;     */
+&nbsp;    public void setToolTipGenerator(PieToolTipGenerator generator) {
+<b class="fc">&nbsp;        this.toolTipGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the URL generator.
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setURLGenerator(PieURLGenerator)
+&nbsp;     */
+&nbsp;    public PieURLGenerator getURLGenerator() {
+<b class="fc">&nbsp;        return this.urlGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the URL generator and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getURLGenerator()
+&nbsp;     */
+&nbsp;    public void setURLGenerator(PieURLGenerator generator) {
+<b class="fc">&nbsp;        this.urlGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum arc angle that will be drawn.  Pie sections for an
+&nbsp;     * angle smaller than this are not drawn, to avoid a JDK bug.
+&nbsp;     *
+&nbsp;     * @return The minimum angle.
+&nbsp;     *
+&nbsp;     * @see #setMinimumArcAngleToDraw(double)
+&nbsp;     */
+&nbsp;    public double getMinimumArcAngleToDraw() {
+<b class="fc">&nbsp;        return this.minimumArcAngleToDraw;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the minimum arc angle that will be drawn.  Pie sections for an
+&nbsp;     * angle smaller than this are not drawn, to avoid a JDK bug.  See this
+&nbsp;     * link for details:
+&nbsp;     * &lt;br&gt;&lt;br&gt;
+&nbsp;     * &lt;a href=&quot;http://www.jfree.org/phpBB2/viewtopic.php?t=2707&quot;&gt;
+&nbsp;     * http://www.jfree.org/phpBB2/viewtopic.php?t=2707&lt;/a&gt;
+&nbsp;     * &lt;br&gt;&lt;br&gt;
+&nbsp;     * ...and this bug report in the Java Bug Parade:
+&nbsp;     * &lt;br&gt;&lt;br&gt;
+&nbsp;     * &lt;a href=
+&nbsp;     * &quot;http://developer.java.sun.com/developer/bugParade/bugs/4836495.html&quot;&gt;
+&nbsp;     * http://developer.java.sun.com/developer/bugParade/bugs/4836495.html&lt;/a&gt;
+&nbsp;     *
+&nbsp;     * @param angle  the minimum angle.
+&nbsp;     *
+&nbsp;     * @see #getMinimumArcAngleToDraw()
+&nbsp;     */
+&nbsp;    public void setMinimumArcAngleToDraw(double angle) {
+<b class="fc">&nbsp;        this.minimumArcAngleToDraw = angle;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shape used for legend items.
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendItemShape(Shape)
+&nbsp;     */
+&nbsp;    public Shape getLegendItemShape() {
+<b class="fc">&nbsp;        return this.legendItemShape;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used for legend items and sends a {@link PlotChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendItemShape()
+&nbsp;     */
+&nbsp;    public void setLegendItemShape(Shape shape) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(shape, &quot;shape&quot;);</b>
+<b class="fc">&nbsp;        this.legendItemShape = shape;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend label generator.
+&nbsp;     *
+&nbsp;     * @return The legend label generator (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendLabelGenerator(PieSectionLabelGenerator)
+&nbsp;     */
+&nbsp;    public PieSectionLabelGenerator getLegendLabelGenerator() {
+<b class="nc">&nbsp;        return this.legendLabelGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend label generator and sends a {@link PlotChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendLabelGenerator()
+&nbsp;     */
+&nbsp;    public void setLegendLabelGenerator(PieSectionLabelGenerator generator) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(generator, &quot;generator&quot;);</b>
+<b class="fc">&nbsp;        this.legendLabelGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend label tool tip generator.
+&nbsp;     *
+&nbsp;     * @return The legend label tool tip generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendLabelToolTipGenerator(PieSectionLabelGenerator)
+&nbsp;     */
+&nbsp;    public PieSectionLabelGenerator getLegendLabelToolTipGenerator() {
+<b class="nc">&nbsp;        return this.legendLabelToolTipGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend label tool tip generator and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendLabelToolTipGenerator()
+&nbsp;     */
+&nbsp;    public void setLegendLabelToolTipGenerator(
+&nbsp;            PieSectionLabelGenerator generator) {
+<b class="fc">&nbsp;        this.legendLabelToolTipGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend label URL generator.
+&nbsp;     *
+&nbsp;     * @return The legend label URL generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendLabelURLGenerator(PieURLGenerator)
+&nbsp;     */
+&nbsp;    public PieURLGenerator getLegendLabelURLGenerator() {
+<b class="fc">&nbsp;        return this.legendLabelURLGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend label URL generator and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendLabelURLGenerator()
+&nbsp;     */
+&nbsp;    public void setLegendLabelURLGenerator(PieURLGenerator generator) {
+<b class="fc">&nbsp;        this.legendLabelURLGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow generator for the plot, if any.
+&nbsp;     * 
+&nbsp;     * @return The shadow generator (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public ShadowGenerator getShadowGenerator() {
+<b class="nc">&nbsp;        return this.shadowGenerator;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shadow generator for the plot and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.  Note that this is
+&nbsp;     * a bitmap drop-shadow generation facility and is separate from the
+&nbsp;     * vector based show option that is controlled via the
+&nbsp;     * {@link #setShadowPaint(java.awt.Paint)} method.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setShadowGenerator(ShadowGenerator generator) {
+<b class="fc">&nbsp;        this.shadowGenerator = generator;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a mouse wheel rotation (this method is intended for use by the
+&nbsp;     * {@code MouseWheelHandler} class).
+&nbsp;     *
+&nbsp;     * @param rotateClicks  the number of rotate clicks on the the mouse wheel.
+&nbsp;     */
+&nbsp;    public void handleMouseWheelRotation(int rotateClicks) {
+<b class="nc">&nbsp;        setStartAngle(this.startAngle + rotateClicks * 4.0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the drawing procedure.  This method will be called before
+&nbsp;     * the first item is rendered, giving the plot an opportunity to initialise
+&nbsp;     * any state information it wants to maintain.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plotArea  the plot area ({@code null} not permitted).
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param index  the secondary index ({@code null} for primary
+&nbsp;     *               renderer).
+&nbsp;     * @param info  collects chart rendering information for return to caller.
+&nbsp;     *
+&nbsp;     * @return A state object (maintains state information relevant to one
+&nbsp;     *         chart drawing).
+&nbsp;     */
+&nbsp;    public PiePlotState initialise(Graphics2D g2, Rectangle2D plotArea,
+&nbsp;            PiePlot&lt;?&gt; plot, Integer index, PlotRenderingInfo info) {
+&nbsp;
+<b class="fc">&nbsp;        PiePlotState state = new PiePlotState(info);</b>
+<b class="fc">&nbsp;        state.setPassesRequired(2);</b>
+<b class="fc">&nbsp;        if (this.dataset != null) {</b>
+<b class="fc">&nbsp;            state.setTotal(DatasetUtils.calculatePieDatasetTotal(</b>
+<b class="fc">&nbsp;                    plot.getDataset()));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        state.setLatestAngle(plot.getStartAngle());</b>
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the plot on a Java 2D graphics device (such as the screen or a
+&nbsp;     * printer).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area within which the plot should be drawn.
+&nbsp;     * @param anchor  the anchor point ({@code null} permitted).
+&nbsp;     * @param parentState  the state from the parent plot, if there is one.
+&nbsp;     * @param info  collects info about the drawing
+&nbsp;     *              ({@code null} permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,
+&nbsp;                     PlotState parentState, PlotRenderingInfo info) {
+&nbsp;
+&nbsp;        // adjust for insets...
+<b class="fc">&nbsp;        RectangleInsets insets = getInsets();</b>
+<b class="fc">&nbsp;        insets.trim(area);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (info != null) {</b>
+<b class="nc">&nbsp;            info.setPlotArea(area);</b>
+<b class="nc">&nbsp;            info.setDataArea(area);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        drawBackground(g2, area);</b>
+<b class="fc">&nbsp;        drawOutline(g2, area);</b>
+&nbsp;
+<b class="fc">&nbsp;        Shape savedClip = g2.getClip();</b>
+<b class="fc">&nbsp;        g2.clip(area);</b>
+&nbsp;
+<b class="fc">&nbsp;        Composite originalComposite = g2.getComposite();</b>
+<b class="fc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+<b class="fc">&nbsp;                getForegroundAlpha()));</b>
+&nbsp;
+<b class="fc">&nbsp;        if (!DatasetUtils.isEmptyOrNull(this.dataset)) {</b>
+<b class="fc">&nbsp;            Graphics2D savedG2 = g2;</b>
+<b class="fc">&nbsp;            boolean suppressShadow = Boolean.TRUE.equals(g2.getRenderingHint(</b>
+&nbsp;                    JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION));
+<b class="fc">&nbsp;            BufferedImage dataImage = null;</b>
+<b class="fc">&nbsp;            if (this.shadowGenerator != null &amp;&amp; !suppressShadow) {</b>
+<b class="nc">&nbsp;                dataImage = new BufferedImage((int) area.getWidth(),</b>
+<b class="nc">&nbsp;                    (int) area.getHeight(), BufferedImage.TYPE_INT_ARGB);</b>
+<b class="nc">&nbsp;                g2 = dataImage.createGraphics();</b>
+<b class="nc">&nbsp;                g2.translate(-area.getX(), -area.getY());</b>
+<b class="nc">&nbsp;                g2.setRenderingHints(savedG2.getRenderingHints());</b>
+&nbsp;            }
+<b class="fc">&nbsp;            drawPie(g2, area, info);</b>
+<b class="fc">&nbsp;            if (this.shadowGenerator != null &amp;&amp; !suppressShadow) {</b>
+<b class="nc">&nbsp;                BufferedImage shadowImage </b>
+<b class="nc">&nbsp;                        = this.shadowGenerator.createDropShadow(dataImage);</b>
+<b class="nc">&nbsp;                g2 = savedG2;</b>
+<b class="nc">&nbsp;                g2.drawImage(shadowImage, (int) area.getX() </b>
+<b class="nc">&nbsp;                        + this.shadowGenerator.calculateOffsetX(), </b>
+<b class="nc">&nbsp;                        (int) area.getY()</b>
+<b class="nc">&nbsp;                        + this.shadowGenerator.calculateOffsetY(), null);</b>
+<b class="nc">&nbsp;                g2.drawImage(dataImage, (int) area.getX(), (int) area.getY(), </b>
+&nbsp;                        null);
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            drawNoDataMessage(g2, area);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        g2.setClip(savedClip);</b>
+<b class="fc">&nbsp;        g2.setComposite(originalComposite);</b>
+&nbsp;
+<b class="fc">&nbsp;        drawOutline(g2, area);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the pie.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     * @param info  chart rendering info.
+&nbsp;     */
+&nbsp;    protected void drawPie(Graphics2D g2, Rectangle2D plotArea,
+&nbsp;                           PlotRenderingInfo info) {
+&nbsp;
+<b class="fc">&nbsp;        PiePlotState state = initialise(g2, plotArea, this, null, info);</b>
+&nbsp;
+&nbsp;        // adjust the plot area for interior spacing and labels...
+<b class="fc">&nbsp;        double labelReserve = 0.0;</b>
+<b class="fc">&nbsp;        if (this.labelGenerator != null &amp;&amp; !this.simpleLabels) {</b>
+<b class="fc">&nbsp;            labelReserve = this.labelGap + this.maximumLabelWidth;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double gapHorizontal = plotArea.getWidth() * labelReserve * 2.0;</b>
+<b class="fc">&nbsp;        double gapVertical = plotArea.getHeight() * this.interiorGap * 2.0;</b>
+&nbsp;
+&nbsp;
+&nbsp;        if (DEBUG_DRAW_INTERIOR) {
+&nbsp;            double hGap = plotArea.getWidth() * this.interiorGap;
+&nbsp;            double vGap = plotArea.getHeight() * this.interiorGap;
+&nbsp;
+&nbsp;            double igx1 = plotArea.getX() + hGap;
+&nbsp;            double igx2 = plotArea.getMaxX() - hGap;
+&nbsp;            double igy1 = plotArea.getY() + vGap;
+&nbsp;            double igy2 = plotArea.getMaxY() - vGap;
+&nbsp;            g2.setPaint(Color.GRAY);
+&nbsp;            g2.draw(new Rectangle2D.Double(igx1, igy1, igx2 - igx1,
+&nbsp;                    igy2 - igy1));
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        double linkX = plotArea.getX() + gapHorizontal / 2;</b>
+<b class="fc">&nbsp;        double linkY = plotArea.getY() + gapVertical / 2;</b>
+<b class="fc">&nbsp;        double linkW = plotArea.getWidth() - gapHorizontal;</b>
+<b class="fc">&nbsp;        double linkH = plotArea.getHeight() - gapVertical;</b>
+&nbsp;
+&nbsp;        // make the link area a square if the pie chart is to be circular...
+<b class="fc">&nbsp;        if (this.circular) {</b>
+<b class="fc">&nbsp;            double min = Math.min(linkW, linkH) / 2;</b>
+<b class="fc">&nbsp;            linkX = (linkX + linkX + linkW) / 2 - min;</b>
+<b class="fc">&nbsp;            linkY = (linkY + linkY + linkH) / 2 - min;</b>
+<b class="fc">&nbsp;            linkW = 2 * min;</b>
+<b class="fc">&nbsp;            linkH = 2 * min;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // the link area defines the dog leg points for the linking lines to
+&nbsp;        // the labels
+<b class="fc">&nbsp;        Rectangle2D linkArea = new Rectangle2D.Double(linkX, linkY, linkW,</b>
+&nbsp;                linkH);
+<b class="fc">&nbsp;        state.setLinkArea(linkArea);</b>
+&nbsp;
+&nbsp;        if (DEBUG_DRAW_LINK_AREA) {
+&nbsp;            g2.setPaint(Color.BLUE);
+&nbsp;            g2.draw(linkArea);
+&nbsp;            g2.setPaint(Color.YELLOW);
+&nbsp;            g2.draw(new Ellipse2D.Double(linkArea.getX(), linkArea.getY(),
+&nbsp;                    linkArea.getWidth(), linkArea.getHeight()));
+&nbsp;        }
+&nbsp;
+&nbsp;        // the explode area defines the max circle/ellipse for the exploded
+&nbsp;        // pie sections.  it is defined by shrinking the linkArea by the
+&nbsp;        // linkMargin factor.
+<b class="fc">&nbsp;        double lm = 0.0;</b>
+<b class="fc">&nbsp;        if (!this.simpleLabels) {</b>
+<b class="fc">&nbsp;            lm = this.labelLinkMargin;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double hh = linkArea.getWidth() * lm * 2.0;</b>
+<b class="fc">&nbsp;        double vv = linkArea.getHeight() * lm * 2.0;</b>
+<b class="fc">&nbsp;        Rectangle2D explodeArea = new Rectangle2D.Double(linkX + hh / 2.0,</b>
+&nbsp;                linkY + vv / 2.0, linkW - hh, linkH - vv);
+&nbsp;
+<b class="fc">&nbsp;        state.setExplodedPieArea(explodeArea);</b>
+&nbsp;
+&nbsp;        // the pie area defines the circle/ellipse for regular pie sections.
+&nbsp;        // it is defined by shrinking the explodeArea by the explodeMargin
+&nbsp;        // factor.
+<b class="fc">&nbsp;        double maximumExplodePercent = getMaximumExplodePercent();</b>
+<b class="fc">&nbsp;        double percent = maximumExplodePercent / (1.0 + maximumExplodePercent);</b>
+&nbsp;
+<b class="fc">&nbsp;        double h1 = explodeArea.getWidth() * percent;</b>
+<b class="fc">&nbsp;        double v1 = explodeArea.getHeight() * percent;</b>
+<b class="fc">&nbsp;        Rectangle2D pieArea = new Rectangle2D.Double(explodeArea.getX()</b>
+<b class="fc">&nbsp;                + h1 / 2.0, explodeArea.getY() + v1 / 2.0,</b>
+<b class="fc">&nbsp;                explodeArea.getWidth() - h1, explodeArea.getHeight() - v1);</b>
+&nbsp;
+&nbsp;        if (DEBUG_DRAW_PIE_AREA) {
+&nbsp;            g2.setPaint(Color.GREEN);
+&nbsp;            g2.draw(pieArea);
+&nbsp;        }
+<b class="fc">&nbsp;        state.setPieArea(pieArea);</b>
+<b class="fc">&nbsp;        state.setPieCenterX(pieArea.getCenterX());</b>
+<b class="fc">&nbsp;        state.setPieCenterY(pieArea.getCenterY());</b>
+<b class="fc">&nbsp;        state.setPieWRadius(pieArea.getWidth() / 2.0);</b>
+<b class="fc">&nbsp;        state.setPieHRadius(pieArea.getHeight() / 2.0);</b>
+&nbsp;
+&nbsp;        // plot the data (unless the dataset is null)...
+<b class="fc">&nbsp;        if ((this.dataset != null) &amp;&amp; (this.dataset.getKeys().size() &gt; 0)) {</b>
+&nbsp;
+<b class="fc">&nbsp;            List&lt;K&gt; keys = this.dataset.getKeys();</b>
+<b class="fc">&nbsp;            double totalValue = DatasetUtils.calculatePieDatasetTotal(</b>
+&nbsp;                    this.dataset);
+&nbsp;
+<b class="fc">&nbsp;            int passesRequired = state.getPassesRequired();</b>
+<b class="fc">&nbsp;            for (int pass = 0; pass &lt; passesRequired; pass++) {</b>
+<b class="fc">&nbsp;                double runningTotal = 0.0;</b>
+<b class="fc">&nbsp;                for (int section = 0; section &lt; keys.size(); section++) {</b>
+<b class="fc">&nbsp;                    Number n = this.dataset.getValue(section);</b>
+<b class="fc">&nbsp;                    if (n != null) {</b>
+<b class="fc">&nbsp;                        double value = n.doubleValue();</b>
+<b class="fc">&nbsp;                        if (value &gt; 0.0) {</b>
+<b class="fc">&nbsp;                            runningTotal += value;</b>
+<b class="fc">&nbsp;                            drawItem(g2, section, explodeArea, state, pass);</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (this.simpleLabels) {</b>
+<b class="nc">&nbsp;                drawSimpleLabels(g2, keys, totalValue, plotArea, linkArea,</b>
+&nbsp;                        state);
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                drawLabels(g2, keys, totalValue, plotArea, linkArea, state);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            drawNoDataMessage(g2, plotArea);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a single data item.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     * @param section  the section index.
+&nbsp;     * @param dataArea  the data plot area.
+&nbsp;     * @param state  state information for one chart.
+&nbsp;     * @param currentPass  the current pass index.
+&nbsp;     */
+&nbsp;    protected void drawItem(Graphics2D g2, int section, Rectangle2D dataArea,
+&nbsp;                            PiePlotState state, int currentPass) {
+&nbsp;
+<b class="fc">&nbsp;        Number n = this.dataset.getValue(section);</b>
+<b class="fc">&nbsp;        if (n == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        double value = n.doubleValue();</b>
+<b class="fc">&nbsp;        double angle1 = 0.0;</b>
+<b class="fc">&nbsp;        double angle2 = 0.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (this.direction == Rotation.CLOCKWISE) {</b>
+<b class="fc">&nbsp;            angle1 = state.getLatestAngle();</b>
+<b class="fc">&nbsp;            angle2 = angle1 - value / state.getTotal() * 360.0;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (this.direction == Rotation.ANTICLOCKWISE) {</b>
+<b class="nc">&nbsp;            angle1 = state.getLatestAngle();</b>
+<b class="nc">&nbsp;            angle2 = angle1 + value / state.getTotal() * 360.0;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Rotation type not recognised.&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        double angle = (angle2 - angle1);</b>
+<b class="fc">&nbsp;        if (Math.abs(angle) &gt; getMinimumArcAngleToDraw()) {</b>
+<b class="fc">&nbsp;            double ep = 0.0;</b>
+<b class="fc">&nbsp;            double mep = getMaximumExplodePercent();</b>
+<b class="fc">&nbsp;            if (mep &gt; 0.0) {</b>
+<b class="nc">&nbsp;                ep = getExplodePercent(dataset.getKey(section)) / mep;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Rectangle2D arcBounds = getArcBounds(state.getPieArea(),</b>
+<b class="fc">&nbsp;                    state.getExplodedPieArea(), angle1, angle, ep);</b>
+<b class="fc">&nbsp;            Arc2D.Double arc = new Arc2D.Double(arcBounds, angle1, angle,</b>
+&nbsp;                    Arc2D.PIE);
+&nbsp;
+<b class="fc">&nbsp;            if (currentPass == 0) {</b>
+<b class="fc">&nbsp;                if (this.shadowPaint != null &amp;&amp; this.shadowGenerator == null) {</b>
+<b class="fc">&nbsp;                    Shape shadowArc = ShapeUtils.createTranslatedShape(</b>
+&nbsp;                            arc, (float) this.shadowXOffset,
+&nbsp;                            (float) this.shadowYOffset);
+<b class="fc">&nbsp;                    g2.setPaint(this.shadowPaint);</b>
+<b class="fc">&nbsp;                    g2.fill(shadowArc);</b>
+<b class="fc">&nbsp;                }</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (currentPass == 1) {</b>
+<b class="fc">&nbsp;                K key = getSectionKey(section);</b>
+<b class="fc">&nbsp;                Paint paint = lookupSectionPaint(key, state);</b>
+<b class="fc">&nbsp;                g2.setPaint(paint);</b>
+<b class="fc">&nbsp;                g2.fill(arc);</b>
+&nbsp;
+<b class="fc">&nbsp;                Paint outlinePaint = lookupSectionOutlinePaint(key);</b>
+<b class="fc">&nbsp;                Stroke outlineStroke = lookupSectionOutlineStroke(key);</b>
+<b class="fc">&nbsp;                if (this.sectionOutlinesVisible) {</b>
+<b class="fc">&nbsp;                    g2.setPaint(outlinePaint);</b>
+<b class="fc">&nbsp;                    g2.setStroke(outlineStroke);</b>
+<b class="fc">&nbsp;                    g2.draw(arc);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                // update the linking line target for later
+&nbsp;                // add an entity for the pie section
+<b class="fc">&nbsp;                if (state.getInfo() != null) {</b>
+<b class="nc">&nbsp;                    EntityCollection entities = state.getEntityCollection();</b>
+<b class="nc">&nbsp;                    if (entities != null) {</b>
+<b class="nc">&nbsp;                        String tip = null;</b>
+<b class="nc">&nbsp;                        if (this.toolTipGenerator != null) {</b>
+<b class="nc">&nbsp;                            tip = this.toolTipGenerator.generateToolTip(</b>
+&nbsp;                                    this.dataset, key);
+&nbsp;                        }
+<b class="nc">&nbsp;                        String url = null;</b>
+<b class="nc">&nbsp;                        if (this.urlGenerator != null) {</b>
+<b class="nc">&nbsp;                            url = this.urlGenerator.generateURL(this.dataset,</b>
+&nbsp;                                    key, this.pieIndex);
+&nbsp;                        }
+<b class="nc">&nbsp;                        PieSectionEntity entity = new PieSectionEntity(</b>
+&nbsp;                                arc, this.dataset, this.pieIndex, section, key,
+&nbsp;                                tip, url);
+<b class="nc">&nbsp;                        entities.add(entity);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        state.setLatestAngle(angle2);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the pie section labels in the simple form.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param keys  the section keys.
+&nbsp;     * @param totalValue  the total value for all sections in the pie.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     * @param pieArea  the area containing the pie.
+&nbsp;     * @param state  the plot state.
+&nbsp;     */
+&nbsp;    protected void drawSimpleLabels(Graphics2D g2, List&lt;K&gt; keys,
+&nbsp;            double totalValue, Rectangle2D plotArea, Rectangle2D pieArea,
+&nbsp;            PiePlotState state) {
+&nbsp;
+<b class="nc">&nbsp;        Composite originalComposite = g2.getComposite();</b>
+<b class="nc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+&nbsp;                1.0f));
+&nbsp;
+<b class="nc">&nbsp;        Rectangle2D labelsArea = this.simpleLabelOffset.createInsetRectangle(</b>
+&nbsp;                pieArea);
+<b class="nc">&nbsp;        double runningTotal = 0.0;</b>
+<b class="nc">&nbsp;        for (K key : keys) {</b>
+&nbsp;            boolean include;
+<b class="nc">&nbsp;            double v = 0.0;</b>
+<b class="nc">&nbsp;            Number n = getDataset().getValue(key);</b>
+<b class="nc">&nbsp;            if (n == null) {</b>
+<b class="nc">&nbsp;                include = !getIgnoreNullValues();</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                v = n.doubleValue();</b>
+<b class="nc">&nbsp;                include = getIgnoreZeroValues() ? v &gt; 0.0 : v &gt;= 0.0;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (include) {</b>
+<b class="nc">&nbsp;                runningTotal = runningTotal + v;</b>
+&nbsp;                // work out the mid angle (0 - 90 and 270 - 360) = right,
+&nbsp;                // otherwise left
+<b class="nc">&nbsp;                double mid = getStartAngle() + (getDirection().getFactor()</b>
+&nbsp;                        * ((runningTotal - v / 2.0) * 360) / totalValue);
+&nbsp;
+<b class="nc">&nbsp;                Arc2D arc = new Arc2D.Double(labelsArea, getStartAngle(),</b>
+<b class="nc">&nbsp;                        mid - getStartAngle(), Arc2D.OPEN);</b>
+<b class="nc">&nbsp;                int x = (int) arc.getEndPoint().getX();</b>
+<b class="nc">&nbsp;                int y = (int) arc.getEndPoint().getY();</b>
+&nbsp;
+<b class="nc">&nbsp;                PieSectionLabelGenerator myLabelGenerator = getLabelGenerator();</b>
+<b class="nc">&nbsp;                if (myLabelGenerator == null) {</b>
+<b class="nc">&nbsp;                    continue;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                String label = myLabelGenerator.generateSectionLabel(</b>
+&nbsp;                        this.dataset, key);
+<b class="nc">&nbsp;                if (label == null) {</b>
+<b class="nc">&nbsp;                    continue;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                g2.setFont(this.labelFont);</b>
+<b class="nc">&nbsp;                FontMetrics fm = g2.getFontMetrics();</b>
+<b class="nc">&nbsp;                Rectangle2D bounds = TextUtils.getTextBounds(label, g2, fm);</b>
+<b class="nc">&nbsp;                Rectangle2D out = this.labelPadding.createOutsetRectangle(</b>
+&nbsp;                        bounds);
+<b class="nc">&nbsp;                Shape bg = ShapeUtils.createTranslatedShape(out,</b>
+<b class="nc">&nbsp;                        x - bounds.getCenterX(), y - bounds.getCenterY());</b>
+<b class="nc">&nbsp;                if (this.labelShadowPaint != null</b>
+&nbsp;                        &amp;&amp; this.shadowGenerator == null) {
+<b class="nc">&nbsp;                    Shape shadow = ShapeUtils.createTranslatedShape(bg,</b>
+&nbsp;                            this.shadowXOffset, this.shadowYOffset);
+<b class="nc">&nbsp;                    g2.setPaint(this.labelShadowPaint);</b>
+<b class="nc">&nbsp;                    g2.fill(shadow);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (this.labelBackgroundPaint != null) {</b>
+<b class="nc">&nbsp;                    g2.setPaint(this.labelBackgroundPaint);</b>
+<b class="nc">&nbsp;                    g2.fill(bg);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (this.labelOutlinePaint != null</b>
+&nbsp;                        &amp;&amp; this.labelOutlineStroke != null) {
+<b class="nc">&nbsp;                    g2.setPaint(this.labelOutlinePaint);</b>
+<b class="nc">&nbsp;                    g2.setStroke(this.labelOutlineStroke);</b>
+<b class="nc">&nbsp;                    g2.draw(bg);</b>
+&nbsp;                }
+&nbsp;
+<b class="nc">&nbsp;                g2.setPaint(this.labelPaint);</b>
+<b class="nc">&nbsp;                g2.setFont(this.labelFont);</b>
+<b class="nc">&nbsp;                TextUtils.drawAlignedString(label, g2, x, y,</b>
+&nbsp;                        TextAnchor.CENTER);
+&nbsp;
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        g2.setComposite(originalComposite);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the labels for the pie sections.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param keys  the keys.
+&nbsp;     * @param totalValue  the total value.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     * @param linkArea  the link area.
+&nbsp;     * @param state  the state.
+&nbsp;     */
+&nbsp;    protected void drawLabels(Graphics2D g2, List&lt;K&gt; keys, double totalValue,
+&nbsp;                              Rectangle2D plotArea, Rectangle2D linkArea,
+&nbsp;                              PiePlotState state) {
+&nbsp;
+<b class="fc">&nbsp;        Composite originalComposite = g2.getComposite();</b>
+<b class="fc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+&nbsp;                1.0f));
+&nbsp;
+&nbsp;        // classify the keys according to which side the label will appear...
+<b class="fc">&nbsp;        DefaultKeyedValues leftKeys = new DefaultKeyedValues();</b>
+<b class="fc">&nbsp;        DefaultKeyedValues rightKeys = new DefaultKeyedValues();</b>
+&nbsp;
+<b class="fc">&nbsp;        double runningTotal = 0.0;</b>
+<b class="fc">&nbsp;        for (K key : keys) {</b>
+&nbsp;            boolean include;
+<b class="fc">&nbsp;            double v = 0.0;</b>
+<b class="fc">&nbsp;            Number n = this.dataset.getValue(key);</b>
+<b class="fc">&nbsp;            if (n == null) {</b>
+<b class="nc">&nbsp;                include = !this.ignoreNullValues;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                v = n.doubleValue();</b>
+<b class="fc">&nbsp;                include = this.ignoreZeroValues ? v &gt; 0.0 : v &gt;= 0.0;</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (include) {</b>
+<b class="fc">&nbsp;                runningTotal = runningTotal + v;</b>
+&nbsp;                // work out the mid angle (0 - 90 and 270 - 360) = right,
+&nbsp;                // otherwise left
+<b class="fc">&nbsp;                double mid = this.startAngle + (this.direction.getFactor()</b>
+&nbsp;                        * ((runningTotal - v / 2.0) * 360) / totalValue);
+<b class="fc">&nbsp;                if (Math.cos(Math.toRadians(mid)) &lt; 0.0) {</b>
+<b class="fc">&nbsp;                    leftKeys.addValue(key, mid);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    rightKeys.addValue(key, mid);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        g2.setFont(getLabelFont());</b>
+&nbsp;
+&nbsp;        // calculate the max label width from the plot dimensions, because
+&nbsp;        // a circular pie can leave a lot more room for labels...
+<b class="fc">&nbsp;        double marginX = plotArea.getX();</b>
+<b class="fc">&nbsp;        double gap = plotArea.getWidth() * this.labelGap;</b>
+<b class="fc">&nbsp;        double ww = linkArea.getX() - gap - marginX;</b>
+<b class="fc">&nbsp;        float labelWidth = (float) this.labelPadding.trimWidth(ww);</b>
+&nbsp;
+&nbsp;        // draw the labels...
+<b class="fc">&nbsp;        if (this.labelGenerator != null) {</b>
+<b class="fc">&nbsp;            drawLeftLabels(leftKeys, g2, plotArea, linkArea, labelWidth,</b>
+&nbsp;                    state);
+<b class="fc">&nbsp;            drawRightLabels(rightKeys, g2, plotArea, linkArea, labelWidth,</b>
+&nbsp;                    state);
+&nbsp;        }
+<b class="fc">&nbsp;        g2.setComposite(originalComposite);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the left labels.
+&nbsp;     *
+&nbsp;     * @param leftKeys  a collection of keys and angles (to the middle of the
+&nbsp;     *         section, in degrees) for the sections on the left side of the
+&nbsp;     *         plot.
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     * @param linkArea  the link area.
+&nbsp;     * @param maxLabelWidth  the maximum label width.
+&nbsp;     * @param state  the state.
+&nbsp;     */
+&nbsp;    protected void drawLeftLabels(KeyedValues&lt;K&gt; leftKeys, Graphics2D g2,
+&nbsp;                                  Rectangle2D plotArea, Rectangle2D linkArea,
+&nbsp;                                  float maxLabelWidth, PiePlotState state) {
+&nbsp;
+<b class="fc">&nbsp;        this.labelDistributor.clear();</b>
+<b class="fc">&nbsp;        double lGap = plotArea.getWidth() * this.labelGap;</b>
+<b class="fc">&nbsp;        double verticalLinkRadius = state.getLinkArea().getHeight() / 2.0;</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; leftKeys.getItemCount(); i++) {</b>
+<b class="fc">&nbsp;            String label = this.labelGenerator.generateSectionLabel(</b>
+<b class="fc">&nbsp;                    this.dataset, leftKeys.getKey(i));</b>
+<b class="fc">&nbsp;            if (label != null) {</b>
+<b class="fc">&nbsp;                TextBlock block = TextUtils.createTextBlock(label,</b>
+&nbsp;                        this.labelFont, this.labelPaint, maxLabelWidth,
+&nbsp;                        new G2TextMeasurer(g2));
+<b class="fc">&nbsp;                TextBox labelBox = new TextBox(block);</b>
+<b class="fc">&nbsp;                labelBox.setBackgroundPaint(this.labelBackgroundPaint);</b>
+<b class="fc">&nbsp;                labelBox.setOutlinePaint(this.labelOutlinePaint);</b>
+<b class="fc">&nbsp;                labelBox.setOutlineStroke(this.labelOutlineStroke);</b>
+<b class="fc">&nbsp;                if (this.shadowGenerator == null) {</b>
+<b class="fc">&nbsp;                    labelBox.setShadowPaint(this.labelShadowPaint);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    labelBox.setShadowPaint(null);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                labelBox.setInteriorGap(this.labelPadding);</b>
+<b class="fc">&nbsp;                double theta = Math.toRadians(</b>
+<b class="fc">&nbsp;                        leftKeys.getValue(i).doubleValue());</b>
+<b class="fc">&nbsp;                double baseY = state.getPieCenterY() - Math.sin(theta)</b>
+&nbsp;                               * verticalLinkRadius;
+<b class="fc">&nbsp;                double hh = labelBox.getHeight(g2);</b>
+&nbsp;
+<b class="fc">&nbsp;                this.labelDistributor.addPieLabelRecord(new PieLabelRecord(</b>
+<b class="fc">&nbsp;                        leftKeys.getKey(i), theta, baseY, labelBox, hh,</b>
+<b class="fc">&nbsp;                        lGap / 2.0 + lGap / 2.0 * -Math.cos(theta), 1.0</b>
+<b class="fc">&nbsp;                        - getLabelLinkDepth()</b>
+<b class="fc">&nbsp;                        + getExplodePercent(leftKeys.getKey(i))));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        double hh = plotArea.getHeight();</b>
+<b class="fc">&nbsp;        double gap = hh * getInteriorGap();</b>
+<b class="fc">&nbsp;        this.labelDistributor.distributeLabels(plotArea.getMinY() + gap,</b>
+&nbsp;                hh - 2 * gap);
+<b class="fc">&nbsp;        for (int i = 0; i &lt; this.labelDistributor.getItemCount(); i++) {</b>
+<b class="fc">&nbsp;            drawLeftLabel(g2, state,</b>
+<b class="fc">&nbsp;                    this.labelDistributor.getPieLabelRecord(i));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the right labels.
+&nbsp;     *
+&nbsp;     * @param keys  the keys.
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     * @param linkArea  the link area.
+&nbsp;     * @param maxLabelWidth  the maximum label width.
+&nbsp;     * @param state  the state.
+&nbsp;     */
+&nbsp;    protected void drawRightLabels(KeyedValues&lt;K&gt; keys, Graphics2D g2,
+&nbsp;                                   Rectangle2D plotArea, Rectangle2D linkArea,
+&nbsp;                                   float maxLabelWidth, PiePlotState state) {
+&nbsp;
+&nbsp;        // draw the right labels...
+<b class="fc">&nbsp;        this.labelDistributor.clear();</b>
+<b class="fc">&nbsp;        double lGap = plotArea.getWidth() * this.labelGap;</b>
+<b class="fc">&nbsp;        double verticalLinkRadius = state.getLinkArea().getHeight() / 2.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        for (int i = 0; i &lt; keys.getItemCount(); i++) {</b>
+<b class="fc">&nbsp;            String label = this.labelGenerator.generateSectionLabel(</b>
+<b class="fc">&nbsp;                    this.dataset, keys.getKey(i));</b>
+&nbsp;
+<b class="fc">&nbsp;            if (label != null) {</b>
+<b class="fc">&nbsp;                TextBlock block = TextUtils.createTextBlock(label,</b>
+&nbsp;                        this.labelFont, this.labelPaint, maxLabelWidth,
+&nbsp;                        new G2TextMeasurer(g2));
+<b class="fc">&nbsp;                TextBox labelBox = new TextBox(block);</b>
+<b class="fc">&nbsp;                labelBox.setBackgroundPaint(this.labelBackgroundPaint);</b>
+<b class="fc">&nbsp;                labelBox.setOutlinePaint(this.labelOutlinePaint);</b>
+<b class="fc">&nbsp;                labelBox.setOutlineStroke(this.labelOutlineStroke);</b>
+<b class="fc">&nbsp;                if (this.shadowGenerator == null) {</b>
+<b class="fc">&nbsp;                    labelBox.setShadowPaint(this.labelShadowPaint);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    labelBox.setShadowPaint(null);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                labelBox.setInteriorGap(this.labelPadding);</b>
+<b class="fc">&nbsp;                double theta = Math.toRadians(keys.getValue(i).doubleValue());</b>
+<b class="fc">&nbsp;                double baseY = state.getPieCenterY()</b>
+<b class="fc">&nbsp;                              - Math.sin(theta) * verticalLinkRadius;</b>
+<b class="fc">&nbsp;                double hh = labelBox.getHeight(g2);</b>
+<b class="fc">&nbsp;                this.labelDistributor.addPieLabelRecord(new PieLabelRecord(</b>
+<b class="fc">&nbsp;                        keys.getKey(i), theta, baseY, labelBox, hh,</b>
+<b class="fc">&nbsp;                        lGap / 2.0 + lGap / 2.0 * Math.cos(theta),</b>
+<b class="fc">&nbsp;                        1.0 - getLabelLinkDepth()</b>
+<b class="fc">&nbsp;                        + getExplodePercent(keys.getKey(i))));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        double hh = plotArea.getHeight();</b>
+<b class="fc">&nbsp;        double gap = 0.00; //hh * getInteriorGap();</b>
+<b class="fc">&nbsp;        this.labelDistributor.distributeLabels(plotArea.getMinY() + gap,</b>
+&nbsp;                hh - 2 * gap);
+<b class="fc">&nbsp;        for (int i = 0; i &lt; this.labelDistributor.getItemCount(); i++) {</b>
+<b class="fc">&nbsp;            drawRightLabel(g2, state,</b>
+<b class="fc">&nbsp;                    this.labelDistributor.getPieLabelRecord(i));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a collection of legend items for the pie chart.
+&nbsp;     *
+&nbsp;     * @return The legend items (never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItemCollection getLegendItems() {
+&nbsp;
+<b class="fc">&nbsp;        LegendItemCollection result = new LegendItemCollection();</b>
+<b class="fc">&nbsp;        if (this.dataset == null) {</b>
+<b class="nc">&nbsp;            return result;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        List&lt;K&gt; keys = this.dataset.getKeys();</b>
+<b class="fc">&nbsp;        int section = 0;</b>
+<b class="fc">&nbsp;        Shape shape = getLegendItemShape();</b>
+<b class="fc">&nbsp;        for (K key : keys) {</b>
+<b class="fc">&nbsp;            Number n = this.dataset.getValue(key);</b>
+&nbsp;            boolean include;
+<b class="fc">&nbsp;            if (n == null) {</b>
+<b class="fc">&nbsp;                include = !this.ignoreNullValues;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                double v = n.doubleValue();</b>
+<b class="fc">&nbsp;                if (v == 0.0) {</b>
+<b class="fc">&nbsp;                    include = !this.ignoreZeroValues;</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    include = v &gt; 0.0;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (include) {</b>
+<b class="fc">&nbsp;                String label = this.legendLabelGenerator.generateSectionLabel(</b>
+&nbsp;                        this.dataset, key);
+<b class="fc">&nbsp;                if (label != null) {</b>
+<b class="fc">&nbsp;                    String description = label;</b>
+<b class="fc">&nbsp;                    String toolTipText = null;</b>
+<b class="fc">&nbsp;                    if (this.legendLabelToolTipGenerator != null) {</b>
+<b class="nc">&nbsp;                        toolTipText = this.legendLabelToolTipGenerator</b>
+<b class="nc">&nbsp;                                .generateSectionLabel(this.dataset, key);</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    String urlText = null;</b>
+<b class="fc">&nbsp;                    if (this.legendLabelURLGenerator != null) {</b>
+<b class="nc">&nbsp;                        urlText = this.legendLabelURLGenerator.generateURL(</b>
+&nbsp;                                this.dataset, key, this.pieIndex);
+&nbsp;                    }
+<b class="fc">&nbsp;                    Paint paint = lookupSectionPaint(key);</b>
+<b class="fc">&nbsp;                    Paint outlinePaint = lookupSectionOutlinePaint(key);</b>
+<b class="fc">&nbsp;                    Stroke outlineStroke = lookupSectionOutlineStroke(key);</b>
+<b class="fc">&nbsp;                    LegendItem item = new LegendItem(label, description,</b>
+&nbsp;                            toolTipText, urlText, true, shape, true, paint,
+&nbsp;                            true, outlinePaint, outlineStroke,
+&nbsp;                            false,          // line not visible
+&nbsp;                            new Line2D.Float(), new BasicStroke(), Color.BLACK);
+<b class="fc">&nbsp;                    item.setDataset(getDataset());</b>
+<b class="fc">&nbsp;                    item.setSeriesIndex(this.dataset.getIndex(key));</b>
+<b class="fc">&nbsp;                    item.setSeriesKey(key);</b>
+<b class="fc">&nbsp;                    result.add(item);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                section++;</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;            else {
+<b class="fc">&nbsp;                section++;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a short string describing the type of plot.
+&nbsp;     *
+&nbsp;     * @return The plot type.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getPlotType() {
+<b class="nc">&nbsp;        return localizationResources.getString(&quot;Pie_Plot&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a rectangle that can be used to create a pie section (taking
+&nbsp;     * into account the amount by which the pie section is &#39;exploded&#39;).
+&nbsp;     *
+&nbsp;     * @param unexploded  the area inside which the unexploded pie sections are
+&nbsp;     *                    drawn.
+&nbsp;     * @param exploded  the area inside which the exploded pie sections are
+&nbsp;     *                  drawn.
+&nbsp;     * @param angle  the start angle.
+&nbsp;     * @param extent  the extent of the arc.
+&nbsp;     * @param explodePercent  the amount by which the pie section is exploded.
+&nbsp;     *
+&nbsp;     * @return A rectangle that can be used to create a pie section.
+&nbsp;     */
+&nbsp;    protected Rectangle2D getArcBounds(Rectangle2D unexploded,
+&nbsp;                                       Rectangle2D exploded,
+&nbsp;                                       double angle, double extent,
+&nbsp;                                       double explodePercent) {
+&nbsp;
+<b class="fc">&nbsp;        if (explodePercent == 0.0) {</b>
+<b class="fc">&nbsp;            return unexploded;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Arc2D arc1 = new Arc2D.Double(unexploded, angle, extent / 2,</b>
+&nbsp;                Arc2D.OPEN);
+<b class="nc">&nbsp;        Point2D point1 = arc1.getEndPoint();</b>
+<b class="nc">&nbsp;        Arc2D.Double arc2 = new Arc2D.Double(exploded, angle, extent / 2,</b>
+&nbsp;                Arc2D.OPEN);
+<b class="nc">&nbsp;        Point2D point2 = arc2.getEndPoint();</b>
+<b class="nc">&nbsp;        double deltaX = (point1.getX() - point2.getX()) * explodePercent;</b>
+<b class="nc">&nbsp;        double deltaY = (point1.getY() - point2.getY()) * explodePercent;</b>
+<b class="nc">&nbsp;        return new Rectangle2D.Double(unexploded.getX() - deltaX,</b>
+<b class="nc">&nbsp;                unexploded.getY() - deltaY, unexploded.getWidth(),</b>
+<b class="nc">&nbsp;                unexploded.getHeight());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a section label on the left side of the pie chart.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the state.
+&nbsp;     * @param record  the label record.
+&nbsp;     */
+&nbsp;    protected void drawLeftLabel(Graphics2D g2, PiePlotState state,
+&nbsp;                                 PieLabelRecord record) {
+&nbsp;
+<b class="fc">&nbsp;        double anchorX = state.getLinkArea().getMinX();</b>
+<b class="fc">&nbsp;        double targetX = anchorX - record.getGap();</b>
+<b class="fc">&nbsp;        double targetY = record.getAllocatedY();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (this.labelLinksVisible) {</b>
+<b class="fc">&nbsp;            double theta = record.getAngle();</b>
+<b class="fc">&nbsp;            double linkX = state.getPieCenterX() + Math.cos(theta)</b>
+<b class="fc">&nbsp;                    * state.getPieWRadius() * record.getLinkPercent();</b>
+<b class="fc">&nbsp;            double linkY = state.getPieCenterY() - Math.sin(theta)</b>
+<b class="fc">&nbsp;                    * state.getPieHRadius() * record.getLinkPercent();</b>
+<b class="fc">&nbsp;            double elbowX = state.getPieCenterX() + Math.cos(theta)</b>
+<b class="fc">&nbsp;                    * state.getLinkArea().getWidth() / 2.0;</b>
+<b class="fc">&nbsp;            double elbowY = state.getPieCenterY() - Math.sin(theta)</b>
+<b class="fc">&nbsp;                    * state.getLinkArea().getHeight() / 2.0;</b>
+<b class="fc">&nbsp;            double anchorY = elbowY;</b>
+<b class="fc">&nbsp;            g2.setPaint(this.labelLinkPaint);</b>
+<b class="fc">&nbsp;            g2.setStroke(this.labelLinkStroke);</b>
+<b class="fc">&nbsp;            PieLabelLinkStyle style = getLabelLinkStyle();</b>
+<b class="fc">&nbsp;            if (style.equals(PieLabelLinkStyle.STANDARD)) {</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(linkX, linkY, elbowX, elbowY));</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(anchorX, anchorY, elbowX, elbowY));</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(anchorX, anchorY, targetX, targetY));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (style.equals(PieLabelLinkStyle.QUAD_CURVE)) {</b>
+<b class="nc">&nbsp;                QuadCurve2D q = new QuadCurve2D.Float();</b>
+<b class="nc">&nbsp;                q.setCurve(targetX, targetY, anchorX, anchorY, elbowX, elbowY);</b>
+<b class="nc">&nbsp;                g2.draw(q);</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(elbowX, elbowY, linkX, linkY));</b>
+<b class="nc">&nbsp;            }</b>
+<b class="fc">&nbsp;            else if (style.equals(PieLabelLinkStyle.CUBIC_CURVE)) {</b>
+<b class="fc">&nbsp;                CubicCurve2D c = new CubicCurve2D .Float();</b>
+<b class="fc">&nbsp;                c.setCurve(targetX, targetY, anchorX, anchorY, elbowX, elbowY,</b>
+&nbsp;                        linkX, linkY);
+<b class="fc">&nbsp;                g2.draw(c);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        TextBox tb = record.getLabel();</b>
+<b class="fc">&nbsp;        tb.draw(g2, (float) targetX, (float) targetY, RectangleAnchor.RIGHT);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a section label on the right side of the pie chart.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the state.
+&nbsp;     * @param record  the label record.
+&nbsp;     */
+&nbsp;    protected void drawRightLabel(Graphics2D g2, PiePlotState state,
+&nbsp;                                  PieLabelRecord record) {
+&nbsp;
+<b class="fc">&nbsp;        double anchorX = state.getLinkArea().getMaxX();</b>
+<b class="fc">&nbsp;        double targetX = anchorX + record.getGap();</b>
+<b class="fc">&nbsp;        double targetY = record.getAllocatedY();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (this.labelLinksVisible) {</b>
+<b class="fc">&nbsp;            double theta = record.getAngle();</b>
+<b class="fc">&nbsp;            double linkX = state.getPieCenterX() + Math.cos(theta)</b>
+<b class="fc">&nbsp;                    * state.getPieWRadius() * record.getLinkPercent();</b>
+<b class="fc">&nbsp;            double linkY = state.getPieCenterY() - Math.sin(theta)</b>
+<b class="fc">&nbsp;                    * state.getPieHRadius() * record.getLinkPercent();</b>
+<b class="fc">&nbsp;            double elbowX = state.getPieCenterX() + Math.cos(theta)</b>
+<b class="fc">&nbsp;                    * state.getLinkArea().getWidth() / 2.0;</b>
+<b class="fc">&nbsp;            double elbowY = state.getPieCenterY() - Math.sin(theta)</b>
+<b class="fc">&nbsp;                    * state.getLinkArea().getHeight() / 2.0;</b>
+<b class="fc">&nbsp;            double anchorY = elbowY;</b>
+<b class="fc">&nbsp;            g2.setPaint(this.labelLinkPaint);</b>
+<b class="fc">&nbsp;            g2.setStroke(this.labelLinkStroke);</b>
+<b class="fc">&nbsp;            PieLabelLinkStyle style = getLabelLinkStyle();</b>
+<b class="fc">&nbsp;            if (style.equals(PieLabelLinkStyle.STANDARD)) {</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(linkX, linkY, elbowX, elbowY));</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(anchorX, anchorY, elbowX, elbowY));</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(anchorX, anchorY, targetX, targetY));</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (style.equals(PieLabelLinkStyle.QUAD_CURVE)) {</b>
+<b class="nc">&nbsp;                QuadCurve2D q = new QuadCurve2D.Float();</b>
+<b class="nc">&nbsp;                q.setCurve(targetX, targetY, anchorX, anchorY, elbowX, elbowY);</b>
+<b class="nc">&nbsp;                g2.draw(q);</b>
+<b class="nc">&nbsp;                g2.draw(new Line2D.Double(elbowX, elbowY, linkX, linkY));</b>
+<b class="nc">&nbsp;            }</b>
+<b class="fc">&nbsp;            else if (style.equals(PieLabelLinkStyle.CUBIC_CURVE)) {</b>
+<b class="fc">&nbsp;                CubicCurve2D c = new CubicCurve2D .Float();</b>
+<b class="fc">&nbsp;                c.setCurve(targetX, targetY, anchorX, anchorY, elbowX, elbowY,</b>
+&nbsp;                        linkX, linkY);
+<b class="fc">&nbsp;                g2.draw(c);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        TextBox tb = record.getLabel();</b>
+<b class="fc">&nbsp;        tb.draw(g2, (float) targetX, (float) targetY, RectangleAnchor.LEFT);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the center for the specified section.
+&nbsp;     * Checks to see if the section is exploded and recalculates the
+&nbsp;     * new center if so.
+&nbsp;     *
+&nbsp;     * @param state  PiePlotState
+&nbsp;     * @param key  section key.
+&nbsp;     *
+&nbsp;     * @return The center for the specified section.
+&nbsp;     */
+&nbsp;    protected Point2D getArcCenter(PiePlotState state, K key) {
+<b class="nc">&nbsp;        Point2D center = new Point2D.Double(state.getPieCenterX(), state</b>
+<b class="nc">&nbsp;            .getPieCenterY());</b>
+&nbsp;
+<b class="nc">&nbsp;        double ep = getExplodePercent(key);</b>
+<b class="nc">&nbsp;        double mep = getMaximumExplodePercent();</b>
+<b class="nc">&nbsp;        if (mep &gt; 0.0) {</b>
+<b class="nc">&nbsp;            ep = ep / mep;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (ep != 0) {</b>
+<b class="nc">&nbsp;            Rectangle2D pieArea = state.getPieArea();</b>
+<b class="nc">&nbsp;            Rectangle2D expPieArea = state.getExplodedPieArea();</b>
+&nbsp;            double angle1, angle2;
+<b class="nc">&nbsp;            Number n = this.dataset.getValue(key);</b>
+<b class="nc">&nbsp;            double value = n.doubleValue();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (this.direction == Rotation.CLOCKWISE) {</b>
+<b class="nc">&nbsp;                angle1 = state.getLatestAngle();</b>
+<b class="nc">&nbsp;                angle2 = angle1 - value / state.getTotal() * 360.0;</b>
+<b class="nc">&nbsp;            } else if (this.direction == Rotation.ANTICLOCKWISE) {</b>
+<b class="nc">&nbsp;                angle1 = state.getLatestAngle();</b>
+<b class="nc">&nbsp;                angle2 = angle1 + value / state.getTotal() * 360.0;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                throw new IllegalStateException(&quot;Rotation type not recognised.&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            double angle = (angle2 - angle1);</b>
+&nbsp;
+<b class="nc">&nbsp;            Arc2D arc1 = new Arc2D.Double(pieArea, angle1, angle / 2,</b>
+&nbsp;                    Arc2D.OPEN);
+<b class="nc">&nbsp;            Point2D point1 = arc1.getEndPoint();</b>
+<b class="nc">&nbsp;            Arc2D.Double arc2 = new Arc2D.Double(expPieArea, angle1, angle / 2,</b>
+&nbsp;                    Arc2D.OPEN);
+<b class="nc">&nbsp;            Point2D point2 = arc2.getEndPoint();</b>
+<b class="nc">&nbsp;            double deltaX = (point1.getX() - point2.getX()) * ep;</b>
+<b class="nc">&nbsp;            double deltaY = (point1.getY() - point2.getY()) * ep;</b>
+&nbsp;
+<b class="nc">&nbsp;            center = new Point2D.Double(state.getPieCenterX() - deltaX,</b>
+<b class="nc">&nbsp;                     state.getPieCenterY() - deltaY);</b>
+&nbsp;
+&nbsp;        }
+<b class="nc">&nbsp;        return center;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the specified section. This is equivalent to
+&nbsp;     * {@code lookupSectionPaint(section)}.  Checks to see if the user set the 
+&nbsp;     * {@code Paint} to be of type {@code RadialGradientPaint} and if so it 
+&nbsp;     * adjusts the center and radius to match the Pie.
+&nbsp;     *
+&nbsp;     * @param key  the section key.
+&nbsp;     * @param state  PiePlotState.
+&nbsp;     *
+&nbsp;     * @return The paint for the specified section.
+&nbsp;     */
+&nbsp;    protected Paint lookupSectionPaint(K key, PiePlotState state) {
+<b class="fc">&nbsp;        Paint paint = lookupSectionPaint(key, getAutoPopulateSectionPaint());</b>
+&nbsp;        // for a RadialGradientPaint we adjust the center and radius to match
+&nbsp;        // the current pie segment...
+<b class="fc">&nbsp;        if (paint instanceof RadialGradientPaint) {</b>
+<b class="nc">&nbsp;            RadialGradientPaint rgp = (RadialGradientPaint) paint;</b>
+<b class="nc">&nbsp;            Point2D center = getArcCenter(state, key);</b>
+<b class="nc">&nbsp;            float radius = (float) Math.max(state.getPieHRadius(), </b>
+<b class="nc">&nbsp;                    state.getPieWRadius());</b>
+<b class="nc">&nbsp;            float[] fractions = rgp.getFractions();</b>
+<b class="nc">&nbsp;            Color[] colors = rgp.getColors();</b>
+<b class="nc">&nbsp;            paint = new RadialGradientPaint(center, radius, fractions, colors);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this plot for equality with an arbitrary object.  Note that the
+&nbsp;     * plot&#39;s dataset is NOT included in the test for equality.
+&nbsp;     *
+&nbsp;     * @param obj  the object to test against ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof PiePlot)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!super.equals(obj)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PiePlot that = (PiePlot) obj;</b>
+<b class="fc">&nbsp;        if (this.pieIndex != that.pieIndex) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.interiorGap != that.interiorGap) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.circular != that.circular) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.startAngle != that.startAngle) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.direction != that.direction) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.ignoreZeroValues != that.ignoreZeroValues) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.ignoreNullValues != that.ignoreNullValues) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.sectionPaintMap, that.sectionPaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultSectionPaint,</b>
+&nbsp;                that.defaultSectionPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.sectionOutlinesVisible != that.sectionOutlinesVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.sectionOutlinePaintMap, that.sectionOutlinePaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.defaultSectionOutlinePaint,</b>
+&nbsp;                that.defaultSectionOutlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.sectionOutlineStrokeMap, that.sectionOutlineStrokeMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.defaultSectionOutlineStroke, that.defaultSectionOutlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.shadowPaint, that.shadowPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.shadowXOffset == that.shadowXOffset)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.shadowYOffset == that.shadowYOffset)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.explodePercentages, that.explodePercentages)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.labelGenerator, that.labelGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.labelFont, that.labelFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelPaint, that.labelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelBackgroundPaint,</b>
+&nbsp;                that.labelBackgroundPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelOutlinePaint,</b>
+&nbsp;                that.labelOutlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.labelOutlineStroke, that.labelOutlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelShadowPaint,</b>
+&nbsp;                that.labelShadowPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.simpleLabels != that.simpleLabels) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.simpleLabelOffset.equals(that.simpleLabelOffset)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.labelPadding.equals(that.labelPadding)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.maximumLabelWidth == that.maximumLabelWidth)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.labelGap == that.labelGap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.labelLinkMargin == that.labelLinkMargin)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.labelLinksVisible != that.labelLinksVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.labelLinkStyle.equals(that.labelLinkStyle)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelLinkPaint, that.labelLinkPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.labelLinkStroke, that.labelLinkStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.toolTipGenerator, that.toolTipGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.urlGenerator, that.urlGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(this.minimumArcAngleToDraw == that.minimumArcAngleToDraw)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.legendItemShape, that.legendItemShape)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.legendLabelGenerator, that.legendLabelGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.legendLabelToolTipGenerator, that.legendLabelToolTipGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.legendLabelURLGenerator, that.legendLabelURLGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSectionPaint != that.autoPopulateSectionPaint) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSectionOutlinePaint</b>
+&nbsp;                != that.autoPopulateSectionOutlinePaint) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPopulateSectionOutlineStroke</b>
+&nbsp;                != that.autoPopulateSectionOutlineStroke) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.shadowGenerator, that.shadowGenerator)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;        // can&#39;t find any difference...
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a hashcode.  Note that, as with the equals method, the dataset
+&nbsp;     * is NOT included in the hashcode.
+&nbsp;     * 
+&nbsp;     * @return the hashcode
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        int hash = 7;</b>
+<b class="nc">&nbsp;        hash = 73 * hash + this.pieIndex;</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.interiorGap) ^ (Double.doubleToLongBits(this.interiorGap) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.circular ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.startAngle) ^ (Double.doubleToLongBits(this.startAngle) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.direction);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.sectionPaintMap);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.defaultSectionPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.autoPopulateSectionPaint ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.sectionOutlinesVisible ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.sectionOutlinePaintMap);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.defaultSectionOutlinePaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.autoPopulateSectionOutlinePaint ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.sectionOutlineStrokeMap);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.defaultSectionOutlineStroke);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.autoPopulateSectionOutlineStroke ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.shadowPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.shadowXOffset) ^ (Double.doubleToLongBits(this.shadowXOffset) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.shadowYOffset) ^ (Double.doubleToLongBits(this.shadowYOffset) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.explodePercentages);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelFont);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelBackgroundPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelOutlinePaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelOutlineStroke);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelShadowPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.simpleLabels ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelPadding);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.simpleLabelOffset);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.maximumLabelWidth) ^ (Double.doubleToLongBits(this.maximumLabelWidth) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.labelGap) ^ (Double.doubleToLongBits(this.labelGap) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.labelLinksVisible ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelLinkStyle);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.labelLinkMargin) ^ (Double.doubleToLongBits(this.labelLinkMargin) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelLinkPaint);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.labelLinkStroke);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.toolTipGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.urlGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.legendLabelGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.legendLabelToolTipGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.legendLabelURLGenerator);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.ignoreNullValues ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (this.ignoreZeroValues ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.legendItemShape);</b>
+<b class="nc">&nbsp;        hash = 73 * hash + (int) (Double.doubleToLongBits(this.minimumArcAngleToDraw) ^ (Double.doubleToLongBits(this.minimumArcAngleToDraw) &gt;&gt;&gt; 32));</b>
+<b class="nc">&nbsp;        hash = 73 * hash + Objects.hashCode(this.shadowGenerator);</b>
+<b class="nc">&nbsp;        return hash;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the plot.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the plot does
+&nbsp;     *         not support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        PiePlot clone = (PiePlot) super.clone();</b>
+<b class="fc">&nbsp;        clone.sectionPaintMap = new HashMap&lt;&gt;(this.sectionPaintMap);</b>
+<b class="fc">&nbsp;        clone.sectionOutlinePaintMap = new HashMap&lt;&gt;(this.sectionOutlinePaintMap);</b>
+<b class="fc">&nbsp;        clone.sectionOutlineStrokeMap = new HashMap&lt;&gt;(this.sectionOutlineStrokeMap);</b>
+<b class="fc">&nbsp;        clone.explodePercentages = new TreeMap&lt;&gt;(this.explodePercentages);</b>
+<b class="fc">&nbsp;        if (this.labelGenerator != null) {</b>
+<b class="fc">&nbsp;            clone.labelGenerator = CloneUtils.clone(this.labelGenerator);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (clone.dataset != null) {</b>
+<b class="fc">&nbsp;            clone.dataset.addChangeListener(clone);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        clone.urlGenerator = CloneUtils.copy(this.urlGenerator);</b>
+<b class="fc">&nbsp;        clone.legendItemShape = CloneUtils.clone(this.legendItemShape);</b>
+<b class="fc">&nbsp;        clone.legendLabelGenerator = CloneUtils.copy(this.legendLabelGenerator);</b>
+<b class="fc">&nbsp;        clone.legendLabelToolTipGenerator = CloneUtils.clone(this.legendLabelToolTipGenerator);</b>
+<b class="fc">&nbsp;        clone.legendLabelURLGenerator = CloneUtils.copy(this.legendLabelURLGenerator);</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultSectionPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.defaultSectionOutlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.defaultSectionOutlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.shadowPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelBackgroundPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelOutlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.labelOutlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelShadowPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelLinkPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.labelLinkStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeShape(this.legendItemShape, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.defaultSectionPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.defaultSectionOutlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.shadowPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelBackgroundPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelOutlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelOutlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.labelShadowPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelLinkPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelLinkStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.legendItemShape = SerialUtils.readShape(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

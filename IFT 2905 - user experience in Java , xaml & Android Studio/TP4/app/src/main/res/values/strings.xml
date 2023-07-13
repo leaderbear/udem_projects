@@ -1,0 +1,36 @@
+<resources>
+    <string name="app_name">ift2905_d4</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+
+
+    <!-- Bottom navigation bar strings -->
+    <string name="bottom_nav_social">"Social"</string>
+    <string name="bottom_nav_programs">"Programs"</string>
+    <string name="bottom_nav_activity">"Activity"</string>
+    <string name="bottom_nav_progress">"Progress"</string>
+    <string name="bottom_nav_profile">"Profile"</string>
+
+
+    <!-- Main activity view -->
+    <string name="activity_page_general_progress">General progress</string>
+    <string name="activity_page_general_progress_pc">XX%</string>
+    <string name="activity_page_streak">Streak:</string>
+    <string name="activity_page_streak_number">264 Days</string>
+    <string name="activity_page_popular_program">Most popular program in your region:</string>
+
+
+    <string name="program_view_program_name">Name of the program</string>
+    <string name="program_view_program_equipment">List of exercises : </string>
+
+    <string name="training_view_timer">TIMER</string>
+    <string name="training_view_timer_value">XX:XX</string>
+
+</resources>

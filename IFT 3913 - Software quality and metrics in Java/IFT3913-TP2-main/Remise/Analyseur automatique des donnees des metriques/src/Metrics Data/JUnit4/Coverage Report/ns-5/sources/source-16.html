@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Block</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.block</a>
+</div>
+
+<h1>Coverage Summary for Class: Block (org.jfree.chart.block)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Block</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------
+&nbsp; * Block.java
+&nbsp; * ----------
+&nbsp; * (C) Copyright 2004-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.block;
+&nbsp;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import org.jfree.chart.Drawable;
+&nbsp;
+&nbsp;/**
+&nbsp; * A block is an arbitrary item that can be drawn (in Java2D space) within a
+&nbsp; * rectangular area, has a preferred size, and can be arranged by an
+&nbsp; * {@link Arrangement} manager.
+&nbsp; */
+&nbsp;public interface Block extends Drawable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an ID for the block.
+&nbsp;     *
+&nbsp;     * @return An ID.
+&nbsp;     */
+&nbsp;    String getID();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the ID for the block.
+&nbsp;     *
+&nbsp;     * @param id  the ID.
+&nbsp;     */
+&nbsp;    void setID(String id);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Arranges the contents of the block, with no constraints, and returns
+&nbsp;     * the block size.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     *
+&nbsp;     * @return The size of the block.
+&nbsp;     */
+&nbsp;    Size2D arrange(Graphics2D g2);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Arranges the contents of the block, within the given constraints, and
+&nbsp;     * returns the block size.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param constraint  the constraint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The block size (in Java2D units, never {@code null}).
+&nbsp;     */
+&nbsp;    Size2D arrange(Graphics2D g2, RectangleConstraint constraint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the current bounds of the block.
+&nbsp;     *
+&nbsp;     * @return The bounds.
+&nbsp;     */
+&nbsp;    Rectangle2D getBounds();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the bounds of the block.
+&nbsp;     *
+&nbsp;     * @param bounds  the bounds.
+&nbsp;     */
+&nbsp;    void setBounds(Rectangle2D bounds);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the block within the specified area.  Refer to the documentation
+&nbsp;     * for the implementing class for information about the {@code params}
+&nbsp;     * and return value supported.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area.
+&nbsp;     * @param params  optional parameters ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return An optional return value (possibly {@code null}).
+&nbsp;     */
+&nbsp;    Object draw(Graphics2D g2, Rectangle2D area, Object params);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

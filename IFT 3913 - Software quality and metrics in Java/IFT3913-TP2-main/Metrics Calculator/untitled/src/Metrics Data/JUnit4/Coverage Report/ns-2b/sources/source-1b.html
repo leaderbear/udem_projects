@@ -1,0 +1,346 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > XYDataItem</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: XYDataItem (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XYDataItem</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    85,4%
+  </span>
+  <span class="absValue">
+    (35/41)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * XYDataItem.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2003-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents one (x, y) data item for an {@link XYSeries}.  Note that
+&nbsp; * subclasses are REQUIRED to support cloning.
+&nbsp; */
+&nbsp;public class XYDataItem implements Cloneable, Comparable&lt;XYDataItem&gt;, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 2751513470325494890L;
+&nbsp;
+&nbsp;    /** The x-value ({@code null} not permitted). */
+&nbsp;    private Number x;
+&nbsp;
+&nbsp;    /** The y-value. */
+&nbsp;    private Number y;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new data item.
+&nbsp;     *
+&nbsp;     * @param x  the x-value ({@code null} NOT permitted).
+&nbsp;     * @param y  the y-value ({@code null} permitted).
+&nbsp;     */
+<b class="fc">&nbsp;    public XYDataItem(Number x, Number y) {</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(x, &quot;x&quot;);</b>
+<b class="fc">&nbsp;        this.x = x;</b>
+<b class="fc">&nbsp;        this.y = y;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new data item.
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     * @param y  the y-value.
+&nbsp;     */
+&nbsp;    public XYDataItem(double x, double y) {
+<b class="fc">&nbsp;        this(Double.valueOf(x), Double.valueOf(y));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value.
+&nbsp;     *
+&nbsp;     * @return The x-value (never {@code null}).
+&nbsp;     */
+&nbsp;    public Number getX() {
+<b class="fc">&nbsp;        return this.x;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value as a double primitive.
+&nbsp;     *
+&nbsp;     * @return The x-value.
+&nbsp;     *
+&nbsp;     * @see #getX()
+&nbsp;     * @see #getYValue()
+&nbsp;     */
+&nbsp;    public double getXValue() {
+&nbsp;        // this.x is not allowed to be null...
+<b class="fc">&nbsp;        return this.x.doubleValue();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value.
+&nbsp;     *
+&nbsp;     * @return The y-value (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public Number getY() {
+<b class="fc">&nbsp;        return this.y;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value as a double primitive.
+&nbsp;     *
+&nbsp;     * @return The y-value.
+&nbsp;     *
+&nbsp;     * @see #getY()
+&nbsp;     * @see #getXValue()
+&nbsp;     */
+&nbsp;    public double getYValue() {
+<b class="fc">&nbsp;        double result = Double.NaN;</b>
+<b class="fc">&nbsp;        if (this.y != null) {</b>
+<b class="fc">&nbsp;            result = this.y.doubleValue();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the y-value for this data item.  Note that there is no
+&nbsp;     * corresponding method to change the x-value.
+&nbsp;     *
+&nbsp;     * @param y  the new y-value.
+&nbsp;     */
+&nbsp;    public void setY(double y) {
+<b class="fc">&nbsp;        setY(Double.valueOf(y));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the y-value for this data item.  Note that there is no
+&nbsp;     * corresponding method to change the x-value.
+&nbsp;     *
+&nbsp;     * @param y  the new y-value ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setY(Number y) {
+<b class="fc">&nbsp;        this.y = y;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an integer indicating the order of this object relative to
+&nbsp;     * another object.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * For the order we consider only the x-value:
+&nbsp;     * negative == &quot;less-than&quot;, zero == &quot;equal&quot;, positive == &quot;greater-than&quot;.
+&nbsp;     *
+&nbsp;     * @param other  the data item being compared to.
+&nbsp;     *
+&nbsp;     * @return An integer indicating the order of this data pair object
+&nbsp;     *      relative to another object.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int compareTo(XYDataItem other) {
+&nbsp;        int result;
+<b class="fc">&nbsp;        double compare = this.x.doubleValue() - other.getX().doubleValue();</b>
+<b class="fc">&nbsp;        if (compare &gt; 0.0) {</b>
+<b class="fc">&nbsp;            result = 1;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            if (compare &lt; 0.0) {</b>
+<b class="fc">&nbsp;                result = -1;</b>
+&nbsp;            } else {
+<b class="fc">&nbsp;                result = 0;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of this object.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() {
+<b class="fc">&nbsp;        Object clone = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            clone = super.clone();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        catch (CloneNotSupportedException e) { // won&#39;t get here...</b>
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests if this object is equal to another.
+&nbsp;     *
+&nbsp;     * @param obj  the object to test against for equality ({@code null}
+&nbsp;     *             permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof XYDataItem)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        XYDataItem that = (XYDataItem) obj;</b>
+<b class="fc">&nbsp;        if (!this.x.equals(that.x)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.y, that.y)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+&nbsp;        int result;
+<b class="fc">&nbsp;        result = this.x.hashCode();</b>
+<b class="fc">&nbsp;        result = 29 * result + (this.y != null ? this.y.hashCode() : 0);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a string representing this instance, primarily for debugging
+&nbsp;     * use.
+&nbsp;     *
+&nbsp;     * @return A string.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;[&quot; + getXValue() + &quot;, &quot; + getYValue() + &quot;]&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

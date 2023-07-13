@@ -1,0 +1,204 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > FlowDataset</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.flow</a>
+</div>
+
+<h1>Coverage Summary for Class: FlowDataset (org.jfree.data.flow)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">FlowDataset</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------------
+&nbsp; * FlowDataset.java
+&nbsp; * ----------------
+&nbsp; * (C) Copyright 2021-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.flow;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Set;
+&nbsp;import org.jfree.data.general.Dataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A dataset representing value flows from a set of source nodes to a set of 
+&nbsp; * destination nodes.  The number of source nodes does not need to match the
+&nbsp; * number of destination nodes.
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * The dataset can represent flows in one or many stages.  In the simple case,
+&nbsp; * the flows are defined in one stage, going directly from a source node to 
+&nbsp; * the final destination node.  In a multi-stage dataset there will be groups
+&nbsp; * of intermediate nodes and the flows are defined stage-by-stage from the
+&nbsp; * source to the destination.
+&nbsp; * 
+&nbsp; * @param &lt;K&gt; the type for the keys used to identify sources and destinations 
+&nbsp; *     (instances should be immutable, {@code String} is a good default choice).
+&nbsp; * 
+&nbsp; * @since 1.5.3
+&nbsp; */
+&nbsp;public interface FlowDataset&lt;K extends Comparable&lt;K&gt;&gt; extends Dataset {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of flow stages (never less than one).
+&nbsp;     * 
+&nbsp;     * @return The number of flow stages.
+&nbsp;     */
+&nbsp;    int getStageCount();
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns a list of the sources at the specified stage.
+&nbsp;     * 
+&nbsp;     * @param stage  the stage index (0 to {@code getStageCount()} - 1).
+&nbsp;     * 
+&nbsp;     * @return A list of the sources at the specified stage (never {@code null}).
+&nbsp;     */
+&nbsp;    List&lt;K&gt; getSources(int stage);
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns a list of the destinations at the specified stage.  For a 
+&nbsp;     * multi-stage dataset, the destinations at stage N are the same as the
+&nbsp;     * sources at stage N+1.
+&nbsp;     * 
+&nbsp;     * @param stage  the stage index (0 to {@code getStageCount()} - 1).
+&nbsp;     * 
+&nbsp;     * @return A list of the sources at the specified stage (never {@code null}).
+&nbsp;     */
+&nbsp;    List&lt;K&gt; getDestinations(int stage);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the set of keys for all the nodes in the dataset.
+&nbsp;     * 
+&nbsp;     * @return The set of keys for all the nodes in the dataset (possibly empty but never {@code null}).
+&nbsp;     */
+&nbsp;    Set&lt;NodeKey&lt;K&gt;&gt; getAllNodes();
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the value of a property, if specified, for the specified node.  
+&nbsp;     *
+&nbsp;     * @param nodeKey  the node key ({@code null} not permitted).
+&nbsp;     * @param propertyKey  the node key ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @return The property value, or {@code null}. 
+&nbsp;     */    
+&nbsp;    Object getNodeProperty(NodeKey&lt;K&gt; nodeKey, String propertyKey);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flow between a source node and a destination node at a
+&nbsp;     * specified stage.  This must be 0 or greater.  The dataset can return
+&nbsp;     * {@code null} to represent an unknown value.
+&nbsp;     * 
+&nbsp;     * @param stage  the stage index (0 to {@code getStageCount()} - 1).
+&nbsp;     * @param source  the source ({@code null} not permitted). 
+&nbsp;     * @param destination  the destination ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @return The flow (zero or greater, possibly {@code null}). 
+&nbsp;     */
+&nbsp;    Number getFlow(int stage, K source, K destination);
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns a set of keys for all the flows in the dataset.
+&nbsp;     * 
+&nbsp;     * @return A set. 
+&nbsp;     */
+&nbsp;    Set&lt;FlowKey&lt;K&gt;&gt; getAllFlows();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the value of a property, if specified, for the specified flow.  
+&nbsp;     * 
+&nbsp;     * @param flowKey  the flow key ({@code null} not permitted).
+&nbsp;     * @param propertyKey  the property key ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @return The property value, or {@code null}. 
+&nbsp;     */    
+&nbsp;    Object getFlowProperty(FlowKey&lt;K&gt; flowKey, String propertyKey);
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

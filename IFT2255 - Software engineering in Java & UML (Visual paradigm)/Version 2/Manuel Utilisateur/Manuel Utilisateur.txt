@@ -1,0 +1,62 @@
+                           # ====================================================================================#
+                           #                      Manuel utilisateur pour le logiciel #GYM                       #
+                           # ====================================================================================#
+
+
+DÉMARRAGE:
+au lancement de l'application une liste des commandes disponibles s'affichent. Pour effectuer une action il faut taper la commande correspondante et valider
+en appuyant sur la touche Entrée. La commande n'est pas sensible aux majuscules et minuscules. Pour afficher la liste des commandes à nouveau, il suffit de 
+taper la commande "Aide".
+
+LISTE DES COMMANDES ET EXEMPLES:
+
+#----------------------------------------------------------------------------------------------------------------------------#
+Aide: Cette commande affiche le message d'aide, qui liste les commandes disponibles.
+>Exemple: Pas d'exemple pour cette commande
+#----------------------------------------------------------------------------------------------------------------------------#
+Verifier: Cette commande permet de vérifier la validité du numéro d'un client (que ce soit un professionel ou un membre)
+>Exemple: On souhaite vérifier le numéro d'un membre souhaitant acceder au centre sportif. On tape "Verifier", puis on
+valide. On entre le numéro qu'on souhaite vérifier, puis on valide. Le logiciel affichera si le numéro est valide ou non.
+#----------------------------------------------------------------------------------------------------------------------------#
+Ajouter: Cette commande permet d'ajouter un nouveau client (membre ou professionel), ou un nouveau service.
+>Exemple: Une personne souhaite devenir membre #GYM. On tape "Ajouter", puis on valide. On tape "client" puis on
+valide. Puis on complète les informations du client au fur et à mesure qu'elles nous sont demandées par le logiciel.
+>Exemple: Un professionel souhaite ajouter un service. On tape "Ajouter", puis on valide. On tape "service", puis on
+valide. Puis on complète les informations du nouveau service au fur et à mesure que le logiciel les demandes.
+#----------------------------------------------------------------------------------------------------------------------------#
+Modifier: Cette commande permet de modifier les informations d'un client ou service existent.
+>Exemple: Un client a déménagé, et souhaite changer son adresse. On tape "Modifier", on valide. On tape "client" puis on valide.
+On tape en suite le numéro du client et on valide. On entre la nouvelle adresse quand elle nous est demandée, et on laisse les
+autres champs vide pour ne pas les changer.
+#----------------------------------------------------------------------------------------------------------------------------#
+Supprimer: Cette commande supprime définitivement un client ou un service du logiciel.
+>Exemple: Un membre souhaite se désinscrire. On tape "Supprimer" et on valide. Puis on entre son numéro, on valide et on
+confirme la suppression.
+#----------------------------------------------------------------------------------------------------------------------------#
+Trouver: Permet d'entrer une date, et trouver tout les services ayant lieu à cette date.
+>Exemple: Un client souhaite connaitre les services le 16 décembre 2020. On tape "Trouver" et on valide. On entre la date au
+fur et à mesure qu'elle nous est demandée, et le logiciel affichera tout les services ce jour si il y en a (et leur horaires)
+#----------------------------------------------------------------------------------------------------------------------------#
+Inscrire: Permet d'inscrire un client à une séance.
+>Exemple: Un client à trouvé un service qui lui plait grâce à la commande "Trouver", et connait donc son numéro, et souhaite
+s'y inscrire. On tape "Inscrire" et on valide. Puis on entre les numéro du service & du client quand ils nous sont demandés.
+#----------------------------------------------------------------------------------------------------------------------------#
+Confirmer: Permet de confirmer la présence d'un client à une séance
+>Exemple: Un client se présente au comptoir pour acceder à un service auquel il est inscrit. On tape "Confirmer", on valide.
+Puis on tape le numéro du service & du client quand ils nous sont demandés.
+#----------------------------------------------------------------------------------------------------------------------------#
+Rechercher: Permet de trouver un client ou un service à partir de son numéro.
+>Exemple: On souhaite connaitre l'adresse d'un client à partir de son numéro. On tape "Rechercher", on valide. Puis on tape le
+numéro du client et on valide. Le logiciel affichera toutes les informations du client.
+>Exemple: On souhaite connaitre l'horaire d'un service à partir de son numéro. On tape "Rechercher", on valide. Puis on tape
+le numéro du service et on valide. Le logiciel affichera toutes les informations du service.
+#----------------------------------------------------------------------------------------------------------------------------#
+Synthese: Cette commande est destinée au gérant et génère le fichier synthese.txt.
+>Exemple: On souhaite avoir le rapport des activités du centre dans les 7 derniers jours, on tape "Synthese", et on ouvre le
+fichier texte crée. La synthèse est automatiquement générée au cours de la procedure comptable
+
+
+PROCEDURE COMPTABLE:
+Les vendredi à minuit, la procedure comptable se déclenche automatiquement. Pour chaque client, une facture est générée dans 
+un fichier texte, et les fichiers TEF requis par le système banquaire sont générés pour chaque professionel ayant donné un
+service cette semaine là. La synthèse est aussi générée automatiquement à ce moment dans le fichier synthese.txt

@@ -1,0 +1,653 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > XYSplineRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: XYSplineRenderer (org.jfree.chart.renderer.xy)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XYSplineRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    46,2%
+  </span>
+  <span class="absValue">
+    (6/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16,6%
+  </span>
+  <span class="absValue">
+    (24/145)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">XYSplineRenderer$FillType</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (5/5)
+  </span>
+</td>
+  </tr>
+  <tr>
+    <td class="name">XYSplineRenderer$XYSplineState</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (8/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    19%
+  </span>
+  <span class="absValue">
+    (29/153)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------
+&nbsp; * XYSplineRenderer.java
+&nbsp; * ---------------------
+&nbsp; * (C) Copyright 2007-2021, by Klaus Rheinwald and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Klaus Rheinwald;
+&nbsp; * Contributor(s):   Tobias von Petersdorff (tvp@math.umd.edu,
+&nbsp; *                       http://www.wam.umd.edu/~petersd/);
+&nbsp; *                   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.xy;
+&nbsp;
+&nbsp;import java.awt.GradientPaint;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.geom.GeneralPath;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.util.GradientPaintTransformer;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.util.StandardGradientPaintTransformer;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A renderer that connects data points with natural cubic splines and/or
+&nbsp; * draws shapes at each data point.  This renderer is designed for use with
+&nbsp; * the {@link XYPlot} class. The example shown here is generated by the
+&nbsp; * {@code XYSplineRendererDemo1.java} program included in the JFreeChart
+&nbsp; * demo collection:
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * &lt;img src=&quot;doc-files/XYSplineRendererSample.png&quot; alt=&quot;XYSplineRendererSample.png&quot;&gt;
+&nbsp; *
+&nbsp; * @since 1.0.7
+&nbsp; */
+&nbsp;public class XYSplineRenderer extends XYLineAndShapeRenderer {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An enumeration of the fill types for the renderer.
+&nbsp;     */
+<b class="fc">&nbsp;    public enum FillType {</b>
+&nbsp;       
+&nbsp;        /** No fill. */
+<b class="fc">&nbsp;        NONE,</b>
+&nbsp;        
+&nbsp;        /** Fill down to zero. */
+<b class="fc">&nbsp;        TO_ZERO,</b>
+&nbsp;        
+&nbsp;        /** Fill to the lower bound. */
+<b class="fc">&nbsp;        TO_LOWER_BOUND,</b>
+&nbsp;        
+&nbsp;        /** Fill to the upper bound. */
+<b class="fc">&nbsp;        TO_UPPER_BOUND</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Represents state information that applies to a single rendering of
+&nbsp;     * a chart.
+&nbsp;     */
+&nbsp;    public static class XYSplineState extends State {
+&nbsp;        
+&nbsp;        /** The area to fill under the curve. */
+&nbsp;        public GeneralPath fillArea;
+&nbsp;        
+&nbsp;        /** The points. */
+&nbsp;        public List&lt;Point2D&gt; points;
+&nbsp;        
+&nbsp;        /**
+&nbsp;         * Creates a new state instance.
+&nbsp;         * 
+&nbsp;         * @param info  the plot rendering info. 
+&nbsp;         */
+&nbsp;        public XYSplineState(PlotRenderingInfo info) {
+<b class="nc">&nbsp;            super(info);</b>
+<b class="nc">&nbsp;            this.fillArea = new GeneralPath();</b>
+<b class="nc">&nbsp;            this.points = new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Resolution of splines (number of line segments between points)
+&nbsp;     */
+&nbsp;    private int precision;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that can be set to specify 
+&nbsp;     * to fill the area under the spline.
+&nbsp;     */
+&nbsp;    private FillType fillType;
+&nbsp;
+&nbsp;    private GradientPaintTransformer gradientPaintTransformer;
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Creates a new instance with the precision attribute defaulting to 5 
+&nbsp;     * and no fill of the area &#39;under&#39; the spline.
+&nbsp;     */
+&nbsp;    public XYSplineRenderer() {
+<b class="fc">&nbsp;        this(5, FillType.NONE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new renderer with the specified precision 
+&nbsp;     * and no fill of the area &#39;under&#39; (between &#39;0&#39; and) the spline.
+&nbsp;     *
+&nbsp;     * @param precision  the number of points between data items.
+&nbsp;     */
+&nbsp;    public XYSplineRenderer(int precision) {
+<b class="nc">&nbsp;        this(precision, FillType.NONE);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new renderer with the specified precision
+&nbsp;     * and specified fill of the area &#39;under&#39; (between &#39;0&#39; and) the spline.
+&nbsp;     *
+&nbsp;     * @param precision  the number of points between data items.
+&nbsp;     * @param fillType  the type of fill beneath the curve ({@code null} 
+&nbsp;     *     not permitted).
+&nbsp;     * 
+&nbsp;     * @since 1.0.17
+&nbsp;     */
+&nbsp;    public XYSplineRenderer(int precision, FillType fillType) {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        if (precision &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires precision &gt; 0.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Args.nullNotPermitted(fillType, &quot;fillType&quot;);</b>
+<b class="fc">&nbsp;        this.precision = precision;</b>
+<b class="fc">&nbsp;        this.fillType = fillType;</b>
+<b class="fc">&nbsp;        this.gradientPaintTransformer = new StandardGradientPaintTransformer();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of line segments used to approximate the spline
+&nbsp;     * curve between data points.
+&nbsp;     *
+&nbsp;     * @return The number of line segments.
+&nbsp;     *
+&nbsp;     * @see #setPrecision(int)
+&nbsp;     */
+&nbsp;    public int getPrecision() {
+<b class="nc">&nbsp;        return this.precision;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set the resolution of splines and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param p  number of line segments between points (must be &amp;gt; 0).
+&nbsp;     *
+&nbsp;     * @see #getPrecision()
+&nbsp;     */
+&nbsp;    public void setPrecision(int p) {
+<b class="fc">&nbsp;        if (p &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires p &gt; 0.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.precision = p;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the type of fill that the renderer draws beneath the curve.
+&nbsp;     *
+&nbsp;     * @return The type of fill (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setFillType(FillType) 
+&nbsp;     * 
+&nbsp;     * @since 1.0.17
+&nbsp;     */
+&nbsp;    public FillType getFillType() {
+<b class="nc">&nbsp;        return this.fillType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set the fill type and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param fillType   the fill type ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getFillType()
+&nbsp;     * 
+&nbsp;     * @since 1.0.17
+&nbsp;     */
+&nbsp;    public void setFillType(FillType fillType) {
+<b class="fc">&nbsp;        this.fillType = fillType;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gradient paint transformer, or {@code null}.
+&nbsp;     * 
+&nbsp;     * @return The gradient paint transformer (possibly {@code null}).
+&nbsp;     * 
+&nbsp;     * @since 1.0.17
+&nbsp;     */
+&nbsp;    public GradientPaintTransformer getGradientPaintTransformer() {
+<b class="nc">&nbsp;        return this.gradientPaintTransformer;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets the gradient paint transformer and sends a 
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     * 
+&nbsp;     * @param gpt  the transformer ({@code null} permitted).
+&nbsp;     * 
+&nbsp;     * @since 1.0.17
+&nbsp;     */
+&nbsp;    public void setGradientPaintTransformer(GradientPaintTransformer gpt) {
+<b class="fc">&nbsp;        this.gradientPaintTransformer = gpt;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Initialises the renderer.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method will be called before the first item is rendered, giving the
+&nbsp;     * renderer an opportunity to initialise any state information it wants to
+&nbsp;     * maintain.  The renderer can do nothing if it chooses.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area inside the axes.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param data  the data.
+&nbsp;     * @param info  an optional info collection object to return data back to
+&nbsp;     *              the caller.
+&nbsp;     *
+&nbsp;     * @return The renderer state.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            XYPlot plot, XYDataset data, PlotRenderingInfo info) {
+&nbsp;
+<b class="nc">&nbsp;        setDrawSeriesLineAsPath(true);</b>
+<b class="nc">&nbsp;        XYSplineState state = new XYSplineState(info);</b>
+<b class="nc">&nbsp;        state.setProcessVisibleItemsOnly(false);</b>
+<b class="nc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the item (first pass). This method draws the lines
+&nbsp;     * connecting the items. Instead of drawing separate lines,
+&nbsp;     * a GeneralPath is constructed and drawn at the end of
+&nbsp;     * the series painting.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color information
+&nbsp;     *              etc).
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param pass  the pass.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param xAxis  the domain axis.
+&nbsp;     * @param yAxis  the range axis.
+&nbsp;     * @param dataArea  the area within which the data is being drawn.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected void drawPrimaryLineAsPath(XYItemRendererState state,
+&nbsp;            Graphics2D g2, XYPlot plot, XYDataset dataset, int pass,
+&nbsp;            int series, int item, ValueAxis xAxis, ValueAxis yAxis,
+&nbsp;            Rectangle2D dataArea) {
+&nbsp;
+<b class="nc">&nbsp;        XYSplineState s = (XYSplineState) state;</b>
+<b class="nc">&nbsp;        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();</b>
+<b class="nc">&nbsp;        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();</b>
+&nbsp;
+&nbsp;        // get the data points
+<b class="nc">&nbsp;        double x1 = dataset.getXValue(series, item);</b>
+<b class="nc">&nbsp;        double y1 = dataset.getYValue(series, item);</b>
+<b class="nc">&nbsp;        double transX1 = xAxis.valueToJava2D(x1, dataArea, xAxisLocation);</b>
+<b class="nc">&nbsp;        double transY1 = yAxis.valueToJava2D(y1, dataArea, yAxisLocation);</b>
+&nbsp;
+&nbsp;        // Collect points
+<b class="nc">&nbsp;        if (!Double.isNaN(transX1) &amp;&amp; !Double.isNaN(transY1)) {</b>
+<b class="nc">&nbsp;            Point2D p = plot.getOrientation() == PlotOrientation.HORIZONTAL </b>
+<b class="nc">&nbsp;                ? new Point2D.Float((float) transY1, (float) transX1) </b>
+<b class="nc">&nbsp;                : new Point2D.Float((float) transX1, (float) transY1);</b>
+<b class="nc">&nbsp;            if (!s.points.contains(p))</b>
+<b class="nc">&nbsp;                s.points.add(p);</b>
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (item == dataset.getItemCount(series) - 1) {     // construct path</b>
+<b class="nc">&nbsp;            if (s.points.size() &gt; 1) {</b>
+&nbsp;                Point2D origin;
+<b class="nc">&nbsp;                if (this.fillType == FillType.TO_ZERO) {</b>
+<b class="nc">&nbsp;                    float xz = (float) xAxis.valueToJava2D(0, dataArea, </b>
+&nbsp;                            yAxisLocation);
+<b class="nc">&nbsp;                    float yz = (float) yAxis.valueToJava2D(0, dataArea, </b>
+&nbsp;                            yAxisLocation);
+<b class="nc">&nbsp;                    origin = plot.getOrientation() == PlotOrientation.HORIZONTAL</b>
+<b class="nc">&nbsp;                            ? new Point2D.Float(yz, xz) </b>
+<b class="nc">&nbsp;                            : new Point2D.Float(xz, yz);</b>
+<b class="nc">&nbsp;                } else if (this.fillType == FillType.TO_LOWER_BOUND) {</b>
+<b class="nc">&nbsp;                    float xlb = (float) xAxis.valueToJava2D(</b>
+<b class="nc">&nbsp;                            xAxis.getLowerBound(), dataArea, xAxisLocation);</b>
+<b class="nc">&nbsp;                    float ylb = (float) yAxis.valueToJava2D(</b>
+<b class="nc">&nbsp;                            yAxis.getLowerBound(), dataArea, yAxisLocation);</b>
+<b class="nc">&nbsp;                    origin = plot.getOrientation() == PlotOrientation.HORIZONTAL</b>
+<b class="nc">&nbsp;                            ? new Point2D.Float(ylb, xlb) </b>
+<b class="nc">&nbsp;                            : new Point2D.Float(xlb, ylb);</b>
+<b class="nc">&nbsp;                } else {// fillType == TO_UPPER_BOUND</b>
+<b class="nc">&nbsp;                    float xub = (float) xAxis.valueToJava2D(</b>
+<b class="nc">&nbsp;                            xAxis.getUpperBound(), dataArea, xAxisLocation);</b>
+<b class="nc">&nbsp;                    float yub = (float) yAxis.valueToJava2D(</b>
+<b class="nc">&nbsp;                            yAxis.getUpperBound(), dataArea, yAxisLocation);</b>
+<b class="nc">&nbsp;                    origin = plot.getOrientation() == PlotOrientation.HORIZONTAL</b>
+<b class="nc">&nbsp;                            ? new Point2D.Float(yub, xub)</b>
+<b class="nc">&nbsp;                            : new Point2D.Float(xub, yub);</b>
+&nbsp;                }
+&nbsp;                
+&nbsp;                // we need at least two points to draw something
+<b class="nc">&nbsp;                Point2D cp0 = s.points.get(0);</b>
+<b class="nc">&nbsp;                s.seriesPath.moveTo(cp0.getX(), cp0.getY());</b>
+<b class="nc">&nbsp;                if (this.fillType != FillType.NONE) {</b>
+<b class="nc">&nbsp;                    if (plot.getOrientation() == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                        s.fillArea.moveTo(origin.getX(), cp0.getY());</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        s.fillArea.moveTo(cp0.getX(), origin.getY());</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    s.fillArea.lineTo(cp0.getX(), cp0.getY());</b>
+&nbsp;                }
+<b class="nc">&nbsp;                if (s.points.size() == 2) {</b>
+&nbsp;                    // we need at least 3 points to spline. Draw simple line
+&nbsp;                    // for two points
+<b class="nc">&nbsp;                    Point2D cp1 = s.points.get(1);</b>
+<b class="nc">&nbsp;                    if (this.fillType != FillType.NONE) {</b>
+<b class="nc">&nbsp;                        s.fillArea.lineTo(cp1.getX(), cp1.getY());</b>
+<b class="nc">&nbsp;                        s.fillArea.lineTo(cp1.getX(), origin.getY());</b>
+<b class="nc">&nbsp;                        s.fillArea.closePath();</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    s.seriesPath.lineTo(cp1.getX(), cp1.getY());</b>
+<b class="nc">&nbsp;                } else {</b>
+&nbsp;                    // construct spline
+<b class="nc">&nbsp;                    int np = s.points.size(); // number of points</b>
+<b class="nc">&nbsp;                    float[] d = new float[np]; // Newton form coefficients</b>
+<b class="nc">&nbsp;                    float[] x = new float[np]; // x-coordinates of nodes</b>
+&nbsp;                    float y, oldy;
+&nbsp;                    float t, oldt;
+&nbsp;
+<b class="nc">&nbsp;                    float[] a = new float[np];</b>
+&nbsp;                    float t1;
+&nbsp;                    float t2;
+<b class="nc">&nbsp;                    float[] h = new float[np];</b>
+&nbsp;
+<b class="nc">&nbsp;                    for (int i = 0; i &lt; np; i++) {</b>
+<b class="nc">&nbsp;                        Point2D.Float cpi = (Point2D.Float) s.points.get(i);</b>
+<b class="nc">&nbsp;                        x[i] = cpi.x;</b>
+<b class="nc">&nbsp;                        d[i] = cpi.y;</b>
+&nbsp;                    }
+&nbsp;
+<b class="nc">&nbsp;                    for (int i = 1; i &lt;= np - 1; i++)</b>
+<b class="nc">&nbsp;                        h[i] = x[i] - x[i - 1];</b>
+&nbsp;
+<b class="nc">&nbsp;                    float[] sub = new float[np - 1];</b>
+<b class="nc">&nbsp;                    float[] diag = new float[np - 1];</b>
+<b class="nc">&nbsp;                    float[] sup = new float[np - 1];</b>
+&nbsp;
+<b class="nc">&nbsp;                    for (int i = 1; i &lt;= np - 2; i++) {</b>
+<b class="nc">&nbsp;                        diag[i] = (h[i] + h[i + 1]) / 3;</b>
+<b class="nc">&nbsp;                        sup[i] = h[i + 1] / 6;</b>
+<b class="nc">&nbsp;                        sub[i] = h[i] / 6;</b>
+<b class="nc">&nbsp;                        a[i] = (d[i + 1] - d[i]) / h[i + 1]</b>
+&nbsp;                                   - (d[i] - d[i - 1]) / h[i];
+&nbsp;                    }
+<b class="nc">&nbsp;                    solveTridiag(sub, diag, sup, a, np - 2);</b>
+&nbsp;
+&nbsp;                    // note that a[0]=a[np-1]=0
+<b class="nc">&nbsp;                    oldt = x[0];</b>
+<b class="nc">&nbsp;                    oldy = d[0];</b>
+<b class="nc">&nbsp;                    for (int i = 1; i &lt;= np - 1; i++) {</b>
+&nbsp;                        // loop over intervals between nodes
+<b class="nc">&nbsp;                        for (int j = 1; j &lt;= this.precision; j++) {</b>
+<b class="nc">&nbsp;                            t1 = (h[i] * j) / this.precision;</b>
+<b class="nc">&nbsp;                            t2 = h[i] - t1;</b>
+<b class="nc">&nbsp;                            y = ((-a[i - 1] / 6 * (t2 + h[i]) * t1 + d[i - 1])</b>
+&nbsp;                                    * t2 + (-a[i] / 6 * (t1 + h[i]) * t2
+&nbsp;                                    + d[i]) * t1) / h[i];
+<b class="nc">&nbsp;                            t = x[i - 1] + t1;</b>
+<b class="nc">&nbsp;                            s.seriesPath.lineTo(t, y);</b>
+<b class="nc">&nbsp;                            if (this.fillType != FillType.NONE) {</b>
+<b class="nc">&nbsp;                                s.fillArea.lineTo(t, y);</b>
+&nbsp;                            }
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                // Add last point @ y=0 for fillPath and close path
+<b class="nc">&nbsp;                if (this.fillType != FillType.NONE) {</b>
+<b class="nc">&nbsp;                    if (plot.getOrientation() == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                        s.fillArea.lineTo(origin.getX(), s.points.get(</b>
+<b class="nc">&nbsp;                                s.points.size() - 1).getY());</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        s.fillArea.lineTo(s.points.get(</b>
+<b class="nc">&nbsp;                                s.points.size() - 1).getX(), origin.getY());</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    s.fillArea.closePath();</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                // fill under the curve...
+<b class="nc">&nbsp;                if (this.fillType != FillType.NONE) {</b>
+<b class="nc">&nbsp;                    Paint fp = getSeriesFillPaint(series);</b>
+<b class="nc">&nbsp;                    if (this.gradientPaintTransformer != null </b>
+&nbsp;                            &amp;&amp; fp instanceof GradientPaint) {
+<b class="nc">&nbsp;                        GradientPaint gp = this.gradientPaintTransformer</b>
+<b class="nc">&nbsp;                                .transform((GradientPaint) fp, s.fillArea);</b>
+<b class="nc">&nbsp;                        g2.setPaint(gp);</b>
+<b class="nc">&nbsp;                    } else {</b>
+<b class="nc">&nbsp;                        g2.setPaint(fp);                        </b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    g2.fill(s.fillArea);</b>
+<b class="nc">&nbsp;                    s.fillArea.reset();</b>
+&nbsp;                }
+&nbsp;                // then draw the line...
+<b class="nc">&nbsp;                drawFirstPassShape(g2, pass, series, item, s.seriesPath);</b>
+&nbsp;            }
+&nbsp;            // reset points vector
+<b class="nc">&nbsp;            s.points = new ArrayList&lt;&gt;();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    private void solveTridiag(float[] sub, float[] diag, float[] sup,
+&nbsp;            float[] b, int n) {
+&nbsp;/*      solve linear system with tridiagonal n by n matrix a
+&nbsp;        using Gaussian elimination *without* pivoting
+&nbsp;        where   a(i,i-1) = sub[i]  for 2&lt;=i&lt;=n
+&nbsp;        a(i,i)   = diag[i] for 1&lt;=i&lt;=n
+&nbsp;        a(i,i+1) = sup[i]  for 1&lt;=i&lt;=n-1
+&nbsp;        (the values sub[1], sup[n] are ignored)
+&nbsp;        right hand side vector b[1:n] is overwritten with solution
+&nbsp;        NOTE: 1...n is used in all arrays, 0 is unused */
+&nbsp;        int i;
+&nbsp;/*      factorization and forward substitution */
+<b class="nc">&nbsp;        for (i = 2; i &lt;= n; i++) {</b>
+<b class="nc">&nbsp;            sub[i] /= diag[i - 1];</b>
+<b class="nc">&nbsp;            diag[i] -= sub[i] * sup[i - 1];</b>
+<b class="nc">&nbsp;            b[i] -= sub[i] * b[i - 1];</b>
+&nbsp;        }
+<b class="nc">&nbsp;        b[n] /= diag[n];</b>
+<b class="nc">&nbsp;        for (i = n - 1; i &gt;= 1; i--)</b>
+<b class="nc">&nbsp;            b[i] = (b[i] - sup[i] * b[i + 1]) / diag[i];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this renderer for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof XYSplineRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        XYSplineRenderer that = (XYSplineRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.precision != that.precision) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.fillType != that.fillType) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.gradientPaintTransformer, that.gradientPaintTransformer)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

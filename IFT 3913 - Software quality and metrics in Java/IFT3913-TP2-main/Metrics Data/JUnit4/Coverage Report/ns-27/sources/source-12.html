@@ -1,0 +1,248 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > BoxAndWhiskerXYDataset</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.statistics</a>
+</div>
+
+<h1>Coverage Summary for Class: BoxAndWhiskerXYDataset (org.jfree.data.statistics)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">BoxAndWhiskerXYDataset</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------------
+&nbsp; * BoxAndWhiskerXYDataset.java
+&nbsp; * ---------------------------
+&nbsp; * (C) Copyright 2003-2008, by David Browning and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Browning (for Australian Institute of Marine
+&nbsp; *                   Science);
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; * Changes
+&nbsp; * -------
+&nbsp; * 05-Aug-2003 : Version 1, contributed by David Browning (DG);
+&nbsp; * 12-Aug-2003 : Added new methods: getMaxNonOutlierValue
+&nbsp; *                                  getMaxNonFaroutValue
+&nbsp; *                                  getOutlierCoefficient
+&nbsp; *                                  setOutlierCoefficient
+&nbsp; *                                  getFaroutCoefficient
+&nbsp; *                                  setFaroutCoefficient
+&nbsp; *                                  getInterquartileRange (DB)
+&nbsp; * 27-Aug-2003 : Renamed BoxAndWhiskerDataset --&gt; BoxAndWhiskerXYDataset, and
+&nbsp; *               cut down methods (DG);
+&nbsp; * ------------- JFREECHART 1.0.x ---------------------------------------------
+&nbsp; * 02-Feb-2007 : Removed author tags from all over JFreeChart sources (DG);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.statistics;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * An interface that defines data in the form of (x, max, min, average, median)
+&nbsp; * tuples.
+&nbsp; * &lt;P&gt;
+&nbsp; * Example: JFreeChart uses this interface to obtain data for AIMS
+&nbsp; * max-min-average-median plots.
+&nbsp; */
+&nbsp;public interface BoxAndWhiskerXYDataset&lt;S extends Comparable&lt;S&gt;&gt; 
+&nbsp;        extends XYDataset&lt;S&gt; {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The mean for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getMeanValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the median-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The median-value for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getMedianValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the Q1 median-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The Q1 median-value for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getQ1Value(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the Q3 median-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The Q3 median-value for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getQ3Value(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the min-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The min-value for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getMinRegularValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the max-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The max-value for the specified series and item.
+&nbsp;     */
+&nbsp;    Number getMaxRegularValue(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum value which is not a farout.
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return A {@code Number} representing the maximum non-farout value.
+&nbsp;     */
+&nbsp;    Number getMinOutlier(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum value which is not a farout, ie Q3 + (interquartile
+&nbsp;     * range * farout coefficient).
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return A {@code Number} representing the maximum non-farout value.
+&nbsp;     */
+&nbsp;    Number getMaxOutlier(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a list of outliers for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The list of outliers for the specified series and item
+&nbsp;     *         (possibly {@code null}).
+&nbsp;     */
+&nbsp;    List getOutliers(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the value used as the outlier coefficient. The outlier
+&nbsp;     * coefficient gives an indication of the degree of certainty in an
+&nbsp;     * unskewed distribution.  Increasing the coefficient increases the number
+&nbsp;     * of values included.  Currently only used to ensure farout coefficient
+&nbsp;     * is greater than the outlier coefficient
+&nbsp;     *
+&nbsp;     * @return A {@code double} representing the value used to calculate
+&nbsp;     *         outliers
+&nbsp;     */
+&nbsp;    double getOutlierCoefficient();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the value used as the farout coefficient. The farout coefficient
+&nbsp;     * allows the calculation of which values will be off the graph.
+&nbsp;     *
+&nbsp;     * @return A {@code double} representing the value used to calculate
+&nbsp;     *         farouts
+&nbsp;     */
+&nbsp;    double getFaroutCoefficient();
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

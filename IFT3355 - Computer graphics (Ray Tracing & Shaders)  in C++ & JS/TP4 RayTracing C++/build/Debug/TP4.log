@@ -1,0 +1,6 @@
+﻿cl : ligne de commande warning D9035: l'option 'Gm' est déconseillée et sera supprimée dans une version ultérieure
+  raytracer.cpp
+C:\Users\tabta\Desktop\IFT3355_TP4_A2021\image.hpp(72,7): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+C:\Users\tabta\Desktop\IFT3355_TP4_A2021\raytracer.cpp(225,11): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+C:\Users\tabta\Desktop\IFT3355_TP4_A2021\raytracer.cpp(226,21): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+  TP4.vcxproj -> C:\Users\tabta\Desktop\IFT3355_TP4_A2021\TP4.exe

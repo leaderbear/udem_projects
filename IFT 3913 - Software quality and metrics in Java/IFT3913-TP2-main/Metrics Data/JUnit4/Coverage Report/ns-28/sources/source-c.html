@@ -1,0 +1,563 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Second</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.time</a>
+</div>
+
+<h1>Coverage Summary for Class: Second (org.jfree.data.time)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Second</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    90%
+  </span>
+  <span class="absValue">
+    (18/20)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59,4%
+  </span>
+  <span class="absValue">
+    (60/101)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -----------
+&nbsp; * Second.java
+&nbsp; * -----------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.time;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.Locale;
+&nbsp;import java.util.TimeZone;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents a second in a particular day.  This class is immutable, which is
+&nbsp; * a requirement for all {@link RegularTimePeriod} subclasses.
+&nbsp; */
+&nbsp;public class Second extends RegularTimePeriod implements Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -6536564190712383466L;
+&nbsp;
+&nbsp;    /** Useful constant for the first second in a minute. */
+&nbsp;    public static final int FIRST_SECOND_IN_MINUTE = 0;
+&nbsp;
+&nbsp;    /** Useful constant for the last second in a minute. */
+&nbsp;    public static final int LAST_SECOND_IN_MINUTE = 59;
+&nbsp;
+&nbsp;    /** The day. */
+&nbsp;    private Day day;
+&nbsp;
+&nbsp;    /** The hour of the day. */
+&nbsp;    private byte hour;
+&nbsp;
+&nbsp;    /** The minute. */
+&nbsp;    private byte minute;
+&nbsp;
+&nbsp;    /** The second. */
+&nbsp;    private byte second;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The first millisecond.  We don&#39;t store the last millisecond, because it
+&nbsp;     * is always firstMillisecond + 999L.
+&nbsp;     */
+&nbsp;    private long firstMillisecond;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new Second, based on the system date/time.
+&nbsp;     * The time zone and locale are determined by the calendar
+&nbsp;     * returned by {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     */
+&nbsp;    public Second() {
+<b class="fc">&nbsp;        this(new Date());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new Second.
+&nbsp;     * The time zone and locale are determined by the calendar
+&nbsp;     * returned by {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     *
+&nbsp;     * @param second  the second (0 to 59).
+&nbsp;     * @param minute  the minute ({@code null} not permitted).
+&nbsp;     */
+<b class="fc">&nbsp;    public Second(int second, Minute minute) {</b>
+<b class="fc">&nbsp;        Args.requireInRange(second, &quot;second&quot;, </b>
+&nbsp;                Second.FIRST_SECOND_IN_MINUTE, Second.LAST_SECOND_IN_MINUTE);
+<b class="fc">&nbsp;        Args.nullNotPermitted(minute, &quot;minute&quot;);</b>
+<b class="fc">&nbsp;        this.day = minute.getDay();</b>
+<b class="fc">&nbsp;        this.hour = (byte) minute.getHourValue();</b>
+<b class="fc">&nbsp;        this.minute = (byte) minute.getMinute();</b>
+<b class="fc">&nbsp;        this.second = (byte) second;</b>
+<b class="fc">&nbsp;        peg(getCalendarInstance());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new second.
+&nbsp;     * The time zone and locale are determined by the calendar
+&nbsp;     * returned by {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     *
+&nbsp;     * @param second  the second (0-59).
+&nbsp;     * @param minute  the minute (0-59).
+&nbsp;     * @param hour  the hour (0-23).
+&nbsp;     * @param day  the day (1-31).
+&nbsp;     * @param month  the month (1-12).
+&nbsp;     * @param year  the year (1900-9999).
+&nbsp;     */
+&nbsp;    public Second(int second, int minute, int hour,
+&nbsp;                  int day, int month, int year) {
+<b class="fc">&nbsp;        this(second, new Minute(minute, hour, day, month, year));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new instance from the specified date/time.
+&nbsp;     * The time zone and locale are determined by the calendar
+&nbsp;     * returned by {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     *
+&nbsp;     * @param time  the time ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #Second(Date, TimeZone, Locale)
+&nbsp;     */
+&nbsp;    public Second(Date time) {
+<b class="fc">&nbsp;        this(time, getCalendarInstance());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new second based on the supplied time and time zone.
+&nbsp;     *
+&nbsp;     * @param time  the time ({@code null} not permitted).
+&nbsp;     * @param zone  the time zone ({@code null} not permitted).
+&nbsp;     * @param locale  the locale ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @since 1.0.13
+&nbsp;     */
+&nbsp;    public Second(Date time, TimeZone zone, Locale locale) {
+<b class="fc">&nbsp;        this(time, Calendar.getInstance(zone, locale));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new instance, based on a particular date/time.
+&nbsp;     * The time zone and locale are determined by the {@code calendar}
+&nbsp;     * parameter.
+&nbsp;     *
+&nbsp;     * @param time the date/time ({@code null} not permitted).
+&nbsp;     * @param calendar the calendar to use for calculations ({@code null} not permitted).
+&nbsp;     */
+<b class="fc">&nbsp;    public Second(Date time, Calendar calendar) {</b>
+<b class="fc">&nbsp;        calendar.setTime(time);</b>
+<b class="fc">&nbsp;        this.second = (byte) calendar.get(Calendar.SECOND);</b>
+<b class="fc">&nbsp;        this.minute = (byte) calendar.get(Calendar.MINUTE);</b>
+<b class="fc">&nbsp;        this.hour = (byte) calendar.get(Calendar.HOUR_OF_DAY);</b>
+<b class="fc">&nbsp;        this.day = new Day(time, calendar);</b>
+<b class="fc">&nbsp;        peg(calendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the second within the minute.
+&nbsp;     *
+&nbsp;     * @return The second (0 - 59).
+&nbsp;     */
+&nbsp;    public int getSecond() {
+<b class="fc">&nbsp;        return this.second;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minute.
+&nbsp;     *
+&nbsp;     * @return The minute (never {@code null}).
+&nbsp;     */
+&nbsp;    public Minute getMinute() {
+<b class="fc">&nbsp;        return new Minute(this.minute, new Hour(this.hour, this.day));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the first millisecond of the second.  This will be determined
+&nbsp;     * relative to the time zone specified in the constructor, or in the
+&nbsp;     * calendar instance passed in the most recent call to the
+&nbsp;     * {@link #peg(Calendar)} method.
+&nbsp;     *
+&nbsp;     * @return The first millisecond of the second.
+&nbsp;     *
+&nbsp;     * @see #getLastMillisecond()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getFirstMillisecond() {
+<b class="fc">&nbsp;        return this.firstMillisecond;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the last millisecond of the second.  This will be
+&nbsp;     * determined relative to the time zone specified in the constructor, or
+&nbsp;     * in the calendar instance passed in the most recent call to the
+&nbsp;     * {@link #peg(Calendar)} method.
+&nbsp;     *
+&nbsp;     * @return The last millisecond of the second.
+&nbsp;     *
+&nbsp;     * @see #getFirstMillisecond()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getLastMillisecond() {
+<b class="fc">&nbsp;        return this.firstMillisecond + 999L;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recalculates the start date/time and end date/time for this time period
+&nbsp;     * relative to the supplied calendar (which incorporates a time zone).
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @since 1.0.3
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void peg(Calendar calendar) {
+<b class="fc">&nbsp;        this.firstMillisecond = getFirstMillisecond(calendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the second preceding this one.
+&nbsp;     * No matter what time zone and locale this instance was created with,
+&nbsp;     * the returned instance will use the default calendar for time
+&nbsp;     * calculations, obtained with {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     *
+&nbsp;     * @return The second preceding this one.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public RegularTimePeriod previous() {
+<b class="fc">&nbsp;        Second result = null;</b>
+<b class="fc">&nbsp;        if (this.second != FIRST_SECOND_IN_MINUTE) {</b>
+<b class="fc">&nbsp;            result = new Second(this.second - 1, getMinute());</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            Minute previous = (Minute) getMinute().previous();</b>
+<b class="nc">&nbsp;            if (previous != null) {</b>
+<b class="nc">&nbsp;                result = new Second(LAST_SECOND_IN_MINUTE, previous);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the second following this one.
+&nbsp;     * No matter what time zone and locale this instance was created with,
+&nbsp;     * the returned instance will use the default calendar for time
+&nbsp;     * calculations, obtained with {@link RegularTimePeriod#getCalendarInstance()}.
+&nbsp;     *
+&nbsp;     * @return The second following this one.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public RegularTimePeriod next() {
+<b class="fc">&nbsp;        Second result = null;</b>
+<b class="fc">&nbsp;        if (this.second != LAST_SECOND_IN_MINUTE) {</b>
+<b class="fc">&nbsp;            result = new Second(this.second + 1, getMinute());</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            Minute next = (Minute) getMinute().next();</b>
+<b class="fc">&nbsp;            if (next != null) {</b>
+<b class="nc">&nbsp;                result = new Second(FIRST_SECOND_IN_MINUTE, next);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a serial index number for the minute.
+&nbsp;     *
+&nbsp;     * @return The serial index number.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getSerialIndex() {
+<b class="fc">&nbsp;        long hourIndex = this.day.getSerialIndex() * 24L + this.hour;</b>
+<b class="fc">&nbsp;        long minuteIndex = hourIndex * 60L + this.minute;</b>
+<b class="fc">&nbsp;        return minuteIndex * 60L + this.second;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the first millisecond of the minute.
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar/timezone ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The first millisecond.
+&nbsp;     *
+&nbsp;     * @throws NullPointerException if {@code calendar} is {@code null}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getFirstMillisecond(Calendar calendar) {
+<b class="fc">&nbsp;        int year = this.day.getYear();</b>
+<b class="fc">&nbsp;        int month = this.day.getMonth() - 1;</b>
+<b class="fc">&nbsp;        int d = this.day.getDayOfMonth();</b>
+<b class="fc">&nbsp;        calendar.clear();</b>
+<b class="fc">&nbsp;        calendar.set(year, month, d, this.hour, this.minute, this.second);</b>
+<b class="fc">&nbsp;        calendar.set(Calendar.MILLISECOND, 0);</b>
+<b class="fc">&nbsp;        return calendar.getTimeInMillis();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the last millisecond of the second.
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar/timezone ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The last millisecond.
+&nbsp;     *
+&nbsp;     * @throws NullPointerException if {@code calendar} is {@code null}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public long getLastMillisecond(Calendar calendar) {
+<b class="fc">&nbsp;        return getFirstMillisecond(calendar) + 999L;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests the equality of this object against an arbitrary Object.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method will return true ONLY if the object is a Second object
+&nbsp;     * representing the same second as this instance.
+&nbsp;     *
+&nbsp;     * @param obj  the object to compare ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return {@code true} if second and minute of this and the object
+&nbsp;     *         are the same.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof Second)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Second that = (Second) obj;</b>
+<b class="fc">&nbsp;        if (this.second != that.second) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.minute != that.minute) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.hour != that.hour) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.day.equals(that.day)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this object instance.  The approach described by
+&nbsp;     * Joshua Bloch in &quot;Effective Java&quot; has been used here:
+&nbsp;     * &lt;p&gt;
+&nbsp;     * {@code http://developer.java.sun.com/developer/Books/effectivejava
+&nbsp;     * /Chapter3.pdf}
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        int result = 17;</b>
+<b class="fc">&nbsp;        result = 37 * result + this.second;</b>
+<b class="fc">&nbsp;        result = 37 * result + this.minute;</b>
+<b class="fc">&nbsp;        result = 37 * result + this.hour;</b>
+<b class="fc">&nbsp;        result = 37 * result + this.day.hashCode();</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an integer indicating the order of this Second object relative
+&nbsp;     * to the specified
+&nbsp;     * object: negative == before, zero == same, positive == after.
+&nbsp;     *
+&nbsp;     * @param o1  the object to compare.
+&nbsp;     *
+&nbsp;     * @return negative == before, zero == same, positive == after.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int compareTo(Object o1) {
+&nbsp;        int result;
+&nbsp;
+&nbsp;        // CASE 1 : Comparing to another Second object
+&nbsp;        // -------------------------------------------
+<b class="nc">&nbsp;        if (o1 instanceof Second) {</b>
+<b class="nc">&nbsp;            Second s = (Second) o1;</b>
+<b class="nc">&nbsp;            if (this.firstMillisecond &lt; s.firstMillisecond) {</b>
+<b class="nc">&nbsp;                return -1;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if (this.firstMillisecond &gt; s.firstMillisecond) {</b>
+<b class="nc">&nbsp;                return 1;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                return 0;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // CASE 2 : Comparing to another TimePeriod object
+&nbsp;        // -----------------------------------------------
+<b class="nc">&nbsp;        else if (o1 instanceof RegularTimePeriod) {</b>
+&nbsp;            // more difficult case - evaluate later...
+<b class="nc">&nbsp;            result = 0;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // CASE 3 : Comparing to a non-TimePeriod object
+&nbsp;        // ---------------------------------------------
+&nbsp;        else {
+&nbsp;            // consider time periods to be ordered after general objects
+<b class="nc">&nbsp;            result = 1;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new instance by parsing a string.  The string is assumed to
+&nbsp;     * be in the format &quot;YYYY-MM-DD HH:MM:SS&quot;, perhaps with leading or trailing
+&nbsp;     * whitespace.
+&nbsp;     *
+&nbsp;     * @param s  the string to parse.
+&nbsp;     *
+&nbsp;     * @return The second, or {@code null} if the string is not parseable.
+&nbsp;     */
+&nbsp;    public static Second parseSecond(String s) {
+<b class="nc">&nbsp;        Second result = null;</b>
+<b class="nc">&nbsp;        s = s.trim();</b>
+<b class="nc">&nbsp;        String daystr = s.substring(0, Math.min(10, s.length()));</b>
+<b class="nc">&nbsp;        Day day = Day.parseDay(daystr);</b>
+<b class="nc">&nbsp;        if (day != null) {</b>
+<b class="nc">&nbsp;            String hmsstr = s.substring(Math.min(daystr.length() + 1,</b>
+<b class="nc">&nbsp;                    s.length()), s.length());</b>
+<b class="nc">&nbsp;            hmsstr = hmsstr.trim();</b>
+&nbsp;
+<b class="nc">&nbsp;            int l = hmsstr.length();</b>
+<b class="nc">&nbsp;            String hourstr = hmsstr.substring(0, Math.min(2, l));</b>
+<b class="nc">&nbsp;            String minstr = hmsstr.substring(Math.min(3, l), Math.min(5, l));</b>
+<b class="nc">&nbsp;            String secstr = hmsstr.substring(Math.min(6, l), Math.min(8, l));</b>
+<b class="nc">&nbsp;            int hour = Integer.parseInt(hourstr);</b>
+&nbsp;
+<b class="nc">&nbsp;            if ((hour &gt;= 0) &amp;&amp; (hour &lt;= 23)) {</b>
+&nbsp;
+<b class="nc">&nbsp;                int minute = Integer.parseInt(minstr);</b>
+<b class="nc">&nbsp;                if ((minute &gt;= 0) &amp;&amp; (minute &lt;= 59)) {</b>
+&nbsp;
+<b class="nc">&nbsp;                    Minute m = new Minute(minute, new Hour(hour, day));</b>
+<b class="nc">&nbsp;                    int second = Integer.parseInt(secstr);</b>
+<b class="nc">&nbsp;                    if ((second &gt;= 0) &amp;&amp; (second &lt;= 59)) {</b>
+<b class="nc">&nbsp;                        result = new Second(second, m);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

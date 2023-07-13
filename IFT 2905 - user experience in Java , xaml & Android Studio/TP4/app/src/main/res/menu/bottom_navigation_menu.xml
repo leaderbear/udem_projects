@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bottom_nav_menu">
+    <item
+        android:id="@+id/bottom_nav_button_social"
+        android:enabled="true"
+        android:icon="@drawable/ic_trophy"
+        android:title="@string/bottom_nav_social"/>
+    <item
+        android:id="@+id/bottom_nav_button_programs"
+        android:enabled="true"
+        android:icon="@drawable/ic_dumbbell"
+        android:title="@string/bottom_nav_programs"/>
+    <item
+        android:id="@+id/bottom_nav_button_activity"
+        android:enabled="true"
+        android:icon="@drawable/ic_lightning"
+        android:title="@string/bottom_nav_activity"/>
+    <item
+        android:id="@+id/bottom_nav_button_progress"
+        android:enabled="true"
+        android:icon="@drawable/ic_graph"
+        android:title="@string/bottom_nav_progress"/>
+    <item
+        android:id="@+id/bottom_nav_button_profile"
+        android:enabled="true"
+        android:icon="@drawable/ic_person"
+        android:title="@string/bottom_nav_profile"/>
+</menu>

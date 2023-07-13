@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".register_equip"
+    tools:ignore="ExtraText">
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/equip_prev"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:clickable="true"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.101"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/abc_vector_test" />
+
+
+    <TextView
+        android:id="@+id/textView7"
+        android:layout_width="340dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:text="Select all equipments to which you have access for a personalized fitness program"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.521"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView6"
+        tools:ignore="MissingConstraints" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatingActionButton2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="@+id/editTextTextPersonName2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/editTextTextPersonName2"
+        app:srcCompat="@android:drawable/ic_menu_search"
+        tools:ignore="MissingConstraints" />
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="112dp"
+        android:layout_height="111dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/floatingActionButton3"
+        app:srcCompat="@mipmap/logo"
+        tools:ignore="UnknownId" />
+
+    <EditText
+        android:id="@+id/editTextTextPersonName2"
+        android:layout_width="281dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:hint="Search for a specific equipment"
+        android:inputType="textPersonName"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="388dp"
+        android:layout_height="382dp"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.493"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextTextPersonName2"
+        app:srcCompat="@mipmap/gym_equip" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="354dp"
+        android:layout_height="53dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageView5"
+        tools:ignore="MissingConstraints">
+
+
+        <Button
+            android:id="@+id/register_equip_skip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="44dp"
+            android:backgroundTint="@android:color/darker_gray"
+            android:text="Skip"
+            app:layout_constraintEnd_toStartOf="@+id/register_equip_next"
+            app:layout_constraintHorizontal_bias="0.021"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="2dp" />
+
+        <Button
+            android:id="@+id/register_equip_next"
+            android:layout_width="135dp"
+            android:layout_height="50dp"
+            android:layout_gravity="start"
+            android:layout_marginEnd="40dp"
+            android:backgroundTint="@android:color/holo_blue_light"
+            android:text="Next"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:ignore="MissingConstraints"
+            tools:layout_editor_absoluteY="1dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

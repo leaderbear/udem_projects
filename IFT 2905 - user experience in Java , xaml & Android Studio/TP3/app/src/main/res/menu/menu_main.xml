@@ -1,0 +1,13 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.ift2905_h21_devoir3.MainActivity">
+    <group android:id="@+id/toolbar_items_to_hide">
+        <item
+            android:id="@+id/profile_link"
+            android:orderInCategory="100"
+            android:title=""
+            android:icon="@drawable/profile_circle"
+            app:showAsAction="always" />
+    </group>
+</menu>

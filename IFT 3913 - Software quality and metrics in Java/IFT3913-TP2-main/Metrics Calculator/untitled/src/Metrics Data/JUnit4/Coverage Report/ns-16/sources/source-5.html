@@ -1,0 +1,3181 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ChartPanel</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.swing</a>
+</div>
+
+<h1>Coverage Summary for Class: ChartPanel (org.jfree.chart.swing)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ChartPanel</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28,4%
+  </span>
+  <span class="absValue">
+    (33/116)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    34,8%
+  </span>
+  <span class="absValue">
+    (311/894)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * ChartPanel.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Andrzej Porebski;
+&nbsp; *                   Soren Caspersen;
+&nbsp; *                   Jonathan Nash;
+&nbsp; *                   Hans-Jurgen Greiner;
+&nbsp; *                   Andreas Schneider;
+&nbsp; *                   Daniel van Enckevort;
+&nbsp; *                   David M O&#39;Donnell;
+&nbsp; *                   Arnaud Lelievre;
+&nbsp; *                   Matthias Rose;
+&nbsp; *                   Onno vd Akker;
+&nbsp; *                   Sergei Ivanov;
+&nbsp; *                   Ulrich Voigt - patch 2686040;
+&nbsp; *                   Alessandro Borges - patch 1460845;
+&nbsp; *                   Martin Hoeller;
+&nbsp; *                   Simon Legner - patch from bug 1129;
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.swing;
+&nbsp;
+&nbsp;import java.awt.AWTEvent;
+&nbsp;import java.awt.AlphaComposite;
+&nbsp;import java.awt.Composite;
+&nbsp;import java.awt.Cursor;
+&nbsp;import java.awt.Dimension;
+&nbsp;import java.awt.Graphics;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.GraphicsConfiguration;
+&nbsp;import java.awt.Image;
+&nbsp;import java.awt.Insets;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Point;
+&nbsp;import java.awt.Rectangle;
+&nbsp;import java.awt.Toolkit;
+&nbsp;import java.awt.Transparency;
+&nbsp;import java.awt.datatransfer.Clipboard;
+&nbsp;import java.awt.event.ActionEvent;
+&nbsp;import java.awt.event.ActionListener;
+&nbsp;import java.awt.event.InputEvent;
+&nbsp;import java.awt.event.MouseEvent;
+&nbsp;import java.awt.event.MouseListener;
+&nbsp;import java.awt.event.MouseMotionListener;
+&nbsp;import java.awt.geom.AffineTransform;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.awt.print.PageFormat;
+&nbsp;import java.awt.print.Printable;
+&nbsp;import java.awt.print.PrinterException;
+&nbsp;import java.awt.print.PrinterJob;
+&nbsp;import java.io.BufferedWriter;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileWriter;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.lang.reflect.Constructor;
+&nbsp;import java.lang.reflect.InvocationTargetException;
+&nbsp;import java.lang.reflect.Method;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.EventListener;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.ResourceBundle;
+&nbsp;
+&nbsp;import javax.swing.JFileChooser;
+&nbsp;import javax.swing.JMenu;
+&nbsp;import javax.swing.JMenuItem;
+&nbsp;import javax.swing.JOptionPane;
+&nbsp;import javax.swing.JPanel;
+&nbsp;import javax.swing.JPopupMenu;
+&nbsp;import javax.swing.SwingUtilities;
+&nbsp;import javax.swing.ToolTipManager;
+&nbsp;import javax.swing.event.EventListenerList;
+&nbsp;import javax.swing.filechooser.FileNameExtensionFilter;
+&nbsp;import org.jfree.chart.ChartRenderingInfo;
+&nbsp;import org.jfree.chart.ChartTransferable;
+&nbsp;import org.jfree.chart.ChartUtils;
+&nbsp;import org.jfree.chart.JFreeChart;
+&nbsp;
+&nbsp;import org.jfree.chart.swing.editor.ChartEditor;
+&nbsp;import org.jfree.chart.swing.editor.ChartEditorManager;
+&nbsp;import org.jfree.chart.entity.ChartEntity;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.event.ChartChangeEvent;
+&nbsp;import org.jfree.chart.event.ChartChangeListener;
+&nbsp;import org.jfree.chart.event.ChartProgressEvent;
+&nbsp;import org.jfree.chart.event.ChartProgressListener;
+&nbsp;import org.jfree.chart.plot.Pannable;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.Zoomable;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;
+&nbsp;/**
+&nbsp; * A Swing GUI component for displaying a {@link JFreeChart} object.
+&nbsp; * &lt;P&gt;
+&nbsp; * The panel registers with the chart to receive notification of changes to any
+&nbsp; * component of the chart.  The chart is redrawn automatically whenever this
+&nbsp; * notification is received.
+&nbsp; */
+&nbsp;@SuppressWarnings(&quot;unused&quot;)
+&nbsp;public class ChartPanel extends JPanel implements ChartChangeListener,
+&nbsp;        ChartProgressListener, ActionListener, MouseListener,
+&nbsp;        MouseMotionListener, OverlayChangeListener, Printable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    protected static final long serialVersionUID = 6046366297214274674L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default setting for buffer usage.  The default has been changed to
+&nbsp;     * {@code true} from version 1.0.13 onwards, because of a severe
+&nbsp;     * performance problem with drawing the zoom rectangle using XOR (which
+&nbsp;     * now happens only when the buffer is NOT used).
+&nbsp;     */
+&nbsp;    public static final boolean DEFAULT_BUFFER_USED = true;
+&nbsp;
+&nbsp;    /** The default panel width. */
+&nbsp;    public static final int DEFAULT_WIDTH = 1024;
+&nbsp;
+&nbsp;    /** The default panel height. */
+&nbsp;    public static final int DEFAULT_HEIGHT = 768;
+&nbsp;
+&nbsp;    /** The default limit below which chart scaling kicks in. */
+&nbsp;    public static final int DEFAULT_MINIMUM_DRAW_WIDTH = 300;
+&nbsp;
+&nbsp;    /** The default limit below which chart scaling kicks in. */
+&nbsp;    public static final int DEFAULT_MINIMUM_DRAW_HEIGHT = 200;
+&nbsp;
+&nbsp;    /** The default limit above which chart scaling kicks in. */
+&nbsp;    public static final int DEFAULT_MAXIMUM_DRAW_WIDTH = 1024;
+&nbsp;
+&nbsp;    /** The default limit above which chart scaling kicks in. */
+&nbsp;    public static final int DEFAULT_MAXIMUM_DRAW_HEIGHT = 768;
+&nbsp;
+&nbsp;    /** Properties action command. */
+&nbsp;    public static final String PROPERTIES_COMMAND = &quot;PROPERTIES&quot;;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Copy action command.
+&nbsp;     */
+&nbsp;    public static final String COPY_COMMAND = &quot;COPY&quot;;
+&nbsp;
+&nbsp;    /** Save action command. */
+&nbsp;    public static final String SAVE_COMMAND = &quot;SAVE&quot;;
+&nbsp;
+&nbsp;    /** Action command to save as PNG. */
+&nbsp;    protected static final String SAVE_AS_PNG_COMMAND = &quot;SAVE_AS_PNG&quot;;
+&nbsp;    
+&nbsp;    /** Action command to save as PNG - use screen size */
+&nbsp;    protected static final String SAVE_AS_PNG_SIZE_COMMAND = &quot;SAVE_AS_PNG_SIZE&quot;;
+&nbsp;
+&nbsp;    /** Action command to save as SVG. */
+&nbsp;    protected static final String SAVE_AS_SVG_COMMAND = &quot;SAVE_AS_SVG&quot;;
+&nbsp;    
+&nbsp;    /** Action command to save as PDF. */
+&nbsp;    protected static final String SAVE_AS_PDF_COMMAND = &quot;SAVE_AS_PDF&quot;;
+&nbsp;    
+&nbsp;    /** Print action command. */
+&nbsp;    public static final String PRINT_COMMAND = &quot;PRINT&quot;;
+&nbsp;
+&nbsp;    /** Zoom in (both axes) action command. */
+&nbsp;    public static final String ZOOM_IN_BOTH_COMMAND = &quot;ZOOM_IN_BOTH&quot;;
+&nbsp;
+&nbsp;    /** Zoom in (domain axis only) action command. */
+&nbsp;    public static final String ZOOM_IN_DOMAIN_COMMAND = &quot;ZOOM_IN_DOMAIN&quot;;
+&nbsp;
+&nbsp;    /** Zoom in (range axis only) action command. */
+&nbsp;    public static final String ZOOM_IN_RANGE_COMMAND = &quot;ZOOM_IN_RANGE&quot;;
+&nbsp;
+&nbsp;    /** Zoom out (both axes) action command. */
+&nbsp;    public static final String ZOOM_OUT_BOTH_COMMAND = &quot;ZOOM_OUT_BOTH&quot;;
+&nbsp;
+&nbsp;    /** Zoom out (domain axis only) action command. */
+&nbsp;    public static final String ZOOM_OUT_DOMAIN_COMMAND = &quot;ZOOM_DOMAIN_BOTH&quot;;
+&nbsp;
+&nbsp;    /** Zoom out (range axis only) action command. */
+&nbsp;    public static final String ZOOM_OUT_RANGE_COMMAND = &quot;ZOOM_RANGE_BOTH&quot;;
+&nbsp;
+&nbsp;    /** Zoom reset (both axes) action command. */
+&nbsp;    public static final String ZOOM_RESET_BOTH_COMMAND = &quot;ZOOM_RESET_BOTH&quot;;
+&nbsp;
+&nbsp;    /** Zoom reset (domain axis only) action command. */
+&nbsp;    public static final String ZOOM_RESET_DOMAIN_COMMAND = &quot;ZOOM_RESET_DOMAIN&quot;;
+&nbsp;
+&nbsp;    /** Zoom reset (range axis only) action command. */
+&nbsp;    public static final String ZOOM_RESET_RANGE_COMMAND = &quot;ZOOM_RESET_RANGE&quot;;
+&nbsp;
+&nbsp;    // default modifiers for zooming, private to avoid constant inlining,
+&nbsp;    // publicly available through getDefaultDragModifiersEx()
+&nbsp;    private static final int DEFAULT_DRAG_MODIFIERS_EX;
+&nbsp;
+&nbsp;    // mask for all modifier keys to check for
+&nbsp;    private static final int MODIFIERS_EX_MASK =
+&nbsp;            InputEvent.SHIFT_DOWN_MASK |
+&nbsp;            InputEvent.CTRL_DOWN_MASK |
+&nbsp;            InputEvent.META_DOWN_MASK |
+&nbsp;            InputEvent.ALT_DOWN_MASK;
+&nbsp;
+&nbsp;    static {
+<b class="fc">&nbsp;        int dragModifiers = InputEvent.CTRL_DOWN_MASK;</b>
+&nbsp;        // for MacOSX we can&#39;t use the CTRL key for mouse drags, see:
+&nbsp;        // http://developer.apple.com/qa/qa2004/qa1362.html
+<b class="fc">&nbsp;        String osName = System.getProperty(&quot;os.name&quot;).toLowerCase();</b>
+<b class="fc">&nbsp;        if (osName.startsWith(&quot;mac os x&quot;)) {</b>
+<b class="nc">&nbsp;            dragModifiers = InputEvent.ALT_DOWN_MASK;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DEFAULT_DRAG_MODIFIERS_EX = dragModifiers;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The standard mouse button modifiers for alternative drag operations.
+&nbsp;     * There are two kinds of mouse drag operations: pan and zoom.
+&nbsp;     * To distinguish between them, one needs to require modifier keys
+&nbsp;     * to be held down during the dragging.  However, some modifiers
+&nbsp;     * may not be usable on all platforms.  For example, on Mac OS X
+&nbsp;     * it is impossible to perform Ctrl-drags or right-drags, see
+&nbsp;     * &lt;a href=&quot;http://developer.apple.com/qa/qa2004/qa1362.html&quot;&gt;http://developer.apple.com/qa/qa2004/qa1362.html&lt;/a&gt;.
+&nbsp;     * This function returns a non-zero modifier usable for any platform:
+&nbsp;     * Alt for Mac OS X, Ctrl for other platforms.  It is recommended
+&nbsp;     * to use these modifiers for one operation, and zero modifiers for
+&nbsp;     * the other.
+&nbsp;     *
+&nbsp;     * @return modifiers mask, as in {@link InputEvent#getModifiersEx()}
+&nbsp;     * @see #setPanModifiersEx(int, int)
+&nbsp;     * @see #setZoomModifiersEx(int, int)
+&nbsp;     * @see #setDefaultPanModifiersEx(int)
+&nbsp;     * @see #setDefaultZoomModifiersEx(int)
+&nbsp;     */
+&nbsp;    public static int getDefaultDragModifiersEx() {
+<b class="fc">&nbsp;        return DEFAULT_DRAG_MODIFIERS_EX;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** The chart that is displayed in the panel. */
+&nbsp;    protected JFreeChart chart;
+&nbsp;
+&nbsp;    /** Storage for registered (chart) mouse listeners. */
+&nbsp;    protected transient EventListenerList chartMouseListeners;
+&nbsp;
+&nbsp;    /** A flag that controls whether or not the off-screen buffer is used. */
+&nbsp;    protected boolean useBuffer;
+&nbsp;
+&nbsp;    /** A flag that indicates that the buffer should be refreshed. */
+&nbsp;    protected boolean refreshBuffer;
+&nbsp;
+&nbsp;    /** A buffer for the rendered chart. */
+&nbsp;    protected transient Image chartBuffer;
+&nbsp;
+&nbsp;    /** The height of the chart buffer. */
+&nbsp;    protected int chartBufferHeight;
+&nbsp;
+&nbsp;    /** The width of the chart buffer. */
+&nbsp;    protected int chartBufferWidth;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The minimum width for drawing a chart (uses scaling for smaller widths).
+&nbsp;     */
+&nbsp;    protected int minimumDrawWidth;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The minimum height for drawing a chart (uses scaling for smaller
+&nbsp;     * heights).
+&nbsp;     */
+&nbsp;    protected int minimumDrawHeight;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The maximum width for drawing a chart (uses scaling for bigger
+&nbsp;     * widths).
+&nbsp;     */
+&nbsp;    protected int maximumDrawWidth;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The maximum height for drawing a chart (uses scaling for bigger
+&nbsp;     * heights).
+&nbsp;     */
+&nbsp;    protected int maximumDrawHeight;
+&nbsp;
+&nbsp;    /** The popup menu for the frame. */
+&nbsp;    protected JPopupMenu popup;
+&nbsp;
+&nbsp;    /** The drawing info collected the last time the chart was drawn. */
+&nbsp;    protected ChartRenderingInfo info;
+&nbsp;
+&nbsp;    /** The chart anchor point. */
+&nbsp;    protected Point2D anchor;
+&nbsp;
+&nbsp;    /** The scale factor used to draw the chart. */
+&nbsp;    protected double scaleX;
+&nbsp;
+&nbsp;    /** The scale factor used to draw the chart. */
+&nbsp;    protected double scaleY;
+&nbsp;
+&nbsp;    /** The plot orientation. */
+<b class="fc">&nbsp;    protected PlotOrientation orientation = PlotOrientation.VERTICAL;</b>
+&nbsp;
+&nbsp;    /** A flag that controls whether or not domain zooming is enabled. */
+<b class="fc">&nbsp;    protected boolean domainZoomable = false;</b>
+&nbsp;
+&nbsp;    /** A flag that controls whether or not range zooming is enabled. */
+<b class="fc">&nbsp;    protected boolean rangeZoomable = false;</b>
+&nbsp;
+&nbsp;    /** A strategy to handle zoom rectangle processing and painting. */
+<b class="fc">&nbsp;    private SelectionZoomStrategy selectionZoomStrategy = new DefaultSelectionZoomStrategy();</b>
+&nbsp;
+&nbsp;    /** Menu item for zooming in on a chart (both axes). */
+&nbsp;    protected JMenuItem zoomInBothMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for zooming in on a chart (domain axis). */
+&nbsp;    protected JMenuItem zoomInDomainMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for zooming in on a chart (range axis). */
+&nbsp;    protected JMenuItem zoomInRangeMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for zooming out on a chart. */
+&nbsp;    protected JMenuItem zoomOutBothMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for zooming out on a chart (domain axis). */
+&nbsp;    protected JMenuItem zoomOutDomainMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for zooming out on a chart (range axis). */
+&nbsp;    protected JMenuItem zoomOutRangeMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for resetting the zoom (both axes). */
+&nbsp;    protected JMenuItem zoomResetBothMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for resetting the zoom (domain axis only). */
+&nbsp;    protected JMenuItem zoomResetDomainMenuItem;
+&nbsp;
+&nbsp;    /** Menu item for resetting the zoom (range axis only). */
+&nbsp;    protected JMenuItem zoomResetRangeMenuItem;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default directory for saving charts to file.
+&nbsp;     */
+&nbsp;    protected File defaultDirectoryForSaveAs;
+&nbsp;
+&nbsp;    /** A flag that controls whether or not file extensions are enforced. */
+&nbsp;    protected boolean enforceFileExtensions;
+&nbsp;
+&nbsp;    /** A flag that indicates if original tooltip delays are changed. */
+&nbsp;    protected boolean ownToolTipDelaysActive;
+&nbsp;
+&nbsp;    /** Original initial tooltip delay of ToolTipManager.sharedInstance(). */
+&nbsp;    protected int originalToolTipInitialDelay;
+&nbsp;
+&nbsp;    /** Original reshow tooltip delay of ToolTipManager.sharedInstance(). */
+&nbsp;    protected int originalToolTipReshowDelay;
+&nbsp;
+&nbsp;    /** Original dismiss tooltip delay of ToolTipManager.sharedInstance(). */
+&nbsp;    protected int originalToolTipDismissDelay;
+&nbsp;
+&nbsp;    /** Own initial tooltip delay to be used in this chart panel. */
+&nbsp;    protected int ownToolTipInitialDelay;
+&nbsp;
+&nbsp;    /** Own reshow tooltip delay to be used in this chart panel. */
+&nbsp;    protected int ownToolTipReshowDelay;
+&nbsp;
+&nbsp;    /** Own dismiss tooltip delay to be used in this chart panel. */
+&nbsp;    protected int ownToolTipDismissDelay;
+&nbsp;
+&nbsp;    /** The factor used to zoom in on an axis range. */
+<b class="fc">&nbsp;    protected double zoomInFactor = 0.5;</b>
+&nbsp;
+&nbsp;    /** The factor used to zoom out on an axis range. */
+<b class="fc">&nbsp;    protected double zoomOutFactor = 2.0;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether zoom operations are centred on the
+&nbsp;     * current anchor point, or the centre point of the relevant axis.
+&nbsp;     */
+&nbsp;    protected boolean zoomAroundAnchor;
+&nbsp;
+&nbsp;    /** The resourceBundle for the localization. */
+<b class="fc">&nbsp;    protected static ResourceBundle localizationResources</b>
+<b class="fc">&nbsp;            = ResourceBundle.getBundle(&quot;org.jfree.chart.LocalizationBundle&quot;);</b>
+&nbsp;
+&nbsp;    /** 
+&nbsp;     * Temporary storage for the width and height of the chart 
+&nbsp;     * drawing area during panning.
+&nbsp;     */
+&nbsp;    protected double panW, panH;
+&nbsp;
+&nbsp;    /** The last mouse position during panning. */
+&nbsp;    protected Point panLast;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default mask for mouse events to trigger panning.
+&nbsp;     * Since 2.0.0, this mask uses extended modifiers, as returned
+&nbsp;     * by {@link InputEvent#getModifiersEx()}.
+&nbsp;     * Only used if no button-specific modifiers were set in
+&nbsp;     * {@link #panButtonMasks}.
+&nbsp;     */
+<b class="fc">&nbsp;    protected int panMask = getDefaultDragModifiersEx();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default mask for mouse events to trigger zooming.
+&nbsp;     *
+&nbsp;     * @since 2.0.0
+&nbsp;     */
+<b class="fc">&nbsp;    protected int zoomMask = 0;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The masks for mouse events to trigger panning, per mouse button.
+&nbsp;     *
+&nbsp;     * @since 2.0.0
+&nbsp;     */
+<b class="fc">&nbsp;    protected final Map&lt;Integer, Integer&gt; panButtonMasks = new HashMap&lt;&gt;(3);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The masks for mouse events to trigger zooming, per mouse button.
+&nbsp;     *
+&nbsp;     * @since 2.0.0
+&nbsp;     */
+<b class="fc">&nbsp;    protected final Map&lt;Integer, Integer&gt; zoomButtonMasks = new HashMap&lt;&gt;(3);</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A list of overlays for the panel.
+&nbsp;     */
+&nbsp;    protected List&lt;Overlay&gt; overlays;
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Constructs a panel that displays the specified chart.
+&nbsp;     *
+&nbsp;     * @param chart  the chart.
+&nbsp;     */
+&nbsp;    public ChartPanel(JFreeChart chart) {
+<b class="fc">&nbsp;        this(chart, DEFAULT_WIDTH, DEFAULT_HEIGHT,</b>
+&nbsp;            DEFAULT_MINIMUM_DRAW_WIDTH, DEFAULT_MINIMUM_DRAW_HEIGHT,
+&nbsp;            DEFAULT_MAXIMUM_DRAW_WIDTH, DEFAULT_MAXIMUM_DRAW_HEIGHT,
+&nbsp;            DEFAULT_BUFFER_USED,
+&nbsp;            true,  // properties
+&nbsp;            true,  // save
+&nbsp;            true,  // print
+&nbsp;            true,  // zoom
+&nbsp;            true   // tooltips
+&nbsp;        );
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a panel containing a chart.  The {@code useBuffer} flag
+&nbsp;     * controls whether or not an offscreen {@code BufferedImage} is
+&nbsp;     * maintained for the chart.  If the buffer is used, more memory is
+&nbsp;     * consumed, but panel repaints will be a lot quicker in cases where the
+&nbsp;     * chart itself hasn&#39;t changed (for example, when another frame is moved
+&nbsp;     * to reveal the panel).  WARNING: If you set the {@code useBuffer}
+&nbsp;     * flag to false, note that the mouse zooming rectangle will (in that case)
+&nbsp;     * be drawn using XOR, and there is a SEVERE performance problem with that
+&nbsp;     * on JRE6 on Windows.
+&nbsp;     *
+&nbsp;     * @param chart  the chart.
+&nbsp;     * @param useBuffer  a flag controlling whether or not an off-screen buffer
+&nbsp;     *                   is used (read the warning above before setting this
+&nbsp;     *                   to {@code false}).
+&nbsp;     */
+&nbsp;    public ChartPanel(JFreeChart chart, boolean useBuffer) {
+&nbsp;
+<b class="nc">&nbsp;        this(chart, DEFAULT_WIDTH, DEFAULT_HEIGHT, DEFAULT_MINIMUM_DRAW_WIDTH,</b>
+&nbsp;                DEFAULT_MINIMUM_DRAW_HEIGHT, DEFAULT_MAXIMUM_DRAW_WIDTH,
+&nbsp;                DEFAULT_MAXIMUM_DRAW_HEIGHT, useBuffer,
+&nbsp;                true,  // properties
+&nbsp;                true,  // save
+&nbsp;                true,  // print
+&nbsp;                true,  // zoom
+&nbsp;                true   // tooltips
+&nbsp;                );
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a JFreeChart panel.
+&nbsp;     *
+&nbsp;     * @param chart  the chart.
+&nbsp;     * @param properties  a flag indicating whether or not the chart property
+&nbsp;     *                    editor should be available via the popup menu.
+&nbsp;     * @param save  a flag indicating whether or not save options should be
+&nbsp;     *              available via the popup menu.
+&nbsp;     * @param print  a flag indicating whether or not the print option
+&nbsp;     *               should be available via the popup menu.
+&nbsp;     * @param zoom  a flag indicating whether or not zoom options should
+&nbsp;     *              be added to the popup menu.
+&nbsp;     * @param tooltips  a flag indicating whether or not tooltips should be
+&nbsp;     *                  enabled for the chart.
+&nbsp;     */
+&nbsp;    public ChartPanel(JFreeChart chart, boolean properties, boolean save,
+&nbsp;            boolean print, boolean zoom, boolean tooltips) {
+&nbsp;
+<b class="nc">&nbsp;        this(chart, DEFAULT_WIDTH, DEFAULT_HEIGHT,</b>
+&nbsp;             DEFAULT_MINIMUM_DRAW_WIDTH, DEFAULT_MINIMUM_DRAW_HEIGHT,
+&nbsp;             DEFAULT_MAXIMUM_DRAW_WIDTH, DEFAULT_MAXIMUM_DRAW_HEIGHT,
+&nbsp;             DEFAULT_BUFFER_USED, properties, save, print, zoom, tooltips);
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a JFreeChart panel.
+&nbsp;     *
+&nbsp;     * @param chart  the chart.
+&nbsp;     * @param width  the preferred width of the panel.
+&nbsp;     * @param height  the preferred height of the panel.
+&nbsp;     * @param minimumDrawWidth  the minimum drawing width.
+&nbsp;     * @param minimumDrawHeight  the minimum drawing height.
+&nbsp;     * @param maximumDrawWidth  the maximum drawing width.
+&nbsp;     * @param maximumDrawHeight  the maximum drawing height.
+&nbsp;     * @param useBuffer  a flag that indicates whether to use the off-screen
+&nbsp;     *                   buffer to improve performance (at the expense of
+&nbsp;     *                   memory).
+&nbsp;     * @param properties  a flag indicating whether or not the chart property
+&nbsp;     *                    editor should be available via the popup menu.
+&nbsp;     * @param save  a flag indicating whether or not save options should be
+&nbsp;     *              available via the popup menu.
+&nbsp;     * @param print  a flag indicating whether or not the print option
+&nbsp;     *               should be available via the popup menu.
+&nbsp;     * @param zoom  a flag indicating whether or not zoom options should be
+&nbsp;     *              added to the popup menu.
+&nbsp;     * @param tooltips  a flag indicating whether or not tooltips should be
+&nbsp;     *                  enabled for the chart.
+&nbsp;     */
+&nbsp;    public ChartPanel(JFreeChart chart, int width, int height,
+&nbsp;            int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth,
+&nbsp;            int maximumDrawHeight, boolean useBuffer, boolean properties,
+&nbsp;            boolean save, boolean print, boolean zoom, boolean tooltips) {
+&nbsp;
+<b class="fc">&nbsp;        this(chart, width, height, minimumDrawWidth, minimumDrawHeight,</b>
+&nbsp;                maximumDrawWidth, maximumDrawHeight, useBuffer, properties,
+&nbsp;                true, save, print, zoom, tooltips);
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a JFreeChart panel.
+&nbsp;     *
+&nbsp;     * @param chart  the chart.
+&nbsp;     * @param width  the preferred width of the panel.
+&nbsp;     * @param height  the preferred height of the panel.
+&nbsp;     * @param minimumDrawWidth  the minimum drawing width.
+&nbsp;     * @param minimumDrawHeight  the minimum drawing height.
+&nbsp;     * @param maximumDrawWidth  the maximum drawing width.
+&nbsp;     * @param maximumDrawHeight  the maximum drawing height.
+&nbsp;     * @param useBuffer  a flag that indicates whether to use the off-screen
+&nbsp;     *                   buffer to improve performance (at the expense of
+&nbsp;     *                   memory).
+&nbsp;     * @param properties  a flag indicating whether or not the chart property
+&nbsp;     *                    editor should be available via the popup menu.
+&nbsp;     * @param copy  a flag indicating whether or not a copy option should be
+&nbsp;     *              available via the popup menu.
+&nbsp;     * @param save  a flag indicating whether or not save options should be
+&nbsp;     *              available via the popup menu.
+&nbsp;     * @param print  a flag indicating whether or not the print option
+&nbsp;     *               should be available via the popup menu.
+&nbsp;     * @param zoom  a flag indicating whether or not zoom options should be
+&nbsp;     *              added to the popup menu.
+&nbsp;     * @param tooltips  a flag indicating whether or not tooltips should be
+&nbsp;     *                  enabled for the chart.
+&nbsp;     */
+&nbsp;    public ChartPanel(JFreeChart chart, int width, int height,
+&nbsp;           int minimumDrawWidth, int minimumDrawHeight, int maximumDrawWidth,
+&nbsp;           int maximumDrawHeight, boolean useBuffer, boolean properties,
+&nbsp;           boolean copy, boolean save, boolean print, boolean zoom,
+<b class="fc">&nbsp;           boolean tooltips) {</b>
+&nbsp;
+<b class="fc">&nbsp;        setChart(chart);</b>
+<b class="fc">&nbsp;        this.chartMouseListeners = new EventListenerList();</b>
+<b class="fc">&nbsp;        this.info = new ChartRenderingInfo();</b>
+<b class="fc">&nbsp;        setPreferredSize(new Dimension(width, height));</b>
+<b class="fc">&nbsp;        this.useBuffer = useBuffer;</b>
+<b class="fc">&nbsp;        this.refreshBuffer = false;</b>
+<b class="fc">&nbsp;        this.minimumDrawWidth = minimumDrawWidth;</b>
+<b class="fc">&nbsp;        this.minimumDrawHeight = minimumDrawHeight;</b>
+<b class="fc">&nbsp;        this.maximumDrawWidth = maximumDrawWidth;</b>
+<b class="fc">&nbsp;        this.maximumDrawHeight = maximumDrawHeight;</b>
+&nbsp;
+&nbsp;        // set up popup menu...
+<b class="fc">&nbsp;        this.popup = null;</b>
+<b class="fc">&nbsp;        if (properties || copy || save || print || zoom) {</b>
+<b class="fc">&nbsp;            this.popup = createPopupMenu(properties, copy, save, print, zoom);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        enableEvents(AWTEvent.MOUSE_EVENT_MASK);</b>
+<b class="fc">&nbsp;        enableEvents(AWTEvent.MOUSE_MOTION_EVENT_MASK);</b>
+<b class="fc">&nbsp;        setDisplayToolTips(tooltips);</b>
+<b class="fc">&nbsp;        addMouseListener(this);</b>
+<b class="fc">&nbsp;        addMouseMotionListener(this);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.defaultDirectoryForSaveAs = null;</b>
+<b class="fc">&nbsp;        this.enforceFileExtensions = true;</b>
+&nbsp;
+&nbsp;        // initialize ChartPanel-specific tool tip delays with
+&nbsp;        // values the from ToolTipManager.sharedInstance()
+<b class="fc">&nbsp;        ToolTipManager ttm = ToolTipManager.sharedInstance();</b>
+<b class="fc">&nbsp;        this.ownToolTipInitialDelay = ttm.getInitialDelay();</b>
+<b class="fc">&nbsp;        this.ownToolTipDismissDelay = ttm.getDismissDelay();</b>
+<b class="fc">&nbsp;        this.ownToolTipReshowDelay = ttm.getReshowDelay();</b>
+&nbsp;
+<b class="fc">&nbsp;        this.zoomAroundAnchor = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.overlays = new ArrayList&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the chart contained in the panel.
+&nbsp;     *
+&nbsp;     * @return The chart (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public JFreeChart getChart() {
+<b class="fc">&nbsp;        return this.chart;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the chart that is displayed in the panel.
+&nbsp;     *
+&nbsp;     * @param chart  the chart ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setChart(JFreeChart chart) {
+&nbsp;
+&nbsp;        // stop listening for changes to the existing chart
+<b class="fc">&nbsp;        if (this.chart != null) {</b>
+<b class="fc">&nbsp;            this.chart.removeChangeListener(this);</b>
+<b class="fc">&nbsp;            this.chart.removeProgressListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // add the new chart
+<b class="fc">&nbsp;        this.chart = chart;</b>
+<b class="fc">&nbsp;        if (chart != null) {</b>
+<b class="fc">&nbsp;            this.chart.addChangeListener(this);</b>
+<b class="fc">&nbsp;            this.chart.addProgressListener(this);</b>
+<b class="fc">&nbsp;            Plot plot = chart.getPlot();</b>
+<b class="fc">&nbsp;            this.domainZoomable = false;</b>
+<b class="fc">&nbsp;            this.rangeZoomable = false;</b>
+<b class="fc">&nbsp;            if (plot instanceof Zoomable) {</b>
+<b class="fc">&nbsp;                Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;                this.domainZoomable = z.isDomainZoomable();</b>
+<b class="fc">&nbsp;                this.rangeZoomable = z.isRangeZoomable();</b>
+<b class="fc">&nbsp;                this.orientation = z.getOrientation();</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="fc">&nbsp;            this.domainZoomable = false;</b>
+<b class="fc">&nbsp;            this.rangeZoomable = false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.useBuffer) {</b>
+<b class="fc">&nbsp;            this.refreshBuffer = true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        repaint();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum drawing width for charts.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If the width available on the panel is less than this, then the chart is
+&nbsp;     * drawn at the minimum width then scaled down to fit.
+&nbsp;     *
+&nbsp;     * @return The minimum drawing width.
+&nbsp;     */
+&nbsp;    public int getMinimumDrawWidth() {
+<b class="nc">&nbsp;        return this.minimumDrawWidth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the minimum drawing width for the chart on this panel.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * At the time the chart is drawn on the panel, if the available width is
+&nbsp;     * less than this amount, the chart will be drawn using the minimum width
+&nbsp;     * then scaled down to fit the available space.
+&nbsp;     *
+&nbsp;     * @param width  The width.
+&nbsp;     */
+&nbsp;    public void setMinimumDrawWidth(int width) {
+<b class="nc">&nbsp;        this.minimumDrawWidth = width;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum drawing width for charts.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If the width available on the panel is greater than this, then the chart
+&nbsp;     * is drawn at the maximum width then scaled up to fit.
+&nbsp;     *
+&nbsp;     * @return The maximum drawing width.
+&nbsp;     */
+&nbsp;    public int getMaximumDrawWidth() {
+<b class="nc">&nbsp;        return this.maximumDrawWidth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum drawing width for the chart on this panel.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * At the time the chart is drawn on the panel, if the available width is
+&nbsp;     * greater than this amount, the chart will be drawn using the maximum
+&nbsp;     * width then scaled up to fit the available space.
+&nbsp;     *
+&nbsp;     * @param width  The width.
+&nbsp;     */
+&nbsp;    public void setMaximumDrawWidth(int width) {
+<b class="nc">&nbsp;        this.maximumDrawWidth = width;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum drawing height for charts.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If the height available on the panel is less than this, then the chart
+&nbsp;     * is drawn at the minimum height then scaled down to fit.
+&nbsp;     *
+&nbsp;     * @return The minimum drawing height.
+&nbsp;     */
+&nbsp;    public int getMinimumDrawHeight() {
+<b class="nc">&nbsp;        return this.minimumDrawHeight;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the minimum drawing height for the chart on this panel.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * At the time the chart is drawn on the panel, if the available height is
+&nbsp;     * less than this amount, the chart will be drawn using the minimum height
+&nbsp;     * then scaled down to fit the available space.
+&nbsp;     *
+&nbsp;     * @param height  The height.
+&nbsp;     */
+&nbsp;    public void setMinimumDrawHeight(int height) {
+<b class="nc">&nbsp;        this.minimumDrawHeight = height;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum drawing height for charts.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If the height available on the panel is greater than this, then the
+&nbsp;     * chart is drawn at the maximum height then scaled up to fit.
+&nbsp;     *
+&nbsp;     * @return The maximum drawing height.
+&nbsp;     */
+&nbsp;    public int getMaximumDrawHeight() {
+<b class="nc">&nbsp;        return this.maximumDrawHeight;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum drawing height for the chart on this panel.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * At the time the chart is drawn on the panel, if the available height is
+&nbsp;     * greater than this amount, the chart will be drawn using the maximum
+&nbsp;     * height then scaled up to fit the available space.
+&nbsp;     *
+&nbsp;     * @param height  The height.
+&nbsp;     */
+&nbsp;    public void setMaximumDrawHeight(int height) {
+<b class="nc">&nbsp;        this.maximumDrawHeight = height;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the X scale factor for the chart.  This will be 1.0 if no
+&nbsp;     * scaling has been used.
+&nbsp;     *
+&nbsp;     * @return The scale factor.
+&nbsp;     */
+&nbsp;    public double getScaleX() {
+<b class="nc">&nbsp;        return this.scaleX;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the Y scale factory for the chart.  This will be 1.0 if no
+&nbsp;     * scaling has been used.
+&nbsp;     *
+&nbsp;     * @return The scale factor.
+&nbsp;     */
+&nbsp;    public double getScaleY() {
+<b class="nc">&nbsp;        return this.scaleY;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the anchor point.
+&nbsp;     *
+&nbsp;     * @return The anchor point (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public Point2D getAnchor() {
+<b class="nc">&nbsp;        return this.anchor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the anchor point.  This method is provided for the use of
+&nbsp;     * subclasses, not end users.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor point ({@code null} permitted).
+&nbsp;     */
+&nbsp;    protected void setAnchor(Point2D anchor) {
+<b class="nc">&nbsp;        this.anchor = anchor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the popup menu.
+&nbsp;     *
+&nbsp;     * @return The popup menu.
+&nbsp;     */
+&nbsp;    public JPopupMenu getPopupMenu() {
+<b class="nc">&nbsp;        return this.popup;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the popup menu for the panel.
+&nbsp;     *
+&nbsp;     * @param popup  the popup menu ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setPopupMenu(JPopupMenu popup) {
+<b class="nc">&nbsp;        this.popup = popup;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the chart rendering info from the most recent chart redraw.
+&nbsp;     *
+&nbsp;     * @return The chart rendering info.
+&nbsp;     */
+&nbsp;    public ChartRenderingInfo getChartRenderingInfo() {
+<b class="nc">&nbsp;        return this.info;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A convenience method that switches on mouse-based zooming.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} enables zooming and rectangle fill on
+&nbsp;     *              zoom.
+&nbsp;     */
+&nbsp;    public void setMouseZoomable(boolean flag) {
+<b class="nc">&nbsp;        setMouseZoomable(flag, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A convenience method that switches on mouse-based zooming.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} if zooming enabled
+&nbsp;     * @param fillRectangle  {@code true} if zoom rectangle is filled,
+&nbsp;     *                       false if rectangle is shown as outline only.
+&nbsp;     */
+&nbsp;    public void setMouseZoomable(boolean flag, boolean fillRectangle) {
+<b class="nc">&nbsp;        setDomainZoomable(flag);</b>
+<b class="nc">&nbsp;        setRangeZoomable(flag);</b>
+<b class="nc">&nbsp;        setFillZoomRectangle(fillRectangle);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets default modifier keys for pan operations for all mouse buttons.
+&nbsp;     * Modifiers for a specific button can be set with
+&nbsp;     * {@link #setPanModifiersEx(int, int)}.  If there are none set for
+&nbsp;     * a certain button, it will use the modifiers passed to this function,
+&nbsp;     * defaulting to {@link #getDefaultDragModifiersEx()} if this function
+&nbsp;     * was never called.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Only {@link InputEvent#SHIFT_DOWN_MASK}, {@link InputEvent#CTRL_DOWN_MASK},
+&nbsp;     * {@link InputEvent#META_DOWN_MASK} and {@link InputEvent#ALT_DOWN_MASK} are
+&nbsp;     * checked.  To avoid platform-specific problems, it is recommended to use
+&nbsp;     * {@link #getDefaultDragModifiersEx()} for one operation, and zero modifiers
+&nbsp;     * for the other.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the same modifiers are set for both zooming and panning,
+&nbsp;     * panning will be performed.
+&nbsp;     *
+&nbsp;     * @param modifiersEx modifier keys, as returned by {@link InputEvent#getModifiersEx()}
+&nbsp;     */
+&nbsp;    public void setDefaultPanModifiersEx(int modifiersEx) {
+<b class="nc">&nbsp;        this.panMask = modifiersEx;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets default modifier keys for zoom operations for all mouse buttons.
+&nbsp;     * Modifiers for a specific button can be set with
+&nbsp;     * {@link #setZoomModifiersEx(int, int)}.  If there are none set for
+&nbsp;     * a certain button, it will use the modifiers passed to this function,
+&nbsp;     * defaulting to zero (no modifiers) if this function was never called.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Only {@link InputEvent#SHIFT_DOWN_MASK}, {@link InputEvent#CTRL_DOWN_MASK},
+&nbsp;     * {@link InputEvent#META_DOWN_MASK} and {@link InputEvent#ALT_DOWN_MASK} are
+&nbsp;     * checked.  To avoid platform-specific problems, it is recommended to use
+&nbsp;     * {@link #getDefaultDragModifiersEx()} for one operation, and zero modifiers
+&nbsp;     * for the other.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the same modifiers are set for both zooming and panning,
+&nbsp;     * panning will be performed.
+&nbsp;     *
+&nbsp;     * @param modifiersEx modifier keys, as returned by {@link InputEvent#getModifiersEx()}
+&nbsp;     */
+&nbsp;    public void setDefaultZoomModifiersEx(int modifiersEx) {
+<b class="nc">&nbsp;        this.zoomMask = modifiersEx;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets modifier keys for panning with a specific mouse button. If there are
+&nbsp;     * none set for a certain button with this function, default modifiers set
+&nbsp;     * with {@link #setDefaultPanModifiersEx(int)} will be used, defaulting to
+&nbsp;     * {@link #getDefaultDragModifiersEx()} if none were set either.&lt;p&gt;
+&nbsp;     * Only {@link InputEvent#SHIFT_DOWN_MASK}, {@link InputEvent#CTRL_DOWN_MASK},
+&nbsp;     * {@link InputEvent#META_DOWN_MASK} and {@link InputEvent#ALT_DOWN_MASK} are
+&nbsp;     * checked.  To avoid platform-specific problems, it is recommended to use
+&nbsp;     * {@link #getDefaultDragModifiersEx()} for one operation, and zero modifiers
+&nbsp;     * for the other.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the same modifiers are set for both zooming and panning,
+&nbsp;     * panning will be performed.
+&nbsp;     *
+&nbsp;     * @param mouseButton  the mouse button
+&nbsp;     * @param modifiersEx modifier keys, as returned by {@link InputEvent#getModifiersEx()}
+&nbsp;     */
+&nbsp;    public void setPanModifiersEx(int mouseButton, int modifiersEx) {
+<b class="nc">&nbsp;        panButtonMasks.put(mouseButton, modifiersEx);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets modifier keys for zooming with a specific mouse button.
+&nbsp;     * If there are none set for a certain button with this function,
+&nbsp;     * default modifiers set with {@link #setDefaultZoomModifiersEx(int)}
+&nbsp;     * will be used, defaulting to zero (no modifiers)
+&nbsp;     * if none were set either.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Only {@link InputEvent#SHIFT_DOWN_MASK}, {@link InputEvent#CTRL_DOWN_MASK},
+&nbsp;     * {@link InputEvent#META_DOWN_MASK} and {@link InputEvent#ALT_DOWN_MASK} are
+&nbsp;     * checked.  To avoid platform-specific problems, it is recommended to use
+&nbsp;     * {@link #getDefaultDragModifiersEx()} for one operation, and zero modifiers
+&nbsp;     * for the other.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the same modifiers are set for both zooming and panning,
+&nbsp;     * panning will be performed.
+&nbsp;     *
+&nbsp;     * @param mouseButton  the mouse button.
+&nbsp;     * @param modifiersEx modifier keys, as returned by {@link InputEvent#getModifiersEx()}
+&nbsp;     */
+&nbsp;    public void setZoomModifiersEx(int mouseButton, int modifiersEx) {
+<b class="nc">&nbsp;        zoomButtonMasks.put(mouseButton, modifiersEx);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that determines whether or not zooming is enabled for
+&nbsp;     * the domain axis.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isDomainZoomable() {
+<b class="nc">&nbsp;        return this.domainZoomable;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not zooming is enabled for the
+&nbsp;     * domain axis.  A check is made to ensure that the current plot supports
+&nbsp;     * zooming for the domain values.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} enables zooming if possible.
+&nbsp;     */
+&nbsp;    public void setDomainZoomable(boolean flag) {
+<b class="nc">&nbsp;        if (flag) {</b>
+<b class="nc">&nbsp;            Plot plot = this.chart.getPlot();</b>
+<b class="nc">&nbsp;            if (plot instanceof Zoomable) {</b>
+<b class="nc">&nbsp;                Zoomable z = (Zoomable) plot;</b>
+<b class="nc">&nbsp;                this.domainZoomable = z.isDomainZoomable();</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            this.domainZoomable = false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that determines whether or not zooming is enabled for
+&nbsp;     * the range axis.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isRangeZoomable() {
+<b class="nc">&nbsp;        return this.rangeZoomable;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls mouse-based zooming on the vertical axis.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} enables zooming.
+&nbsp;     */
+&nbsp;    public void setRangeZoomable(boolean flag) {
+<b class="nc">&nbsp;        if (flag) {</b>
+<b class="nc">&nbsp;            Plot plot = this.chart.getPlot();</b>
+<b class="nc">&nbsp;            if (plot instanceof Zoomable) {</b>
+<b class="nc">&nbsp;                Zoomable z = (Zoomable) plot;</b>
+<b class="nc">&nbsp;                this.rangeZoomable = z.isRangeZoomable();</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            this.rangeZoomable = false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a strategy used to control and draw zoom rectangle.
+&nbsp;     *
+&nbsp;     * @return A zoom rectangle strategy.
+&nbsp;     */
+&nbsp;    public SelectionZoomStrategy getSelectionZoomStrategy() {
+<b class="nc">&nbsp;        return selectionZoomStrategy;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A strategy used to control and draw zoom rectangle.
+&nbsp;     *
+&nbsp;     * @param selectionZoomStrategy  A zoom rectangle strategy.
+&nbsp;     */
+&nbsp;    public void setSelectionZoomStrategy(SelectionZoomStrategy selectionZoomStrategy) {
+<b class="nc">&nbsp;        this.selectionZoomStrategy = selectionZoomStrategy;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the zoom rectangle is
+&nbsp;     * filled when drawn.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getFillZoomRectangle() {
+<b class="nc">&nbsp;        return this.selectionZoomStrategy.getFillZoomRectangle();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls how the zoom rectangle is drawn.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} instructs to fill the rectangle on
+&nbsp;     *              zoom, otherwise it will be outlined.
+&nbsp;     */
+&nbsp;    public void setFillZoomRectangle(boolean flag) {
+<b class="nc">&nbsp;        this.selectionZoomStrategy.setFillZoomRectangle(flag);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom trigger distance.  This controls how far the mouse must
+&nbsp;     * move before a zoom action is triggered.
+&nbsp;     *
+&nbsp;     * @return The distance (in Java2D units).
+&nbsp;     */
+&nbsp;    public int getZoomTriggerDistance() {
+<b class="nc">&nbsp;        return this.selectionZoomStrategy.getZoomTriggerDistance();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom trigger distance.  This controls how far the mouse must
+&nbsp;     * move before a zoom action is triggered.
+&nbsp;     *
+&nbsp;     * @param distance  the distance (in Java2D units).
+&nbsp;     */
+&nbsp;    public void setZoomTriggerDistance(int distance) {
+<b class="nc">&nbsp;        this.selectionZoomStrategy.setZoomTriggerDistance(distance);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default directory for the &quot;save as&quot; option.
+&nbsp;     *
+&nbsp;     * @return The default directory (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public File getDefaultDirectoryForSaveAs() {
+<b class="nc">&nbsp;        return this.defaultDirectoryForSaveAs;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default directory for the &quot;save as&quot; option.  If you set this
+&nbsp;     * to {@code null}, the user&#39;s default directory will be used.
+&nbsp;     *
+&nbsp;     * @param directory  the directory ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setDefaultDirectoryForSaveAs(File directory) {
+<b class="nc">&nbsp;        if (directory != null) {</b>
+<b class="nc">&nbsp;            if (!directory.isDirectory()) {</b>
+<b class="nc">&nbsp;                throw new IllegalArgumentException(</b>
+&nbsp;                        &quot;The &#39;directory&#39; argument is not a directory.&quot;);
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        this.defaultDirectoryForSaveAs = directory;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if file extensions should be enforced, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return The flag.
+&nbsp;     *
+&nbsp;     * @see #setEnforceFileExtensions(boolean)
+&nbsp;     */
+&nbsp;    public boolean isEnforceFileExtensions() {
+<b class="nc">&nbsp;        return this.enforceFileExtensions;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls whether or not file extensions are enforced.
+&nbsp;     *
+&nbsp;     * @param enforce  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #isEnforceFileExtensions()
+&nbsp;     */
+&nbsp;    public void setEnforceFileExtensions(boolean enforce) {
+<b class="nc">&nbsp;        this.enforceFileExtensions = enforce;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not zoom operations are
+&nbsp;     * centered around the current anchor point.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setZoomAroundAnchor(boolean)
+&nbsp;     */
+&nbsp;    public boolean getZoomAroundAnchor() {
+<b class="nc">&nbsp;        return this.zoomAroundAnchor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not zoom operations are
+&nbsp;     * centered around the current anchor point.
+&nbsp;     *
+&nbsp;     * @param zoomAroundAnchor  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #getZoomAroundAnchor()
+&nbsp;     */
+&nbsp;    public void setZoomAroundAnchor(boolean zoomAroundAnchor) {
+<b class="nc">&nbsp;        this.zoomAroundAnchor = zoomAroundAnchor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom rectangle fill paint.
+&nbsp;     *
+&nbsp;     * @return The zoom rectangle fill paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setZoomFillPaint(java.awt.Paint)
+&nbsp;     * @see #setFillZoomRectangle(boolean)
+&nbsp;     */
+&nbsp;    public Paint getZoomFillPaint() {
+<b class="fc">&nbsp;        return selectionZoomStrategy.getZoomFillPaint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom rectangle fill paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getZoomFillPaint()
+&nbsp;     * @see #getFillZoomRectangle()
+&nbsp;     */
+&nbsp;    public void setZoomFillPaint(Paint paint) {
+<b class="fc">&nbsp;        selectionZoomStrategy.setZoomFillPaint(paint);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom rectangle outline paint.
+&nbsp;     *
+&nbsp;     * @return The zoom rectangle outline paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setZoomOutlinePaint(java.awt.Paint)
+&nbsp;     * @see #setFillZoomRectangle(boolean)
+&nbsp;     */
+&nbsp;    public Paint getZoomOutlinePaint() {
+<b class="fc">&nbsp;        return selectionZoomStrategy.getZoomOutlinePaint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom rectangle outline paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getZoomOutlinePaint()
+&nbsp;     * @see #getFillZoomRectangle()
+&nbsp;     */
+&nbsp;    public void setZoomOutlinePaint(Paint paint) {
+<b class="fc">&nbsp;        this.selectionZoomStrategy.setZoomOutlinePaint(paint);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The mouse wheel handler.
+&nbsp;     */
+&nbsp;    protected MouseWheelHandler mouseWheelHandler;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the mouse wheel handler is enabled, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isMouseWheelEnabled() {
+<b class="fc">&nbsp;        return this.mouseWheelHandler != null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Enables or disables mouse wheel support for the panel.
+&nbsp;     *
+&nbsp;     * @param flag  a boolean.
+&nbsp;     */
+&nbsp;    public void setMouseWheelEnabled(boolean flag) {
+<b class="fc">&nbsp;        if (flag &amp;&amp; this.mouseWheelHandler == null) {</b>
+<b class="fc">&nbsp;            this.mouseWheelHandler = new MouseWheelHandler(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (!flag &amp;&amp; this.mouseWheelHandler != null) {</b>
+<b class="fc">&nbsp;            this.removeMouseWheelListener(this.mouseWheelHandler);</b>
+<b class="fc">&nbsp;            this.mouseWheelHandler = null;</b>
+&nbsp;        } 
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Add an overlay to the panel.
+&nbsp;     *
+&nbsp;     * @param overlay  the overlay ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void addOverlay(Overlay overlay) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(overlay, &quot;overlay&quot;);</b>
+<b class="nc">&nbsp;        this.overlays.add(overlay);</b>
+<b class="nc">&nbsp;        overlay.addChangeListener(this);</b>
+<b class="nc">&nbsp;        repaint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes an overlay from the panel.
+&nbsp;     *
+&nbsp;     * @param overlay  the overlay to remove ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void removeOverlay(Overlay overlay) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(overlay, &quot;overlay&quot;);</b>
+<b class="nc">&nbsp;        boolean removed = this.overlays.remove(overlay);</b>
+<b class="nc">&nbsp;        if (removed) {</b>
+<b class="nc">&nbsp;            overlay.removeChangeListener(this);</b>
+<b class="nc">&nbsp;            repaint();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a change to an overlay by repainting the panel.
+&nbsp;     *
+&nbsp;     * @param event  the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void overlayChanged(OverlayChangeEvent event) {
+<b class="nc">&nbsp;        repaint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Switches the display of tooltips for the panel on or off.  Note that
+&nbsp;     * tooltips can only be displayed if the chart has been configured to
+&nbsp;     * generate tooltip items.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} to enable tooltips, {@code false} to
+&nbsp;     *              disable tooltips.
+&nbsp;     */
+&nbsp;    public void setDisplayToolTips(boolean flag) {
+<b class="fc">&nbsp;        if (flag) {</b>
+<b class="fc">&nbsp;            ToolTipManager.sharedInstance().registerComponent(this);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            ToolTipManager.sharedInstance().unregisterComponent(this);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a string for the tooltip.
+&nbsp;     *
+&nbsp;     * @param e  the mouse event.
+&nbsp;     *
+&nbsp;     * @return A tool tip or {@code null} if no tooltip is available.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getToolTipText(MouseEvent e) {
+<b class="nc">&nbsp;        String result = null;</b>
+<b class="nc">&nbsp;        if (this.info != null) {</b>
+<b class="nc">&nbsp;            EntityCollection entities = this.info.getEntityCollection();</b>
+<b class="nc">&nbsp;            if (entities != null) {</b>
+<b class="nc">&nbsp;                Insets insets = getInsets();</b>
+<b class="nc">&nbsp;                ChartEntity entity = entities.getEntity(</b>
+<b class="nc">&nbsp;                        (int) ((e.getX() - insets.left) / this.scaleX),</b>
+<b class="nc">&nbsp;                        (int) ((e.getY() - insets.top) / this.scaleY));</b>
+<b class="nc">&nbsp;                if (entity != null) {</b>
+<b class="nc">&nbsp;                    result = entity.getToolTipText();</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates a Java2D point on the chart to a screen location.
+&nbsp;     *
+&nbsp;     * @param java2DPoint  the Java2D point.
+&nbsp;     *
+&nbsp;     * @return The screen location.
+&nbsp;     */
+&nbsp;    public Point translateJava2DToScreen(Point2D java2DPoint) {
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        int x = (int) (java2DPoint.getX() * this.scaleX + insets.left);</b>
+<b class="nc">&nbsp;        int y = (int) (java2DPoint.getY() * this.scaleY + insets.top);</b>
+<b class="nc">&nbsp;        return new Point(x, y);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates a panel (component) location to a Java2D point.
+&nbsp;     *
+&nbsp;     * @param screenPoint  the screen location ({@code null} not
+&nbsp;     *                     permitted).
+&nbsp;     *
+&nbsp;     * @return The Java2D coordinates.
+&nbsp;     */
+&nbsp;    public Point2D translateScreenToJava2D(Point screenPoint) {
+<b class="fc">&nbsp;        Insets insets = getInsets();</b>
+<b class="fc">&nbsp;        double x = (screenPoint.getX() - insets.left) / this.scaleX;</b>
+<b class="fc">&nbsp;        double y = (screenPoint.getY() - insets.top) / this.scaleY;</b>
+<b class="fc">&nbsp;        return new Point2D.Double(x, y);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies any scaling that is in effect for the chart drawing to the
+&nbsp;     * given rectangle.
+&nbsp;     *
+&nbsp;     * @param rect  the rectangle ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A new scaled rectangle.
+&nbsp;     */
+&nbsp;    public Rectangle2D scale(Rectangle2D rect) {
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        double x = rect.getX() * getScaleX() + insets.left;</b>
+<b class="nc">&nbsp;        double y = rect.getY() * getScaleY() + insets.top;</b>
+<b class="nc">&nbsp;        double w = rect.getWidth() * getScaleX();</b>
+<b class="nc">&nbsp;        double h = rect.getHeight() * getScaleY();</b>
+<b class="nc">&nbsp;        return new Rectangle2D.Double(x, y, w, h);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the chart entity at a given point.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method will return null if there is (a) no entity at the given
+&nbsp;     * point, or (b) no entity collection has been generated.
+&nbsp;     *
+&nbsp;     * @param viewX  the x-coordinate.
+&nbsp;     * @param viewY  the y-coordinate.
+&nbsp;     *
+&nbsp;     * @return The chart entity (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public ChartEntity getEntityForPoint(int viewX, int viewY) {
+&nbsp;
+<b class="nc">&nbsp;        ChartEntity result = null;</b>
+<b class="nc">&nbsp;        if (this.info != null) {</b>
+<b class="nc">&nbsp;            Insets insets = getInsets();</b>
+<b class="nc">&nbsp;            double x = (viewX - insets.left) / this.scaleX;</b>
+<b class="nc">&nbsp;            double y = (viewY - insets.top) / this.scaleY;</b>
+<b class="nc">&nbsp;            EntityCollection entities = this.info.getEntityCollection();</b>
+<b class="nc">&nbsp;            result = entities != null ? entities.getEntity(x, y) : null;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the offscreen buffer
+&nbsp;     * needs to be refreshed.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getRefreshBuffer() {
+<b class="nc">&nbsp;        return this.refreshBuffer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the refresh buffer flag.  This flag is used to avoid unnecessary
+&nbsp;     * redrawing of the chart when the offscreen image buffer is used.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} indicates that the buffer should be
+&nbsp;     *              refreshed.
+&nbsp;     */
+&nbsp;    public void setRefreshBuffer(boolean flag) {
+<b class="nc">&nbsp;        this.refreshBuffer = flag;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Paints the component by drawing the chart to fill the entire component,
+&nbsp;     * but allowing for the insets (which will be non-zero if a border has been
+&nbsp;     * set for this component).  To increase performance (at the expense of
+&nbsp;     * memory), an off-screen buffer image can be used.
+&nbsp;     *
+&nbsp;     * @param g  the graphics device for drawing on.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void paintComponent(Graphics g) {
+<b class="nc">&nbsp;        super.paintComponent(g);</b>
+<b class="nc">&nbsp;        if (this.chart == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Graphics2D g2 = (Graphics2D) g.create();</b>
+&nbsp;        
+&nbsp;        // first determine the size of the chart rendering area...
+<b class="nc">&nbsp;        Dimension size = getSize();</b>
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        Rectangle2D available = new Rectangle2D.Double(insets.left, insets.top,</b>
+<b class="nc">&nbsp;                size.getWidth() - insets.left - insets.right,</b>
+<b class="nc">&nbsp;                size.getHeight() - insets.top - insets.bottom);</b>
+&nbsp;
+&nbsp;        // work out if scaling is required...
+<b class="nc">&nbsp;        boolean scale = false;</b>
+<b class="nc">&nbsp;        double drawWidth = available.getWidth();</b>
+<b class="nc">&nbsp;        double drawHeight = available.getHeight();</b>
+<b class="nc">&nbsp;        this.scaleX = 1.0;</b>
+<b class="nc">&nbsp;        this.scaleY = 1.0;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (drawWidth &lt; this.minimumDrawWidth) {</b>
+<b class="nc">&nbsp;            this.scaleX = drawWidth / this.minimumDrawWidth;</b>
+<b class="nc">&nbsp;            drawWidth = this.minimumDrawWidth;</b>
+<b class="nc">&nbsp;            scale = true;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (drawWidth &gt; this.maximumDrawWidth) {</b>
+<b class="nc">&nbsp;            this.scaleX = drawWidth / this.maximumDrawWidth;</b>
+<b class="nc">&nbsp;            drawWidth = this.maximumDrawWidth;</b>
+<b class="nc">&nbsp;            scale = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (drawHeight &lt; this.minimumDrawHeight) {</b>
+<b class="nc">&nbsp;            this.scaleY = drawHeight / this.minimumDrawHeight;</b>
+<b class="nc">&nbsp;            drawHeight = this.minimumDrawHeight;</b>
+<b class="nc">&nbsp;            scale = true;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (drawHeight &gt; this.maximumDrawHeight) {</b>
+<b class="nc">&nbsp;            this.scaleY = drawHeight / this.maximumDrawHeight;</b>
+<b class="nc">&nbsp;            drawHeight = this.maximumDrawHeight;</b>
+<b class="nc">&nbsp;            scale = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Rectangle2D chartArea = new Rectangle2D.Double(0.0, 0.0, drawWidth,</b>
+&nbsp;                drawHeight);
+&nbsp;
+&nbsp;        // are we using the chart buffer?
+<b class="nc">&nbsp;        if (this.useBuffer) {</b>
+&nbsp;
+&nbsp;            // for better rendering on the HiDPI monitors upscaling the buffer to the &quot;native&quot; resoution
+&nbsp;            // instead of using logical one provided by Swing
+<b class="nc">&nbsp;            final AffineTransform globalTransform = ((Graphics2D) g).getTransform();</b>
+<b class="nc">&nbsp;            final double globalScaleX = globalTransform.getScaleX();</b>
+<b class="nc">&nbsp;            final double globalScaleY = globalTransform.getScaleY();</b>
+&nbsp;
+<b class="nc">&nbsp;            final int scaledWidth = (int) (available.getWidth() * globalScaleX);</b>
+<b class="nc">&nbsp;            final int scaledHeight = (int) (available.getHeight() * globalScaleY);</b>
+&nbsp;
+&nbsp;            // do we need to resize the buffer?
+<b class="nc">&nbsp;            if ((this.chartBuffer == null)</b>
+&nbsp;                    || (this.chartBufferWidth != scaledWidth)
+&nbsp;                    || (this.chartBufferHeight != scaledHeight)) {
+<b class="nc">&nbsp;                this.chartBufferWidth = scaledWidth;</b>
+<b class="nc">&nbsp;                this.chartBufferHeight = scaledHeight;</b>
+<b class="nc">&nbsp;                GraphicsConfiguration gc = g2.getDeviceConfiguration();</b>
+<b class="nc">&nbsp;                this.chartBuffer = gc.createCompatibleImage(</b>
+&nbsp;                        this.chartBufferWidth, this.chartBufferHeight,
+&nbsp;                        Transparency.TRANSLUCENT);
+<b class="nc">&nbsp;                this.refreshBuffer = true;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // do we need to redraw the buffer?
+<b class="nc">&nbsp;            if (this.refreshBuffer) {</b>
+&nbsp;
+<b class="nc">&nbsp;                this.refreshBuffer = false; // clear the flag</b>
+&nbsp;
+&nbsp;                // scale graphics of the buffer to the same value as global
+&nbsp;                // Swing graphics - this allow to paint all elements as usual
+&nbsp;                // but applies all necessary smoothing
+<b class="nc">&nbsp;                Graphics2D bufferG2 = (Graphics2D) this.chartBuffer.getGraphics();</b>
+<b class="nc">&nbsp;                bufferG2.scale(globalScaleX, globalScaleY);</b>
+&nbsp;
+<b class="nc">&nbsp;                Rectangle2D bufferArea = new Rectangle2D.Double(</b>
+<b class="nc">&nbsp;                        0, 0, available.getWidth(), available.getHeight());</b>
+&nbsp;
+&nbsp;                // make the background of the buffer clear and transparent
+<b class="nc">&nbsp;                Composite savedComposite = bufferG2.getComposite();</b>
+<b class="nc">&nbsp;                bufferG2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 0.0f));</b>
+<b class="nc">&nbsp;                Rectangle r = new Rectangle(0, 0, (int) available.getWidth(), (int) available.getHeight());</b>
+<b class="nc">&nbsp;                bufferG2.fill(r);</b>
+<b class="nc">&nbsp;                bufferG2.setComposite(savedComposite);</b>
+&nbsp;                
+<b class="nc">&nbsp;                if (scale) {</b>
+<b class="nc">&nbsp;                    AffineTransform saved = bufferG2.getTransform();</b>
+<b class="nc">&nbsp;                    AffineTransform st = AffineTransform.getScaleInstance(</b>
+&nbsp;                            this.scaleX, this.scaleY);
+<b class="nc">&nbsp;                    bufferG2.transform(st);</b>
+<b class="nc">&nbsp;                    this.chart.draw(bufferG2, chartArea, this.anchor,</b>
+&nbsp;                            this.info);
+<b class="nc">&nbsp;                    bufferG2.setTransform(saved);</b>
+<b class="nc">&nbsp;                } else {</b>
+<b class="nc">&nbsp;                    this.chart.draw(bufferG2, bufferArea, this.anchor,</b>
+&nbsp;                            this.info);
+&nbsp;                }
+<b class="nc">&nbsp;                bufferG2.dispose();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // zap the buffer onto the panel...
+<b class="nc">&nbsp;            g2.drawImage(this.chartBuffer, insets.left, insets.top, (int) available.getWidth(), (int) available.getHeight(), this);</b>
+<b class="nc">&nbsp;            g2.addRenderingHints(this.chart.getRenderingHints()); // bug#187</b>
+&nbsp;
+<b class="nc">&nbsp;        } else { // redrawing the chart every time...</b>
+<b class="nc">&nbsp;            AffineTransform saved = g2.getTransform();</b>
+<b class="nc">&nbsp;            g2.translate(insets.left, insets.top);</b>
+<b class="nc">&nbsp;            if (scale) {</b>
+<b class="nc">&nbsp;                AffineTransform st = AffineTransform.getScaleInstance(</b>
+&nbsp;                        this.scaleX, this.scaleY);
+<b class="nc">&nbsp;                g2.transform(st);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            this.chart.draw(g2, chartArea, this.anchor, this.info);</b>
+<b class="nc">&nbsp;            g2.setTransform(saved);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        for (Overlay overlay : this.overlays) {</b>
+<b class="nc">&nbsp;            overlay.paintOverlay(g2, this);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // redraw the zoom rectangle (if present) - if useBuffer is false,
+&nbsp;        // we use XOR so we can XOR the rectangle away again without redrawing
+&nbsp;        // the chart
+<b class="nc">&nbsp;        selectionZoomStrategy.drawZoomRectangle(g2, !this.useBuffer);</b>
+&nbsp;
+<b class="nc">&nbsp;        g2.dispose();</b>
+&nbsp;
+<b class="nc">&nbsp;        this.anchor = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of changes to the chart, and redraws the chart.
+&nbsp;     *
+&nbsp;     * @param event  details of the chart change event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void chartChanged(ChartChangeEvent event) {
+<b class="fc">&nbsp;        this.refreshBuffer = true;</b>
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;            this.orientation = z.getOrientation();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        repaint();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a chart progress event.
+&nbsp;     *
+&nbsp;     * @param event  the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void chartProgress(ChartProgressEvent event) {
+&nbsp;        // does nothing - override if necessary
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles action events generated by the popup menu.
+&nbsp;     *
+&nbsp;     * @param event  the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void actionPerformed(ActionEvent event) {
+&nbsp;
+<b class="nc">&nbsp;        String command = event.getActionCommand();</b>
+&nbsp;
+&nbsp;        // many of the zoom methods need a screen location - all we have is
+&nbsp;        // the zoomPoint, but it might be null.  Here we grab the x and y
+&nbsp;        // coordinates, or use defaults...
+<b class="nc">&nbsp;        double screenX = -1.0;</b>
+<b class="nc">&nbsp;        double screenY = -1.0;</b>
+<b class="nc">&nbsp;        Point2D zoomPoint = this.selectionZoomStrategy.getZoomPoint();</b>
+<b class="nc">&nbsp;        if (zoomPoint != null) {</b>
+<b class="nc">&nbsp;            screenX = zoomPoint.getX();</b>
+<b class="nc">&nbsp;            screenY = zoomPoint.getY();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        switch (command) {</b>
+&nbsp;        case PROPERTIES_COMMAND:
+<b class="nc">&nbsp;            doEditChartProperties();</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case COPY_COMMAND:
+<b class="nc">&nbsp;            doCopy();</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case SAVE_AS_PNG_COMMAND:
+&nbsp;            try {
+<b class="nc">&nbsp;                doSaveAs();</b>
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+<b class="nc">&nbsp;                JOptionPane.showMessageDialog(this, &quot;I/O error occurred.&quot;,</b>
+<b class="nc">&nbsp;                        localizationResources.getString(&quot;Save_as_PNG&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case SAVE_AS_PNG_SIZE_COMMAND:
+&nbsp;            try {
+<b class="nc">&nbsp;                final Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();</b>
+<b class="nc">&nbsp;                doSaveAs(ss.width, ss.height);</b>
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+<b class="nc">&nbsp;                JOptionPane.showMessageDialog(ChartPanel.this, &quot;I/O error occurred.&quot;,</b>
+<b class="nc">&nbsp;                        localizationResources.getString(&quot;Save_as_PNG&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case SAVE_AS_SVG_COMMAND:
+&nbsp;            try {
+<b class="nc">&nbsp;                saveAsSVG(null);</b>
+<b class="nc">&nbsp;            } catch (IOException e) {</b>
+<b class="nc">&nbsp;                JOptionPane.showMessageDialog(this, &quot;I/O error occurred.&quot;,</b>
+<b class="nc">&nbsp;                        localizationResources.getString(&quot;Save_as_SVG&quot;), JOptionPane.WARNING_MESSAGE);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case SAVE_AS_PDF_COMMAND:
+<b class="nc">&nbsp;            saveAsPDF(null);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case PRINT_COMMAND:
+<b class="nc">&nbsp;            createChartPrintJob();</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_IN_BOTH_COMMAND:
+<b class="nc">&nbsp;            zoomInBoth(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_IN_DOMAIN_COMMAND:
+<b class="nc">&nbsp;            zoomInDomain(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_IN_RANGE_COMMAND:
+<b class="nc">&nbsp;            zoomInRange(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_OUT_BOTH_COMMAND:
+<b class="nc">&nbsp;            zoomOutBoth(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_OUT_DOMAIN_COMMAND:
+<b class="nc">&nbsp;            zoomOutDomain(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_OUT_RANGE_COMMAND:
+<b class="nc">&nbsp;            zoomOutRange(screenX, screenY);</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_RESET_BOTH_COMMAND:
+<b class="nc">&nbsp;            restoreAutoBounds();</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_RESET_DOMAIN_COMMAND:
+<b class="nc">&nbsp;            restoreAutoDomainBounds();</b>
+<b class="nc">&nbsp;            break;</b>
+&nbsp;        case ZOOM_RESET_RANGE_COMMAND:
+<b class="nc">&nbsp;            restoreAutoRangeBounds();</b>
+&nbsp;            break;
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;mouse entered&#39; event. This method changes the tooltip delays
+&nbsp;     * of ToolTipManager.sharedInstance() to the possibly different values set
+&nbsp;     * for this chart panel.
+&nbsp;     *
+&nbsp;     * @param e  the mouse event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseEntered(MouseEvent e) {
+<b class="nc">&nbsp;        if (!this.ownToolTipDelaysActive) {</b>
+<b class="nc">&nbsp;            ToolTipManager ttm = ToolTipManager.sharedInstance();</b>
+&nbsp;
+<b class="nc">&nbsp;            this.originalToolTipInitialDelay = ttm.getInitialDelay();</b>
+<b class="nc">&nbsp;            ttm.setInitialDelay(this.ownToolTipInitialDelay);</b>
+&nbsp;
+<b class="nc">&nbsp;            this.originalToolTipReshowDelay = ttm.getReshowDelay();</b>
+<b class="nc">&nbsp;            ttm.setReshowDelay(this.ownToolTipReshowDelay);</b>
+&nbsp;
+<b class="nc">&nbsp;            this.originalToolTipDismissDelay = ttm.getDismissDelay();</b>
+<b class="nc">&nbsp;            ttm.setDismissDelay(this.ownToolTipDismissDelay);</b>
+&nbsp;
+<b class="nc">&nbsp;            this.ownToolTipDelaysActive = true;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;mouse exited&#39; event. This method resets the tooltip delays of
+&nbsp;     * ToolTipManager.sharedInstance() to their
+&nbsp;     * original values in effect before mouseEntered()
+&nbsp;     *
+&nbsp;     * @param e  the mouse event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseExited(MouseEvent e) {
+<b class="nc">&nbsp;        if (this.ownToolTipDelaysActive) {</b>
+&nbsp;            // restore original tooltip dealys
+<b class="nc">&nbsp;            ToolTipManager ttm = ToolTipManager.sharedInstance();</b>
+<b class="nc">&nbsp;            ttm.setInitialDelay(this.originalToolTipInitialDelay);</b>
+<b class="nc">&nbsp;            ttm.setReshowDelay(this.originalToolTipReshowDelay);</b>
+<b class="nc">&nbsp;            ttm.setDismissDelay(this.originalToolTipDismissDelay);</b>
+<b class="nc">&nbsp;            this.ownToolTipDelaysActive = false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;mouse pressed&#39; event.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This event is the popup trigger on Unix/Linux.  For Windows, the popup
+&nbsp;     * trigger is the &#39;mouse released&#39; event.
+&nbsp;     *
+&nbsp;     * @param e  The mouse event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mousePressed(MouseEvent e) {
+<b class="nc">&nbsp;        if (this.chart == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="nc">&nbsp;        int button = e.getButton();</b>
+<b class="nc">&nbsp;        int mods = e.getModifiersEx();</b>
+<b class="nc">&nbsp;        if ((mods &amp; MODIFIERS_EX_MASK) == panButtonMasks.getOrDefault(button, panMask)) {</b>
+&nbsp;            // can we pan this plot?
+<b class="nc">&nbsp;            if (plot instanceof Pannable) {</b>
+<b class="nc">&nbsp;                Pannable pannable = (Pannable) plot;</b>
+<b class="nc">&nbsp;                if (pannable.isDomainPannable() || pannable.isRangePannable()) {</b>
+<b class="nc">&nbsp;                    Rectangle2D screenDataArea = getScreenDataArea(e.getX(),</b>
+<b class="nc">&nbsp;                            e.getY());</b>
+<b class="nc">&nbsp;                    if (screenDataArea != null &amp;&amp; screenDataArea.contains(</b>
+<b class="nc">&nbsp;                            e.getPoint())) {</b>
+<b class="nc">&nbsp;                        this.panW = screenDataArea.getWidth();</b>
+<b class="nc">&nbsp;                        this.panH = screenDataArea.getHeight();</b>
+<b class="nc">&nbsp;                        this.panLast = e.getPoint();</b>
+<b class="nc">&nbsp;                        setCursor(Cursor.getPredefinedCursor(</b>
+&nbsp;                                Cursor.MOVE_CURSOR));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                // the actual panning occurs later in the mouseDragged() 
+&nbsp;                // method
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (!this.selectionZoomStrategy.isActivated()) {</b>
+<b class="nc">&nbsp;            if ((mods &amp; MODIFIERS_EX_MASK) == zoomButtonMasks.getOrDefault(button, zoomMask)) {</b>
+<b class="nc">&nbsp;                Rectangle2D screenDataArea = getScreenDataArea(e.getX(), e.getY());</b>
+<b class="nc">&nbsp;                if (screenDataArea != null) {</b>
+<b class="nc">&nbsp;                Point2D zoomPoint = getPointInRectangle(e.getX(), e.getY(),</b>
+&nbsp;                            screenDataArea);
+<b class="nc">&nbsp;                selectionZoomStrategy.setZoomPoint(zoomPoint);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;                else {
+<b class="nc">&nbsp;                selectionZoomStrategy.setZoomPoint(null);</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (e.isPopupTrigger()) {</b>
+<b class="nc">&nbsp;                if (this.popup != null) {</b>
+<b class="nc">&nbsp;                    displayPopupMenu(e.getX(), e.getY());</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a point based on (x, y) but constrained to be within the bounds
+&nbsp;     * of the given rectangle.  This method could be moved to JCommon.
+&nbsp;     *
+&nbsp;     * @param x  the x-coordinate.
+&nbsp;     * @param y  the y-coordinate.
+&nbsp;     * @param area  the rectangle ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A point within the rectangle.
+&nbsp;     */
+&nbsp;    protected Point2D getPointInRectangle(int x, int y, Rectangle2D area) {
+<b class="nc">&nbsp;        double xx = Math.max(area.getMinX(), Math.min(x, area.getMaxX()));</b>
+<b class="nc">&nbsp;        double yy = Math.max(area.getMinY(), Math.min(y, area.getMaxY()));</b>
+<b class="nc">&nbsp;        return new Point2D.Double(xx, yy);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;mouse dragged&#39; event.
+&nbsp;     *
+&nbsp;     * @param e  the mouse event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseDragged(MouseEvent e) {
+&nbsp;
+&nbsp;        // if the popup menu has already been triggered, then ignore dragging...
+<b class="nc">&nbsp;        if (this.popup != null &amp;&amp; this.popup.isShowing()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // handle panning if we have a start point
+<b class="nc">&nbsp;        if (this.panLast != null) {</b>
+<b class="nc">&nbsp;            double dx = e.getX() - this.panLast.getX();</b>
+<b class="nc">&nbsp;            double dy = e.getY() - this.panLast.getY();</b>
+<b class="nc">&nbsp;            if (dx == 0.0 &amp;&amp; dy == 0.0) {</b>
+&nbsp;                return;
+&nbsp;            }
+<b class="nc">&nbsp;            double wPercent = -dx / this.panW;</b>
+<b class="nc">&nbsp;            double hPercent = dy / this.panH;</b>
+<b class="nc">&nbsp;            boolean old = this.chart.getPlot().isNotify();</b>
+<b class="nc">&nbsp;            this.chart.getPlot().setNotify(false);</b>
+<b class="nc">&nbsp;            Pannable p = (Pannable) this.chart.getPlot();</b>
+<b class="nc">&nbsp;            if (p.getOrientation() == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                p.panDomainAxes(wPercent, this.info.getPlotInfo(),</b>
+&nbsp;                        this.panLast);
+<b class="nc">&nbsp;                p.panRangeAxes(hPercent, this.info.getPlotInfo(),</b>
+&nbsp;                        this.panLast);
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                p.panDomainAxes(hPercent, this.info.getPlotInfo(),</b>
+&nbsp;                        this.panLast);
+<b class="nc">&nbsp;                p.panRangeAxes(wPercent, this.info.getPlotInfo(),</b>
+&nbsp;                        this.panLast);
+&nbsp;            }
+<b class="nc">&nbsp;            this.panLast = e.getPoint();</b>
+<b class="nc">&nbsp;            this.chart.getPlot().setNotify(old);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // if no initial zoom point was set, ignore dragging...
+<b class="nc">&nbsp;        if (this.selectionZoomStrategy.getZoomPoint() == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Graphics2D g2 = (Graphics2D) getGraphics();</b>
+&nbsp;
+&nbsp;        // erase the previous zoom rectangle (if any).  We only need to do
+&nbsp;        // this is we are using XOR mode, which we do when we&#39;re not using
+&nbsp;        // the buffer (if there is a buffer, then at the end of this method we
+&nbsp;        // just trigger a repaint)
+<b class="nc">&nbsp;        if (!this.useBuffer) {</b>
+<b class="nc">&nbsp;            selectionZoomStrategy.drawZoomRectangle(g2, true);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        boolean hZoom, vZoom;
+<b class="nc">&nbsp;        if (this.orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;            hZoom = this.rangeZoomable;</b>
+<b class="nc">&nbsp;            vZoom = this.domainZoomable;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            hZoom = this.domainZoomable;</b>
+<b class="nc">&nbsp;            vZoom = this.rangeZoomable;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Point2D zoomPoint = this.selectionZoomStrategy.getZoomPoint();</b>
+<b class="nc">&nbsp;        Rectangle2D scaledDataArea = getScreenDataArea(</b>
+<b class="nc">&nbsp;                (int) zoomPoint.getX(), (int) zoomPoint.getY());</b>
+&nbsp;
+<b class="nc">&nbsp;        selectionZoomStrategy.updateZoomRectangleSelection(e, hZoom, vZoom, scaledDataArea);</b>
+&nbsp;
+&nbsp;        // Draw the new zoom rectangle...
+<b class="nc">&nbsp;        if (this.useBuffer) {</b>
+<b class="nc">&nbsp;            repaint();</b>
+&nbsp;        }
+&nbsp;        else {
+&nbsp;            // with no buffer, we use XOR to draw the rectangle &quot;over&quot; the
+&nbsp;            // chart...
+<b class="nc">&nbsp;            selectionZoomStrategy.drawZoomRectangle(g2, true);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        g2.dispose();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;mouse released&#39; event.  On Windows, we need to check if this
+&nbsp;     * is a popup trigger, but only if we haven&#39;t already been tracking a zoom
+&nbsp;     * rectangle.
+&nbsp;     *
+&nbsp;     * @param e  information about the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseReleased(MouseEvent e) {
+&nbsp;
+&nbsp;        // if we&#39;ve been panning, we need to reset now that the mouse is 
+&nbsp;        // released...
+<b class="nc">&nbsp;        if (this.panLast != null) {</b>
+<b class="nc">&nbsp;            this.panLast = null;</b>
+<b class="nc">&nbsp;            setCursor(Cursor.getDefaultCursor());</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        else if (this.selectionZoomStrategy.isActivated()) {</b>
+&nbsp;            boolean hZoom, vZoom;
+<b class="nc">&nbsp;            if (this.orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                hZoom = this.rangeZoomable;</b>
+<b class="nc">&nbsp;                vZoom = this.domainZoomable;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                hZoom = this.domainZoomable;</b>
+<b class="nc">&nbsp;                vZoom = this.rangeZoomable;</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            Point2D zoomPoint = this.selectionZoomStrategy.getZoomPoint();</b>
+<b class="nc">&nbsp;            boolean zoomTrigger1 = hZoom &amp;&amp; Math.abs(e.getX()</b>
+<b class="nc">&nbsp;                - zoomPoint.getX()) &gt;= this.selectionZoomStrategy.getZoomTriggerDistance();</b>
+<b class="nc">&nbsp;            boolean zoomTrigger2 = vZoom &amp;&amp; Math.abs(e.getY()</b>
+<b class="nc">&nbsp;                - zoomPoint.getY()) &gt;= this.selectionZoomStrategy.getZoomTriggerDistance();</b>
+<b class="nc">&nbsp;            if (zoomTrigger1 || zoomTrigger2) {</b>
+<b class="nc">&nbsp;                if ((hZoom &amp;&amp; (e.getX() &lt; zoomPoint.getX()))</b>
+<b class="nc">&nbsp;                    || (vZoom &amp;&amp; (e.getY() &lt; zoomPoint.getY()))) {</b>
+<b class="nc">&nbsp;                    restoreAutoBounds();</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    Rectangle2D screenDataArea = getScreenDataArea(</b>
+<b class="nc">&nbsp;                            (int) zoomPoint.getX(),</b>
+<b class="nc">&nbsp;                            (int) zoomPoint.getY());</b>
+&nbsp;
+<b class="nc">&nbsp;                    Rectangle2D zoomArea = selectionZoomStrategy.getZoomRectangle(hZoom, vZoom, screenDataArea);</b>
+<b class="nc">&nbsp;                    zoom(zoomArea);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                this.selectionZoomStrategy.reset();</b>
+&nbsp;            }
+&nbsp;            else {
+&nbsp;                // erase the zoom rectangle
+<b class="nc">&nbsp;                Graphics2D g2 = (Graphics2D) getGraphics();</b>
+<b class="nc">&nbsp;                if (this.useBuffer) {</b>
+<b class="nc">&nbsp;                    repaint();</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    selectionZoomStrategy.drawZoomRectangle(g2, true);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                g2.dispose();</b>
+<b class="nc">&nbsp;                this.selectionZoomStrategy.reset();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        else if (e.isPopupTrigger()) {</b>
+<b class="nc">&nbsp;            if (this.popup != null) {</b>
+<b class="nc">&nbsp;                displayPopupMenu(e.getX(), e.getY());</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of mouse clicks on the panel. These are
+&nbsp;     * translated and passed on to any registered {@link ChartMouseListener}s.
+&nbsp;     *
+&nbsp;     * @param event  Information about the mouse event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseClicked(MouseEvent event) {
+&nbsp;
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        int x = (int) ((event.getX() - insets.left) / this.scaleX);</b>
+<b class="nc">&nbsp;        int y = (int) ((event.getY() - insets.top) / this.scaleY);</b>
+&nbsp;
+<b class="nc">&nbsp;        this.anchor = new Point2D.Double(x, y);</b>
+<b class="nc">&nbsp;        if (this.chart == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        this.chart.setNotify(true);  // force a redraw</b>
+&nbsp;        // new entity code...
+<b class="nc">&nbsp;        Object[] listeners = this.chartMouseListeners.getListeners(</b>
+&nbsp;                ChartMouseListener.class);
+<b class="nc">&nbsp;        if (listeners.length == 0) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        ChartEntity entity = null;</b>
+<b class="nc">&nbsp;        if (this.info != null) {</b>
+<b class="nc">&nbsp;            EntityCollection entities = this.info.getEntityCollection();</b>
+<b class="nc">&nbsp;            if (entities != null) {</b>
+<b class="nc">&nbsp;                entity = entities.getEntity(x, y);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        ChartMouseEvent chartEvent = new ChartMouseEvent(getChart(), event,</b>
+&nbsp;                entity);
+<b class="nc">&nbsp;        for (int i = listeners.length - 1; i &gt;= 0; i -= 1) {</b>
+<b class="nc">&nbsp;            ((ChartMouseListener) listeners[i]).chartMouseClicked(chartEvent);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Implementation of the MouseMotionListener&#39;s method.
+&nbsp;     *
+&nbsp;     * @param e  the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void mouseMoved(MouseEvent e) {
+<b class="nc">&nbsp;        Graphics2D g2 = (Graphics2D) getGraphics();</b>
+<b class="nc">&nbsp;        g2.dispose();</b>
+&nbsp;
+<b class="nc">&nbsp;        Object[] listeners = this.chartMouseListeners.getListeners(</b>
+&nbsp;                ChartMouseListener.class);
+<b class="nc">&nbsp;        if (listeners.length == 0) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        int x = (int) ((e.getX() - insets.left) / this.scaleX);</b>
+<b class="nc">&nbsp;        int y = (int) ((e.getY() - insets.top) / this.scaleY);</b>
+&nbsp;
+<b class="nc">&nbsp;        ChartEntity entity = null;</b>
+<b class="nc">&nbsp;        if (this.info != null) {</b>
+<b class="nc">&nbsp;            EntityCollection entities = this.info.getEntityCollection();</b>
+<b class="nc">&nbsp;            if (entities != null) {</b>
+<b class="nc">&nbsp;                entity = entities.getEntity(x, y);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // we can only generate events if the panel&#39;s chart is not null
+&nbsp;        // (see bug report 1556951)
+<b class="nc">&nbsp;        if (this.chart != null) {</b>
+<b class="nc">&nbsp;            ChartMouseEvent event = new ChartMouseEvent(getChart(), e, entity);</b>
+<b class="nc">&nbsp;            for (int i = listeners.length - 1; i &gt;= 0; i -= 1) {</b>
+<b class="nc">&nbsp;                ((ChartMouseListener) listeners[i]).chartMouseMoved(event);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms in on an anchor point (specified in screen coordinate space).
+&nbsp;     *
+&nbsp;     * @param x  the x value (in screen coordinates).
+&nbsp;     * @param y  the y value (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomInBoth(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // here we tweak the notify flag on the plot so that only
+&nbsp;        // one notification happens even though we update multiple
+&nbsp;        // axes...
+<b class="fc">&nbsp;        boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;        plot.setNotify(false);</b>
+<b class="fc">&nbsp;        zoomInDomain(x, y);</b>
+<b class="fc">&nbsp;        zoomInRange(x, y);</b>
+<b class="fc">&nbsp;        plot.setNotify(savedNotify);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Decreases the length of the domain axis, centered about the given
+&nbsp;     * coordinate on the screen.  The length of the domain axis is reduced
+&nbsp;     * by the value of {@link #getZoomInFactor()}.
+&nbsp;     *
+&nbsp;     * @param x  the x coordinate (in screen coordinates).
+&nbsp;     * @param y  the y-coordinate (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomInDomain(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;            z.zoomDomainAxes(this.zoomInFactor, this.info.getPlotInfo(),</b>
+<b class="fc">&nbsp;                    translateScreenToJava2D(new Point((int) x, (int) y)),</b>
+&nbsp;                    this.zoomAroundAnchor);
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Decreases the length of the range axis, centered about the given
+&nbsp;     * coordinate on the screen.  The length of the range axis is reduced by
+&nbsp;     * the value of {@link #getZoomInFactor()}.
+&nbsp;     *
+&nbsp;     * @param x  the x-coordinate (in screen coordinates).
+&nbsp;     * @param y  the y coordinate (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomInRange(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;            z.zoomRangeAxes(this.zoomInFactor, this.info.getPlotInfo(),</b>
+<b class="fc">&nbsp;                    translateScreenToJava2D(new Point((int) x, (int) y)),</b>
+&nbsp;                    this.zoomAroundAnchor);
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms out on an anchor point (specified in screen coordinate space).
+&nbsp;     *
+&nbsp;     * @param x  the x value (in screen coordinates).
+&nbsp;     * @param y  the y value (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomOutBoth(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // here we tweak the notify flag on the plot so that only
+&nbsp;        // one notification happens even though we update multiple
+&nbsp;        // axes...
+<b class="fc">&nbsp;        boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;        plot.setNotify(false);</b>
+<b class="fc">&nbsp;        zoomOutDomain(x, y);</b>
+<b class="fc">&nbsp;        zoomOutRange(x, y);</b>
+<b class="fc">&nbsp;        plot.setNotify(savedNotify);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Increases the length of the domain axis, centered about the given
+&nbsp;     * coordinate on the screen.  The length of the domain axis is increased
+&nbsp;     * by the value of {@link #getZoomOutFactor()}.
+&nbsp;     *
+&nbsp;     * @param x  the x coordinate (in screen coordinates).
+&nbsp;     * @param y  the y-coordinate (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomOutDomain(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;            z.zoomDomainAxes(this.zoomOutFactor, this.info.getPlotInfo(),</b>
+<b class="fc">&nbsp;                    translateScreenToJava2D(new Point((int) x, (int) y)),</b>
+&nbsp;                    this.zoomAroundAnchor);
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Increases the length the range axis, centered about the given
+&nbsp;     * coordinate on the screen.  The length of the range axis is increased
+&nbsp;     * by the value of {@link #getZoomOutFactor()}.
+&nbsp;     *
+&nbsp;     * @param x  the x coordinate (in screen coordinates).
+&nbsp;     * @param y  the y-coordinate (in screen coordinates).
+&nbsp;     */
+&nbsp;    public void zoomOutRange(double x, double y) {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="fc">&nbsp;            z.zoomRangeAxes(this.zoomOutFactor, this.info.getPlotInfo(),</b>
+<b class="fc">&nbsp;                    translateScreenToJava2D(new Point((int) x, (int) y)),</b>
+&nbsp;                    this.zoomAroundAnchor);
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms in on a selected region.
+&nbsp;     *
+&nbsp;     * @param selection  the selected region.
+&nbsp;     */
+&nbsp;    public void zoom(Rectangle2D selection) {
+&nbsp;
+&nbsp;        // get the origin of the zoom selection in the Java2D space used for
+&nbsp;        // drawing the chart (that is, before any scaling to fit the panel)
+<b class="fc">&nbsp;        Point2D selectOrigin = translateScreenToJava2D(new Point(</b>
+<b class="fc">&nbsp;                (int) Math.ceil(selection.getX()),</b>
+<b class="fc">&nbsp;                (int) Math.ceil(selection.getY())));</b>
+<b class="fc">&nbsp;        PlotRenderingInfo plotInfo = this.info.getPlotInfo();</b>
+<b class="fc">&nbsp;        Rectangle2D scaledDataArea = getScreenDataArea(</b>
+<b class="fc">&nbsp;                (int) selection.getCenterX(), (int) selection.getCenterY());</b>
+<b class="fc">&nbsp;        if ((selection.getHeight() &gt; 0) &amp;&amp; (selection.getWidth() &gt; 0)) {</b>
+&nbsp;
+<b class="fc">&nbsp;            double hLower = (selection.getMinX() - scaledDataArea.getMinX())</b>
+<b class="fc">&nbsp;                / scaledDataArea.getWidth();</b>
+<b class="fc">&nbsp;            double hUpper = (selection.getMaxX() - scaledDataArea.getMinX())</b>
+<b class="fc">&nbsp;                / scaledDataArea.getWidth();</b>
+<b class="fc">&nbsp;            double vLower = (scaledDataArea.getMaxY() - selection.getMaxY())</b>
+<b class="fc">&nbsp;                / scaledDataArea.getHeight();</b>
+<b class="fc">&nbsp;            double vUpper = (scaledDataArea.getMaxY() - selection.getMinY())</b>
+<b class="fc">&nbsp;                / scaledDataArea.getHeight();</b>
+&nbsp;
+<b class="fc">&nbsp;            Plot p = this.chart.getPlot();</b>
+<b class="fc">&nbsp;            if (p instanceof Zoomable) {</b>
+&nbsp;                // here we tweak the notify flag on the plot so that only
+&nbsp;                // one notification happens even though we update multiple
+&nbsp;                // axes...
+<b class="fc">&nbsp;                boolean savedNotify = p.isNotify();</b>
+<b class="fc">&nbsp;                p.setNotify(false);</b>
+<b class="fc">&nbsp;                Zoomable z = (Zoomable) p;</b>
+<b class="fc">&nbsp;                if (z.getOrientation() == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    z.zoomDomainAxes(vLower, vUpper, plotInfo, selectOrigin);</b>
+<b class="nc">&nbsp;                    z.zoomRangeAxes(hLower, hUpper, plotInfo, selectOrigin);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    z.zoomDomainAxes(hLower, hUpper, plotInfo, selectOrigin);</b>
+<b class="fc">&nbsp;                    z.zoomRangeAxes(vLower, vUpper, plotInfo, selectOrigin);</b>
+&nbsp;                }
+<b class="fc">&nbsp;                p.setNotify(savedNotify);</b>
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Restores the auto-range calculation on both axes.
+&nbsp;     */
+&nbsp;    public void restoreAutoBounds() {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // here we tweak the notify flag on the plot so that only
+&nbsp;        // one notification happens even though we update multiple
+&nbsp;        // axes...
+<b class="fc">&nbsp;        boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;        plot.setNotify(false);</b>
+<b class="fc">&nbsp;        restoreAutoDomainBounds();</b>
+<b class="fc">&nbsp;        restoreAutoRangeBounds();</b>
+<b class="fc">&nbsp;        plot.setNotify(savedNotify);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Restores the auto-range calculation on the domain axis.
+&nbsp;     */
+&nbsp;    public void restoreAutoDomainBounds() {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+&nbsp;            // we need to guard against this.zoomPoint being null
+<b class="fc">&nbsp;            Point2D zoomPoint = this.selectionZoomStrategy.getZoomPoint();</b>
+<b class="fc">&nbsp;            Point2D zp = zoomPoint != null ? zoomPoint : new Point();</b>
+<b class="fc">&nbsp;            z.zoomDomainAxes(0.0, this.info.getPlotInfo(), zp);</b>
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Restores the auto-range calculation on the range axis.
+&nbsp;     */
+&nbsp;    public void restoreAutoRangeBounds() {
+<b class="fc">&nbsp;        Plot plot = this.chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot instanceof Zoomable) {</b>
+<b class="fc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+&nbsp;            // here we tweak the notify flag on the plot so that only
+&nbsp;            // one notification happens even though we update multiple
+&nbsp;            // axes...
+<b class="fc">&nbsp;            boolean savedNotify = plot.isNotify();</b>
+<b class="fc">&nbsp;            plot.setNotify(false);</b>
+&nbsp;            // we need to guard against this.zoomPoint being null
+<b class="fc">&nbsp;            Point2D zoomPoint = this.selectionZoomStrategy.getZoomPoint();</b>
+<b class="fc">&nbsp;            Point2D zp = zoomPoint != null ? zoomPoint : new Point();</b>
+<b class="fc">&nbsp;            z.zoomRangeAxes(0.0, this.info.getPlotInfo(), zp);</b>
+<b class="fc">&nbsp;            plot.setNotify(savedNotify);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the data area for the chart (the area inside the axes) with the
+&nbsp;     * current scaling applied (that is, the area as it appears on screen).
+&nbsp;     *
+&nbsp;     * @return The scaled data area.
+&nbsp;     */
+&nbsp;    public Rectangle2D getScreenDataArea() {
+<b class="fc">&nbsp;        Rectangle2D dataArea = this.info.getPlotInfo().getDataArea();</b>
+<b class="fc">&nbsp;        Insets insets = getInsets();</b>
+<b class="fc">&nbsp;        double x = dataArea.getX() * this.scaleX + insets.left;</b>
+<b class="fc">&nbsp;        double y = dataArea.getY() * this.scaleY + insets.top;</b>
+<b class="fc">&nbsp;        double w = dataArea.getWidth() * this.scaleX;</b>
+<b class="fc">&nbsp;        double h = dataArea.getHeight() * this.scaleY;</b>
+<b class="fc">&nbsp;        return new Rectangle2D.Double(x, y, w, h);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the data area (the area inside the axes) for the plot or subplot,
+&nbsp;     * with the current scaling applied.
+&nbsp;     *
+&nbsp;     * @param x  the x-coordinate (for subplot selection).
+&nbsp;     * @param y  the y-coordinate (for subplot selection).
+&nbsp;     *
+&nbsp;     * @return The scaled data area.
+&nbsp;     */
+&nbsp;    public Rectangle2D getScreenDataArea(int x, int y) {
+<b class="fc">&nbsp;        PlotRenderingInfo plotInfo = this.info.getPlotInfo();</b>
+&nbsp;        Rectangle2D result;
+<b class="fc">&nbsp;        if (plotInfo.getSubplotCount() == 0) {</b>
+<b class="fc">&nbsp;            result = getScreenDataArea();</b>
+&nbsp;        }
+&nbsp;        else {
+&nbsp;            // get the origin of the zoom selection in the Java2D space used for
+&nbsp;            // drawing the chart (that is, before any scaling to fit the panel)
+<b class="nc">&nbsp;            Point2D selectOrigin = translateScreenToJava2D(new Point(x, y));</b>
+<b class="nc">&nbsp;            int subplotIndex = plotInfo.getSubplotIndex(selectOrigin);</b>
+<b class="nc">&nbsp;            if (subplotIndex == -1) {</b>
+<b class="nc">&nbsp;                return null;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            result = scale(plotInfo.getSubplotInfo(subplotIndex).getDataArea());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the initial tooltip delay value used inside this chart panel.
+&nbsp;     *
+&nbsp;     * @return An integer representing the initial delay value, in milliseconds.
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#getInitialDelay()
+&nbsp;     */
+&nbsp;    public int getInitialDelay() {
+<b class="nc">&nbsp;        return this.ownToolTipInitialDelay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the reshow tooltip delay value used inside this chart panel.
+&nbsp;     *
+&nbsp;     * @return An integer representing the reshow  delay value, in milliseconds.
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#getReshowDelay()
+&nbsp;     */
+&nbsp;    public int getReshowDelay() {
+<b class="nc">&nbsp;        return this.ownToolTipReshowDelay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the dismissal tooltip delay value used inside this chart panel.
+&nbsp;     *
+&nbsp;     * @return An integer representing the dismissal delay value, in
+&nbsp;     *         milliseconds.
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#getDismissDelay()
+&nbsp;     */
+&nbsp;    public int getDismissDelay() {
+<b class="nc">&nbsp;        return this.ownToolTipDismissDelay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Specifies the initial delay value for this chart panel.
+&nbsp;     *
+&nbsp;     * @param delay  the number of milliseconds to delay (after the cursor has
+&nbsp;     *               paused) before displaying.
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#setInitialDelay(int)
+&nbsp;     */
+&nbsp;    public void setInitialDelay(int delay) {
+<b class="nc">&nbsp;        this.ownToolTipInitialDelay = delay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Specifies the amount of time before the user has to wait initialDelay
+&nbsp;     * milliseconds before a tooltip will be shown.
+&nbsp;     *
+&nbsp;     * @param delay  time in milliseconds
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#setReshowDelay(int)
+&nbsp;     */
+&nbsp;    public void setReshowDelay(int delay) {
+<b class="nc">&nbsp;        this.ownToolTipReshowDelay = delay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Specifies the dismissal delay value for this chart panel.
+&nbsp;     *
+&nbsp;     * @param delay the number of milliseconds to delay before taking away the
+&nbsp;     *              tooltip
+&nbsp;     *
+&nbsp;     * @see javax.swing.ToolTipManager#setDismissDelay(int)
+&nbsp;     */
+&nbsp;    public void setDismissDelay(int delay) {
+<b class="nc">&nbsp;        this.ownToolTipDismissDelay = delay;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom in factor.
+&nbsp;     *
+&nbsp;     * @return The zoom in factor.
+&nbsp;     *
+&nbsp;     * @see #setZoomInFactor(double)
+&nbsp;     */
+&nbsp;    public double getZoomInFactor() {
+<b class="nc">&nbsp;        return this.zoomInFactor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom in factor.
+&nbsp;     *
+&nbsp;     * @param factor  the factor.
+&nbsp;     *
+&nbsp;     * @see #getZoomInFactor()
+&nbsp;     */
+&nbsp;    public void setZoomInFactor(double factor) {
+<b class="nc">&nbsp;        this.zoomInFactor = factor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom out factor.
+&nbsp;     *
+&nbsp;     * @return The zoom out factor.
+&nbsp;     *
+&nbsp;     * @see #setZoomOutFactor(double)
+&nbsp;     */
+&nbsp;    public double getZoomOutFactor() {
+<b class="nc">&nbsp;        return this.zoomOutFactor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom out factor.
+&nbsp;     *
+&nbsp;     * @param factor  the factor.
+&nbsp;     *
+&nbsp;     * @see #getZoomOutFactor()
+&nbsp;     */
+&nbsp;    public void setZoomOutFactor(double factor) {
+<b class="nc">&nbsp;        this.zoomOutFactor = factor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Displays a dialog that allows the user to edit the properties for the
+&nbsp;     * current chart.
+&nbsp;     */
+&nbsp;    public void doEditChartProperties() {
+&nbsp;
+<b class="nc">&nbsp;        ChartEditor editor = ChartEditorManager.getChartEditor(this.chart);</b>
+<b class="nc">&nbsp;        int result = JOptionPane.showConfirmDialog(this, editor,</b>
+<b class="nc">&nbsp;                localizationResources.getString(&quot;Chart_Properties&quot;),</b>
+&nbsp;                JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE);
+<b class="nc">&nbsp;        if (result == JOptionPane.OK_OPTION) {</b>
+<b class="nc">&nbsp;            editor.updateChart(this.chart);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Copies the current chart to the system clipboard.
+&nbsp;     */
+&nbsp;    public void doCopy() {
+&nbsp;        Clipboard systemClipboard
+<b class="nc">&nbsp;                = Toolkit.getDefaultToolkit().getSystemClipboard();</b>
+<b class="nc">&nbsp;        Insets insets = getInsets();</b>
+<b class="nc">&nbsp;        int w = getWidth() - insets.left - insets.right;</b>
+<b class="nc">&nbsp;        int h = getHeight() - insets.top - insets.bottom;</b>
+<b class="nc">&nbsp;        ChartTransferable selection = new ChartTransferable(this.chart, w, h,</b>
+<b class="nc">&nbsp;                getMinimumDrawWidth(), getMinimumDrawHeight(),</b>
+<b class="nc">&nbsp;                getMaximumDrawWidth(), getMaximumDrawHeight(), true);</b>
+<b class="nc">&nbsp;        systemClipboard.setContents(selection, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Opens a file chooser and gives the user an opportunity to save the chart
+&nbsp;     * in PNG format.
+&nbsp;     *
+&nbsp;     * @throws IOException if there is an I/O error.
+&nbsp;     */
+&nbsp;    public void doSaveAs() throws IOException {
+<b class="nc">&nbsp;        doSaveAs(-1, -1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Opens a file chooser and gives the user an opportunity to save the chart
+&nbsp;     * in PNG format.
+&nbsp;     *
+&nbsp;     * @param w  the width for the saved image (if less than or equal to zero,
+&nbsp;     *      the panel width will be used);
+&nbsp;     * @param h  the height for the PNG image (if less than or equal to zero,
+&nbsp;     *      the panel height will be used);
+&nbsp;     *
+&nbsp;     * @throws IOException if there is an I/O error.
+&nbsp;     */
+&nbsp;    public void doSaveAs(int w, int h) throws IOException {
+<b class="nc">&nbsp;        JFileChooser fileChooser = new JFileChooser();</b>
+<b class="nc">&nbsp;        fileChooser.setCurrentDirectory(this.defaultDirectoryForSaveAs);</b>
+<b class="nc">&nbsp;        FileNameExtensionFilter filter = new FileNameExtensionFilter(</b>
+<b class="nc">&nbsp;                    localizationResources.getString(&quot;PNG_Image_Files&quot;), &quot;png&quot;);</b>
+<b class="nc">&nbsp;        fileChooser.addChoosableFileFilter(filter);</b>
+<b class="nc">&nbsp;        fileChooser.setFileFilter(filter);</b>
+&nbsp;
+<b class="nc">&nbsp;        int option = fileChooser.showSaveDialog(this);</b>
+<b class="nc">&nbsp;        if (option == JFileChooser.APPROVE_OPTION) {</b>
+<b class="nc">&nbsp;            String filename = fileChooser.getSelectedFile().getPath();</b>
+<b class="nc">&nbsp;            if (isEnforceFileExtensions()) {</b>
+<b class="nc">&nbsp;                if (!filename.endsWith(&quot;.png&quot;)) {</b>
+<b class="nc">&nbsp;                    filename = filename + &quot;.png&quot;;</b>
+&nbsp;                }
+&nbsp;            }
+<b class="nc">&nbsp;            if (w &lt;= 0) {</b>
+<b class="nc">&nbsp;            	w = getWidth();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (h &lt;= 0) {</b>
+<b class="nc">&nbsp;            	h = getHeight();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            ChartUtils.saveChartAsPNG(new File(filename), this.chart, w, h);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Saves the chart in SVG format (a filechooser will be displayed so that
+&nbsp;     * the user can specify the filename).  Note that this method only works
+&nbsp;     * if the JFreeSVG library is on the classpath...if this library is not 
+&nbsp;     * present, the method will fail.
+&nbsp;     *
+&nbsp;     * @param f  the file.
+&nbsp;     *
+&nbsp;     * @throws IOException if there is an exception.
+&nbsp;     */
+&nbsp;    protected void saveAsSVG(File f) throws IOException {
+<b class="nc">&nbsp;        File file = f;</b>
+<b class="nc">&nbsp;        if (file == null) {</b>
+<b class="nc">&nbsp;            JFileChooser fileChooser = new JFileChooser();</b>
+<b class="nc">&nbsp;            fileChooser.setCurrentDirectory(this.defaultDirectoryForSaveAs);</b>
+<b class="nc">&nbsp;            FileNameExtensionFilter filter = new FileNameExtensionFilter(</b>
+<b class="nc">&nbsp;                    localizationResources.getString(&quot;SVG_Files&quot;), &quot;svg&quot;);</b>
+<b class="nc">&nbsp;            fileChooser.addChoosableFileFilter(filter);</b>
+<b class="nc">&nbsp;            fileChooser.setFileFilter(filter);</b>
+&nbsp;
+<b class="nc">&nbsp;            int option = fileChooser.showSaveDialog(this);</b>
+<b class="nc">&nbsp;            if (option == JFileChooser.APPROVE_OPTION) {</b>
+<b class="nc">&nbsp;                String filename = fileChooser.getSelectedFile().getPath();</b>
+<b class="nc">&nbsp;                if (isEnforceFileExtensions()) {</b>
+<b class="nc">&nbsp;                    if (!filename.endsWith(&quot;.svg&quot;)) {</b>
+<b class="nc">&nbsp;                        filename = filename + &quot;.svg&quot;;</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                file = new File(filename);</b>
+<b class="nc">&nbsp;                if (file.exists()) {</b>
+<b class="nc">&nbsp;                    String fileExists = localizationResources.getString(</b>
+&nbsp;                            &quot;FILE_EXISTS_CONFIRM_OVERWRITE&quot;);
+<b class="nc">&nbsp;                    int response = JOptionPane.showConfirmDialog(this, </b>
+&nbsp;                            fileExists,
+<b class="nc">&nbsp;                            localizationResources.getString(&quot;Save_as_SVG&quot;),</b>
+&nbsp;                            JOptionPane.OK_CANCEL_OPTION);
+<b class="nc">&nbsp;                    if (response == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc">&nbsp;                        file = null;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (file != null) {</b>
+&nbsp;            // use reflection to get the SVG string
+<b class="nc">&nbsp;            String svg = generateSVG(getWidth(), getHeight());</b>
+<b class="nc">&nbsp;            BufferedWriter writer = null;</b>
+<b class="nc">&nbsp;            Exception originalException = null;</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                writer = new BufferedWriter(new FileWriter(file));</b>
+<b class="nc">&nbsp;                writer.write(&quot;&lt;!DOCTYPE svg PUBLIC \&quot;-//W3C//DTD SVG 1.1//EN\&quot; \&quot;http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\&quot;&gt;\n&quot;);</b>
+<b class="nc">&nbsp;                writer.write(svg + &quot;\n&quot;);</b>
+<b class="nc">&nbsp;                writer.flush();</b>
+<b class="nc">&nbsp;            } catch (Exception e) {</b>
+<b class="nc">&nbsp;                originalException = e;</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                if (writer != null) {</b>
+<b class="nc">&nbsp;                    writer.close();</b>
+&nbsp;                }
+<b class="nc">&nbsp;            } catch (IOException ex) {</b>
+<b class="nc">&nbsp;                RuntimeException th = new RuntimeException(ex);</b>
+<b class="nc">&nbsp;                if (originalException != null)</b>
+<b class="nc">&nbsp;                    th.addSuppressed(originalException);</b>
+<b class="nc">&nbsp;                throw th;</b>
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Generates a string containing a rendering of the chart in SVG format.
+&nbsp;     * This feature is only supported if the JFreeSVG library is included on 
+&nbsp;     * the classpath.
+&nbsp;     * 
+&nbsp;     * @param width  the width.
+&nbsp;     * @param height  the height.
+&nbsp;     *
+&nbsp;     * @return A string containing an SVG element for the current chart, or
+&nbsp;     *     {@code null} if there is a problem with the method invocation
+&nbsp;     *     by reflection.
+&nbsp;     */
+&nbsp;    protected String generateSVG(int width, int height) {
+<b class="nc">&nbsp;        Graphics2D g2 = createSVGGraphics2D(width, height);</b>
+<b class="nc">&nbsp;        if (g2 == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;JFreeSVG library is not present.&quot;);</b>
+&nbsp;        }
+&nbsp;        // we suppress shadow generation, because SVG is a vector format and
+&nbsp;        // the shadow effect is applied via bitmap effects...
+<b class="nc">&nbsp;        g2.setRenderingHint(JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true);</b>
+<b class="nc">&nbsp;        String svg = null;</b>
+<b class="nc">&nbsp;        Rectangle2D drawArea = new Rectangle2D.Double(0, 0, width, height);</b>
+<b class="nc">&nbsp;        this.chart.draw(g2, drawArea);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            Method m = g2.getClass().getMethod(&quot;getSVGElement&quot;);</b>
+<b class="nc">&nbsp;            svg = (String) m.invoke(g2);</b>
+<b class="nc">&nbsp;        } catch (NoSuchMethodException | SecurityException | IllegalAccessException |</b>
+&nbsp;                IllegalArgumentException | InvocationTargetException e) {
+&nbsp;            // null will be returned
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return svg;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates an {@code SVGGraphics2D} instance (from JFreeSVG) using reflection.
+&nbsp;     * If JFreeSVG is not on the classpath, this method returns {@code null}.
+&nbsp;     *
+&nbsp;     * @param w  the width.
+&nbsp;     * @param h  the height.
+&nbsp;     *
+&nbsp;     * @return An {@code SVGGraphics2D} instance or {@code null}.
+&nbsp;     */
+&nbsp;    protected Graphics2D createSVGGraphics2D(int w, int h) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Class&lt;?&gt; svgGraphics2d = Class.forName(&quot;org.jfree.graphics2d.svg.SVGGraphics2D&quot;);</b>
+<b class="nc">&nbsp;            Constructor&lt;?&gt; ctor = svgGraphics2d.getConstructor(int.class, int.class);</b>
+<b class="nc">&nbsp;            return (Graphics2D) ctor.newInstance(w, h);</b>
+<b class="nc">&nbsp;        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException | InstantiationException |</b>
+&nbsp;                IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Saves the chart in PDF format (a filechooser will be displayed so that
+&nbsp;     * the user can specify the filename).  Note that this method only works
+&nbsp;     * if the OrsonPDF library is on the classpath...if this library is not
+&nbsp;     * present, the method will fail.
+&nbsp;     *
+&nbsp;     * @param f  the file.
+&nbsp;     */
+&nbsp;    protected void saveAsPDF(File f) {
+<b class="nc">&nbsp;        File file = f;</b>
+<b class="nc">&nbsp;        if (file == null) {</b>
+<b class="nc">&nbsp;            JFileChooser fileChooser = new JFileChooser();</b>
+<b class="nc">&nbsp;            fileChooser.setCurrentDirectory(this.defaultDirectoryForSaveAs);</b>
+<b class="nc">&nbsp;            FileNameExtensionFilter filter = new FileNameExtensionFilter(</b>
+<b class="nc">&nbsp;                    localizationResources.getString(&quot;PDF_Files&quot;), &quot;pdf&quot;);</b>
+<b class="nc">&nbsp;            fileChooser.addChoosableFileFilter(filter);</b>
+<b class="nc">&nbsp;            fileChooser.setFileFilter(filter);</b>
+&nbsp;
+<b class="nc">&nbsp;            int option = fileChooser.showSaveDialog(this);</b>
+<b class="nc">&nbsp;            if (option == JFileChooser.APPROVE_OPTION) {</b>
+<b class="nc">&nbsp;                String filename = fileChooser.getSelectedFile().getPath();</b>
+<b class="nc">&nbsp;                if (isEnforceFileExtensions()) {</b>
+<b class="nc">&nbsp;                    if (!filename.endsWith(&quot;.pdf&quot;)) {</b>
+<b class="nc">&nbsp;                        filename = filename + &quot;.pdf&quot;;</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                file = new File(filename);</b>
+<b class="nc">&nbsp;                if (file.exists()) {</b>
+<b class="nc">&nbsp;                    String fileExists = localizationResources.getString(</b>
+&nbsp;                            &quot;FILE_EXISTS_CONFIRM_OVERWRITE&quot;);
+<b class="nc">&nbsp;                    int response = JOptionPane.showConfirmDialog(this, </b>
+&nbsp;                            fileExists,
+<b class="nc">&nbsp;                            localizationResources.getString(&quot;Save_as_PDF&quot;),</b>
+&nbsp;                            JOptionPane.OK_CANCEL_OPTION);
+<b class="nc">&nbsp;                    if (response == JOptionPane.CANCEL_OPTION) {</b>
+<b class="nc">&nbsp;                        file = null;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (file != null) {</b>
+<b class="nc">&nbsp;            writeAsPDF(file, getWidth(), getHeight());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Writes the current chart to the specified file in PDF format.  This 
+&nbsp;     * will only work when the OrsonPDF library is found on the classpath.
+&nbsp;     * Reflection is used to ensure there is no compile-time dependency on
+&nbsp;     * OrsonPDF (which is non-free software).
+&nbsp;     * 
+&nbsp;     * @param file  the output file ({@code null} not permitted).
+&nbsp;     * @param w  the chart width.
+&nbsp;     * @param h  the chart height.
+&nbsp;     */
+&nbsp;    private void writeAsPDF(File file, int w, int h) {
+<b class="nc">&nbsp;        if (!ChartUtils.isOrsonPDFAvailable()) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(</b>
+&nbsp;                    &quot;OrsonPDF is not present on the classpath.&quot;);
+&nbsp;        }
+<b class="nc">&nbsp;        Args.nullNotPermitted(file, &quot;file&quot;);</b>
+&nbsp;        try {
+<b class="nc">&nbsp;            Class&lt;?&gt; pdfDocClass = Class.forName(&quot;com.orsonpdf.PDFDocument&quot;);</b>
+<b class="nc">&nbsp;            Object pdfDoc = pdfDocClass.getDeclaredConstructor().newInstance();</b>
+<b class="nc">&nbsp;            Method m = pdfDocClass.getMethod(&quot;createPage&quot;, Rectangle2D.class);</b>
+<b class="nc">&nbsp;            Rectangle2D rect = new Rectangle(w, h);</b>
+<b class="nc">&nbsp;            Object page = m.invoke(pdfDoc, rect);</b>
+<b class="nc">&nbsp;            Method m2 = page.getClass().getMethod(&quot;getGraphics2D&quot;);</b>
+<b class="nc">&nbsp;            Graphics2D g2 = (Graphics2D) m2.invoke(page);</b>
+&nbsp;            // we suppress shadow generation, because PDF is a vector format and
+&nbsp;            // the shadow effect is applied via bitmap effects...
+<b class="nc">&nbsp;            g2.setRenderingHint(JFreeChart.KEY_SUPPRESS_SHADOW_GENERATION, true);</b>
+<b class="nc">&nbsp;            Rectangle2D drawArea = new Rectangle2D.Double(0, 0, w, h);</b>
+<b class="nc">&nbsp;            this.chart.draw(g2, drawArea);</b>
+<b class="nc">&nbsp;            Method m3 = pdfDocClass.getMethod(&quot;writeToFile&quot;, File.class);</b>
+<b class="nc">&nbsp;            m3.invoke(pdfDoc, file);</b>
+<b class="nc">&nbsp;        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException |</b>
+&nbsp;                NoSuchMethodException | SecurityException | IllegalArgumentException |
+&nbsp;                InvocationTargetException ex) {
+<b class="nc">&nbsp;            throw new RuntimeException(ex);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a print job for the chart.
+&nbsp;     */
+&nbsp;    public void createChartPrintJob() {
+<b class="nc">&nbsp;        PrinterJob job = PrinterJob.getPrinterJob();</b>
+<b class="nc">&nbsp;        PageFormat pf = job.defaultPage();</b>
+<b class="nc">&nbsp;        PageFormat pf2 = job.pageDialog(pf);</b>
+<b class="nc">&nbsp;        if (pf2 != pf) {</b>
+<b class="nc">&nbsp;            job.setPrintable(this, pf2);</b>
+<b class="nc">&nbsp;            if (job.printDialog()) {</b>
+&nbsp;                try {
+<b class="nc">&nbsp;                    job.print();</b>
+&nbsp;                }
+<b class="nc">&nbsp;                catch (PrinterException e) {</b>
+<b class="nc">&nbsp;                    JOptionPane.showMessageDialog(this, e);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Prints the chart on a single page.
+&nbsp;     *
+&nbsp;     * @param g  the graphics context.
+&nbsp;     * @param pf  the page format to use.
+&nbsp;     * @param pageIndex  the index of the page. If not {@code 0}, nothing
+&nbsp;     *                   gets printed.
+&nbsp;     *
+&nbsp;     * @return The result of printing.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int print(Graphics g, PageFormat pf, int pageIndex) {
+&nbsp;
+<b class="nc">&nbsp;        if (pageIndex != 0) {</b>
+<b class="nc">&nbsp;            return NO_SUCH_PAGE;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Graphics2D g2 = (Graphics2D) g;</b>
+<b class="nc">&nbsp;        double x = pf.getImageableX();</b>
+<b class="nc">&nbsp;        double y = pf.getImageableY();</b>
+<b class="nc">&nbsp;        double w = pf.getImageableWidth();</b>
+<b class="nc">&nbsp;        double h = pf.getImageableHeight();</b>
+<b class="nc">&nbsp;        this.chart.draw(g2, new Rectangle2D.Double(x, y, w, h), this.anchor,</b>
+&nbsp;                null);
+<b class="nc">&nbsp;        return PAGE_EXISTS;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a listener to the list of objects listening for chart mouse events.
+&nbsp;     *
+&nbsp;     * @param listener  the listener ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void addChartMouseListener(ChartMouseListener listener) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(listener, &quot;listener&quot;);</b>
+<b class="fc">&nbsp;        this.chartMouseListeners.add(ChartMouseListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a listener from the list of objects listening for chart mouse
+&nbsp;     * events.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     */
+&nbsp;    public void removeChartMouseListener(ChartMouseListener listener) {
+<b class="fc">&nbsp;        this.chartMouseListeners.remove(ChartMouseListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an array of the listeners of the given type registered with the
+&nbsp;     * panel.
+&nbsp;     *
+&nbsp;     * @param listenerType  the listener type.
+&nbsp;     *
+&nbsp;     * @return An array of listeners.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public &lt;T extends EventListener&gt; T[] getListeners(Class&lt;T&gt; listenerType) {
+<b class="fc">&nbsp;        if (listenerType == ChartMouseListener.class) {</b>
+&nbsp;            // fetch listeners from local storage
+<b class="fc">&nbsp;            return this.chartMouseListeners.getListeners(listenerType);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            return super.getListeners(listenerType);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a popup menu for the panel.  This method includes code that
+&nbsp;     * auto-detects JFreeSVG and OrsonPDF (via reflection) and, if they are
+&nbsp;     * present (and the {@code save} argument is {@code true}, adds a menu item
+&nbsp;     * for each.
+&nbsp;     *
+&nbsp;     * @param properties  include a menu item for the chart property editor.
+&nbsp;     * @param copy include a menu item for copying to the clipboard.
+&nbsp;     * @param save  include one or more menu items for saving the chart to
+&nbsp;     *     supported image formats.
+&nbsp;     * @param print  include a menu item for printing the chart.
+&nbsp;     * @param zoom  include menu items for zooming.
+&nbsp;     *
+&nbsp;     * @return The popup menu.
+&nbsp;     */
+&nbsp;    protected JPopupMenu createPopupMenu(boolean properties,
+&nbsp;            boolean copy, boolean save, boolean print, boolean zoom) {
+&nbsp;
+<b class="fc">&nbsp;        JPopupMenu result = new JPopupMenu(localizationResources.getString(&quot;Chart&quot;) + &quot;:&quot;);</b>
+<b class="fc">&nbsp;        boolean separator = false;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (properties) {</b>
+<b class="fc">&nbsp;            JMenuItem propertiesItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Properties...&quot;));</b>
+<b class="fc">&nbsp;            propertiesItem.setActionCommand(PROPERTIES_COMMAND);</b>
+<b class="fc">&nbsp;            propertiesItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            result.add(propertiesItem);</b>
+<b class="fc">&nbsp;            separator = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (copy) {</b>
+<b class="fc">&nbsp;            if (separator) {</b>
+<b class="fc">&nbsp;                result.addSeparator();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            JMenuItem copyItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Copy&quot;));</b>
+<b class="fc">&nbsp;            copyItem.setActionCommand(COPY_COMMAND);</b>
+<b class="fc">&nbsp;            copyItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            result.add(copyItem);</b>
+<b class="fc">&nbsp;            separator = !save;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (save) {</b>
+<b class="fc">&nbsp;            if (separator) {</b>
+<b class="nc">&nbsp;                result.addSeparator();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            JMenu saveSubMenu = new JMenu(localizationResources.getString(&quot;Save_as&quot;));</b>
+&nbsp;
+&nbsp;            // PNG - current res
+&nbsp;            {
+<b class="fc">&nbsp;                JMenuItem pngItem = new JMenuItem(localizationResources.getString(</b>
+&nbsp;                        &quot;PNG...&quot;));
+<b class="fc">&nbsp;                pngItem.setActionCommand(SAVE_AS_PNG_COMMAND);</b>
+<b class="fc">&nbsp;                pngItem.addActionListener(this);</b>
+<b class="fc">&nbsp;                saveSubMenu.add(pngItem);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;
+&nbsp;            // PNG - screen res
+&nbsp;            {
+<b class="fc">&nbsp;            	final Dimension ss = Toolkit.getDefaultToolkit().getScreenSize();</b>
+<b class="fc">&nbsp;                final String pngName = &quot;PNG (&quot;+ss.width+&quot;x&quot;+ss.height+&quot;) ...&quot;;</b>
+<b class="fc">&nbsp;                JMenuItem pngItem = new JMenuItem(pngName);</b>
+<b class="fc">&nbsp;                pngItem.setActionCommand(SAVE_AS_PNG_SIZE_COMMAND);</b>
+<b class="fc">&nbsp;                pngItem.addActionListener(this);</b>
+<b class="fc">&nbsp;                saveSubMenu.add(pngItem);</b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            if (ChartUtils.isJFreeSVGAvailable()) {</b>
+<b class="nc">&nbsp;                JMenuItem svgItem = new JMenuItem(localizationResources.getString(</b>
+&nbsp;                        &quot;SVG...&quot;));
+<b class="nc">&nbsp;                svgItem.setActionCommand(SAVE_AS_SVG_COMMAND);</b>
+<b class="nc">&nbsp;                svgItem.addActionListener(this);</b>
+<b class="nc">&nbsp;                saveSubMenu.add(svgItem);                </b>
+&nbsp;            }
+&nbsp;            
+<b class="fc">&nbsp;            if (ChartUtils.isOrsonPDFAvailable()) {</b>
+<b class="nc">&nbsp;                JMenuItem pdfItem = new JMenuItem(</b>
+<b class="nc">&nbsp;                        localizationResources.getString(&quot;PDF...&quot;));</b>
+<b class="nc">&nbsp;                pdfItem.setActionCommand(SAVE_AS_PDF_COMMAND);</b>
+<b class="nc">&nbsp;                pdfItem.addActionListener(this);</b>
+<b class="nc">&nbsp;                saveSubMenu.add(pdfItem);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            result.add(saveSubMenu);</b>
+<b class="fc">&nbsp;            separator = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (print) {</b>
+<b class="fc">&nbsp;            if (separator) {</b>
+<b class="fc">&nbsp;                result.addSeparator();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            JMenuItem printItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Print...&quot;));</b>
+<b class="fc">&nbsp;            printItem.setActionCommand(PRINT_COMMAND);</b>
+<b class="fc">&nbsp;            printItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            result.add(printItem);</b>
+<b class="fc">&nbsp;            separator = true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (zoom) {</b>
+<b class="fc">&nbsp;            if (separator) {</b>
+<b class="fc">&nbsp;                result.addSeparator();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            JMenu zoomInMenu = new JMenu(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Zoom_In&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomInBothMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;All_Axes&quot;));</b>
+<b class="fc">&nbsp;            this.zoomInBothMenuItem.setActionCommand(ZOOM_IN_BOTH_COMMAND);</b>
+<b class="fc">&nbsp;            this.zoomInBothMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomInMenu.add(this.zoomInBothMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            zoomInMenu.addSeparator();</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomInDomainMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Domain_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomInDomainMenuItem.setActionCommand(ZOOM_IN_DOMAIN_COMMAND);</b>
+<b class="fc">&nbsp;            this.zoomInDomainMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomInMenu.add(this.zoomInDomainMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomInRangeMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Range_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomInRangeMenuItem.setActionCommand(ZOOM_IN_RANGE_COMMAND);</b>
+<b class="fc">&nbsp;            this.zoomInRangeMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomInMenu.add(this.zoomInRangeMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            result.add(zoomInMenu);</b>
+&nbsp;
+<b class="fc">&nbsp;            JMenu zoomOutMenu = new JMenu(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Zoom_Out&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomOutBothMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;All_Axes&quot;));</b>
+<b class="fc">&nbsp;            this.zoomOutBothMenuItem.setActionCommand(ZOOM_OUT_BOTH_COMMAND);</b>
+<b class="fc">&nbsp;            this.zoomOutBothMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomOutMenu.add(this.zoomOutBothMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            zoomOutMenu.addSeparator();</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomOutDomainMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Domain_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomOutDomainMenuItem.setActionCommand(</b>
+&nbsp;                    ZOOM_OUT_DOMAIN_COMMAND);
+<b class="fc">&nbsp;            this.zoomOutDomainMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomOutMenu.add(this.zoomOutDomainMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomOutRangeMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Range_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomOutRangeMenuItem.setActionCommand(ZOOM_OUT_RANGE_COMMAND);</b>
+<b class="fc">&nbsp;            this.zoomOutRangeMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            zoomOutMenu.add(this.zoomOutRangeMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            result.add(zoomOutMenu);</b>
+&nbsp;
+<b class="fc">&nbsp;            JMenu autoRangeMenu = new JMenu(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Auto_Range&quot;));</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomResetBothMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;All_Axes&quot;));</b>
+<b class="fc">&nbsp;            this.zoomResetBothMenuItem.setActionCommand(</b>
+&nbsp;                    ZOOM_RESET_BOTH_COMMAND);
+<b class="fc">&nbsp;            this.zoomResetBothMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            autoRangeMenu.add(this.zoomResetBothMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            autoRangeMenu.addSeparator();</b>
+<b class="fc">&nbsp;            this.zoomResetDomainMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Domain_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomResetDomainMenuItem.setActionCommand(</b>
+&nbsp;                    ZOOM_RESET_DOMAIN_COMMAND);
+<b class="fc">&nbsp;            this.zoomResetDomainMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            autoRangeMenu.add(this.zoomResetDomainMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            this.zoomResetRangeMenuItem = new JMenuItem(</b>
+<b class="fc">&nbsp;                    localizationResources.getString(&quot;Range_Axis&quot;));</b>
+<b class="fc">&nbsp;            this.zoomResetRangeMenuItem.setActionCommand(</b>
+&nbsp;                    ZOOM_RESET_RANGE_COMMAND);
+<b class="fc">&nbsp;            this.zoomResetRangeMenuItem.addActionListener(this);</b>
+<b class="fc">&nbsp;            autoRangeMenu.add(this.zoomResetRangeMenuItem);</b>
+&nbsp;
+<b class="fc">&nbsp;            result.addSeparator();</b>
+<b class="fc">&nbsp;            result.add(autoRangeMenu);</b>
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The idea is to modify the zooming options depending on the type of chart
+&nbsp;     * being displayed by the panel.
+&nbsp;     *
+&nbsp;     * @param x  horizontal position of the popup.
+&nbsp;     * @param y  vertical position of the popup.
+&nbsp;     */
+&nbsp;    protected void displayPopupMenu(int x, int y) {
+&nbsp;
+<b class="nc">&nbsp;        if (this.popup == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // go through each zoom menu item and decide whether or not to
+&nbsp;        // enable it...
+<b class="nc">&nbsp;        boolean isDomainZoomable = false;</b>
+<b class="nc">&nbsp;        boolean isRangeZoomable = false;</b>
+<b class="nc">&nbsp;        Plot plot = (this.chart != null ? this.chart.getPlot() : null);</b>
+<b class="nc">&nbsp;        if (plot instanceof Zoomable) {</b>
+<b class="nc">&nbsp;            Zoomable z = (Zoomable) plot;</b>
+<b class="nc">&nbsp;            isDomainZoomable = z.isDomainZoomable();</b>
+<b class="nc">&nbsp;            isRangeZoomable = z.isRangeZoomable();</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (this.zoomInDomainMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomInDomainMenuItem.setEnabled(isDomainZoomable);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.zoomOutDomainMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomOutDomainMenuItem.setEnabled(isDomainZoomable);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.zoomResetDomainMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomResetDomainMenuItem.setEnabled(isDomainZoomable);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (this.zoomInRangeMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomInRangeMenuItem.setEnabled(isRangeZoomable);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.zoomOutRangeMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomOutRangeMenuItem.setEnabled(isRangeZoomable);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (this.zoomResetRangeMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomResetRangeMenuItem.setEnabled(isRangeZoomable);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (this.zoomInBothMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomInBothMenuItem.setEnabled(isDomainZoomable</b>
+&nbsp;                    &amp;&amp; isRangeZoomable);
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.zoomOutBothMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomOutBothMenuItem.setEnabled(isDomainZoomable</b>
+&nbsp;                    &amp;&amp; isRangeZoomable);
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.zoomResetBothMenuItem != null) {</b>
+<b class="nc">&nbsp;            this.zoomResetBothMenuItem.setEnabled(isDomainZoomable</b>
+&nbsp;                    &amp;&amp; isRangeZoomable);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        this.popup.show(this, x, y);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the UI for a LookAndFeel change.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void updateUI() {
+&nbsp;        // here we need to update the UI for the popup menu, if the panel
+&nbsp;        // has one...
+<b class="fc">&nbsp;        if (this.popup != null) {</b>
+<b class="fc">&nbsp;            SwingUtilities.updateComponentTreeUI(this.popup);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        super.updateUI();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    protected void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="nc">&nbsp;        stream.defaultWriteObject();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    protected void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="nc">&nbsp;        stream.defaultReadObject();</b>
+&nbsp;
+&nbsp;        // we create a new but empty chartMouseListeners list
+<b class="nc">&nbsp;        this.chartMouseListeners = new EventListenerList();</b>
+&nbsp;
+&nbsp;        // register as a listener with sub-components...
+<b class="nc">&nbsp;        if (this.chart != null) {</b>
+<b class="nc">&nbsp;            this.chart.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

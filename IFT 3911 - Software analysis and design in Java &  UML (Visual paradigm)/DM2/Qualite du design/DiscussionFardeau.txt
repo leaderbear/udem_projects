@@ -1,0 +1,85 @@
+---   DISCUSSION DU FARDEAU DES CLASSES   ---
+
+Calcul du fardeau des classes :
+
+F(Personne) = {String} -> 1
+F(User) = {String, Personne} -> 2
+F(CompagnieEmploye) = {String, Personne, Compagnie, int} -> 4
+F(CreditCardInfo} = {String, long, int, Calendar} -> 4
+F(Transaction) = {float, CreditCardInfo} = {float, CreditCardInfo, String, long, int, Calendar} -> 6
+F(Remboursement) = {Transaction} -> 7
+F(Paiement) = {Transaction} -> 7
+F(Utilisateur) = {String, int, Calendar, bool, Personne, CreditCardInfo, long} -> 7
+F(UtilisateursController) = {int, bool, Utilisateur, String, Calendar, Personne, CreditCardInfo, long, Controller} -> 9
+
+F(Compagnie) = {String, int} -> 2
+F(LigneDeTrain) = {Compagnie, String, int} -> 3
+F(CompagnieDeCroisiere) = {Compagnie, String, int} -> 3
+F(CompagnieDeVol) = {Compagnie, String, int} -> 3
+
+F(Batiment) = {int, String} -> 2
+F(Gare) = {Batiment, int, String} -> 3
+F(Port) = {Batiment, int, String} -> 3
+F(Aeroport) = {Batiment, int, String} -> 3
+F(Voyage) = {Compagnie, String, int, Batiment} -> 4
+F(VoyageFerroviaire) = {Voyage, Compagnie, String, int, Batiment} -> 5
+F(VoyageNaval) = {Voyage, Compagnie, String, int, Batiment} -> 5
+F(Vol) = {Voyage, Compagnie, String, int, Batiment} -> 5
+F(BatimentController) = {Batiment, int, String, Voyage, Compagnie, Controller} -> 6
+F(VoyageController) = {Voyage, Compagnie, String, int, Batiment, Calendar, Controller} -> 7
+
+F(Place) = {int, bool, PlaceEtat} -> 3
+F(Groupe) = {Place, int, bool, PlaceEtat} -> 4
+F(Individuel) = {Place, int, bool, PlaceEtat} -> 4
+F(Cabine) = {Groupe, Place, int, bool, PlaceEtat} -> 5
+F(SiegeAvion) = {Individuel, Place, int, bool, PlaceEtat} -> 5
+F(SiegeTrain) = {Individuel, Place, int, bool, PlaceEtat} -> 5
+F(PlaceController) = {Place, int, bool, PlaceEtat, Controller} -> 5
+
+F(Section) = {int, double, Place, bool, PlaceEtat} -> 5
+F(GroupeSection) = {Section, int, double, Place, bool, PlaceEtat} -> 6
+F(IndividuelSection) = {Section, int, double, Place, bool, PlaceEtat} -> 6
+F(SectionPaquebot) = {GroupeSection, Section, int, double, Place, bool, PlaceEtat} -> 7
+F(SectionAvion) = {IndividuelSection, Section, int, double, Place, bool, PlaceEtat} -> 7
+F(SectionTrain) = {IndividuelSection, Section, int, double, Place, bool, PlaceEtat} -> 7
+F(SectionController) = {Section, int, double, Place, bool, PlaceEtat, Controller} -> 7
+
+F(Vehicule) = {String, int, Section, double, Place, bool, PlaceEtat} -> 7
+F(Avion) = {Vehicule, String, int, Section, double, Place, bool, PlaceEtat} -> 8
+F(Bateau) = {Vehicule, String, int, Section, double, Place, bool, PlaceEtat} -> 8
+F(Train) = {Vehicule, String, int, Section, double, Place, bool, PlaceEtat} -> 8
+F(VehiculeController) = {Vehicule, String, int, Section, double, Place, bool, PlaceEtat, Controller} -> 9
+
+F(CompagniesController) = {Compagnie, String, int, Voyage, Batiment, Vehicule, double, Place, bool, PlaceEtat, Controller} -> 11
+
+F(Confirmation) = {bool, int, Transaction, float, CreditCardInfo, String, long, Calendar} -> 8
+F(Reservation) = {Section, int, double, Place, bool, PlaceEtat, Confirmation, Transaction, float, CreditCardInfo, String, long, Calendar} -> 13
+F(CroisiereReservation) = {Reservation, Section, int, double, Place, bool, PlaceEtat, Confirmation, Transaction, float, CreditCardInfo, String, long, Calendar} -> 14
+F(TrainReservation) = {Reservation, Section, int, double, Place, bool, PlaceEtat, Confirmation, Transaction, float, CreditCardInfo, String, long, Calendar} -> 14
+F(VolReservation) = {Reservation, Section, int, double, Place, bool, PlaceEtat, Confirmation, Transaction, float, CreditCardInfo, String, long, Calendar} -> 14
+
+F(Menu) = {CompagniesController, VehiculeController, PlaceController, BatimentController, UtilisateursController, SectionController, VoyagesController
+	Compagnie, Vehicule, double, Place, PlaceEtat, Batiment, String, Voyage, Compagnie, int, bool, 
+	Utilisateur, Calendar, Personne, float, CreditCardInfo, long, Section, Controller} -> 26
+
+F(menuPrincipal) = {Menu, CompagniesController, VehiculeController, PlaceController, BatimentController, UtilisateursController, SectionController, VoyagesController 
+	Compagnie, Vehicule, double, Place, PlaceEtat, Batiment, String, Voyage, Compagnie, int, bool, 
+	Utilisateur, Calendar, Personne, float, CreditCardInfo, long, Section, Controller} -> 27
+
+F(menuAdministrateur) = {Menu, CompagniesController, VehiculeController, PlaceController, BatimentController, UtilisateursController, SectionController, VoyagesController 
+	Compagnie, Vehicule, double, Place, PlaceEtat, Batiment, String, Voyage, Compagnie, int, bool, 
+	Utilisateur, Calendar, Personne, float, CreditCardInfo, long, Section, Controller} -> 27
+
+F(menuUtilisateur) = {Menu, CompagniesController, VehiculeController, PlaceController, BatimentController, UtilisateursController, SectionController, 
+	Compagnie, Vehicule, double, Place, PlaceEtat, Batiment, String, Voyage, Compagnie, int, bool, 
+	Utilisateur, Calendar, Personne, float, CreditCardInfo, long, Section, Controller} -> 27
+
+F(MainSystem) = {{Menu, CompagniesController, VehiculeController, PlaceController, BatimentController, UtilisateursController, SectionController, VoyagesController
+	Compagnie, Vehicule, double, Place, PlaceEtat, Batiment, String, Voyage, Compagnie, int, bool, 
+	Utilisateur, Calendar, Personne, float, CreditCardInfo, long, Section, Controller} -> 27
+
+
+Discussion : 
+	On remarque que les classes de fondation ont un fardeau très bas (2) et que les classes qui héritent de ces classes de fondation ont aussi un bas fardeau, soit entre 3 et 7.
+	De plus, les classes d'application, qui communiquent avec ces classes de fondation, ont un fardeau plus élevé. 
+	Donc, les classes de fondation sont possiblement réutilisables, alors que les classes d'applications sont possiblement pas réutilisables hors du domaine.

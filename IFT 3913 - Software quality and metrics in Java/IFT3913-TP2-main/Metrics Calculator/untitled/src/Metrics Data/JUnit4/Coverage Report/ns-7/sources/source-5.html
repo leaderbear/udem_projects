@@ -1,0 +1,172 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ImageEncoder</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.encoders</a>
+</div>
+
+<h1>Coverage Summary for Class: ImageEncoder (org.jfree.chart.encoders)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ImageEncoder</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -----------------
+&nbsp; * ImageEncoder.java
+&nbsp; * -----------------
+&nbsp; * (C) Copyright 2004-2016, by Richard Atkinson and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Richard Atkinson;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; * Changes
+&nbsp; * -------
+&nbsp; * 01-Aug-2004 : Initial version (RA);
+&nbsp; * 02-Feb-2007 : Removed author tags all over JFreeChart sources (DG);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.encoders;
+&nbsp;
+&nbsp;import java.awt.image.BufferedImage;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.OutputStream;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface for abstracting different types of image encoders.
+&nbsp; */
+&nbsp;public interface ImageEncoder {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Encodes an image in a particular format.
+&nbsp;     *
+&nbsp;     * @param bufferedImage  The image to be encoded.
+&nbsp;     *
+&nbsp;     * @return The byte[] that is the encoded image.
+&nbsp;     *
+&nbsp;     * @throws IOException if there is an IO problem.
+&nbsp;     */
+&nbsp;    byte[] encode(BufferedImage bufferedImage) throws IOException;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Encodes an image in a particular format and writes it to an OutputStream.
+&nbsp;     *
+&nbsp;     * @param bufferedImage  The image to be encoded.
+&nbsp;     * @param outputStream  The OutputStream to write the encoded image to.
+&nbsp;     * @throws IOException if there is an IO problem.
+&nbsp;     */
+&nbsp;    void encode(BufferedImage bufferedImage, OutputStream outputStream)
+&nbsp;        throws IOException;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the quality of the image encoding.
+&nbsp;     *
+&nbsp;     * @return A float representing the quality.
+&nbsp;     */
+&nbsp;    float getQuality();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set the quality of the image encoding (not supported by all
+&nbsp;     * ImageEncoders).
+&nbsp;     *
+&nbsp;     * @param quality  A float representing the quality.
+&nbsp;     */
+&nbsp;    void setQuality(float quality);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get whether the encoder should encode alpha transparency.
+&nbsp;     *
+&nbsp;     * @return Whether the encoder is encoding alpha transparency.
+&nbsp;     */
+&nbsp;    boolean isEncodingAlpha();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set whether the encoder should encode alpha transparency (not
+&nbsp;     * supported by all ImageEncoders).
+&nbsp;     *
+&nbsp;     * @param encodingAlpha  Whether the encoder should encode alpha
+&nbsp;     *                       transparency.
+&nbsp;     */
+&nbsp;    void setEncodingAlpha(boolean encodingAlpha);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

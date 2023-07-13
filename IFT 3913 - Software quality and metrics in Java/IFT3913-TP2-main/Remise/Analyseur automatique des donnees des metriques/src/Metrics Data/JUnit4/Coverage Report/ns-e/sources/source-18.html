@@ -1,0 +1,2117 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PolarPlot</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.plot</a>
+</div>
+
+<h1>Coverage Summary for Class: PolarPlot (org.jfree.chart.plot)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PolarPlot</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    43,2%
+  </span>
+  <span class="absValue">
+    (41/95)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    48,9%
+  </span>
+  <span class="absValue">
+    (267/546)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------
+&nbsp; * PolarPlot.java
+&nbsp; * --------------
+&nbsp; * (C) Copyright 2004-2021, by Solution Engineering, Inc. and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Daniel Bridenbecker, Solution Engineering, Inc.;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *                   Martin Hoeller (patches 1871902 and 2850344);
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.plot;
+&nbsp;
+&nbsp;import java.awt.AlphaComposite;
+&nbsp;import java.awt.BasicStroke;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Composite;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.FontMetrics;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Point;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Map.Entry;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.ResourceBundle;
+&nbsp;import java.util.Set;
+&nbsp;import java.util.TreeMap;
+&nbsp;import org.jfree.chart.ChartElementVisitor;
+&nbsp;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.legend.LegendItemCollection;
+&nbsp;import org.jfree.chart.axis.Axis;
+&nbsp;import org.jfree.chart.axis.AxisState;
+&nbsp;import org.jfree.chart.axis.NumberTick;
+&nbsp;import org.jfree.chart.axis.NumberTickUnit;
+&nbsp;import org.jfree.chart.axis.TickType;
+&nbsp;import org.jfree.chart.axis.TickUnit;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.axis.ValueTick;
+&nbsp;import org.jfree.chart.event.PlotChangeEvent;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.event.RendererChangeListener;
+&nbsp;import org.jfree.chart.renderer.PolarItemRenderer;
+&nbsp;import org.jfree.chart.text.TextUtils;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.text.TextAnchor;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.general.Dataset;
+&nbsp;import org.jfree.data.general.DatasetChangeEvent;
+&nbsp;import org.jfree.data.general.DatasetUtils;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * Plots data that is in (theta, radius) pairs where theta equal to zero is 
+&nbsp; * due north and increases clockwise.
+&nbsp; */
+&nbsp;public class PolarPlot extends Plot implements ValueAxisPlot, Zoomable,
+&nbsp;        RendererChangeListener, Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 3794383185924179525L;
+&nbsp;
+&nbsp;    /** The default margin. */
+&nbsp;    private static final int DEFAULT_MARGIN = 20;
+&nbsp;
+&nbsp;    /** The annotation margin. */
+&nbsp;    private static final double ANNOTATION_MARGIN = 7.0;
+&nbsp;
+&nbsp;    /** The default angle tick unit size. */
+&nbsp;    public static final double DEFAULT_ANGLE_TICK_UNIT_SIZE = 45.0;
+&nbsp;
+&nbsp;    /** The default angle offset. */
+&nbsp;    public static final double DEFAULT_ANGLE_OFFSET = -90.0;
+&nbsp;
+&nbsp;    /** The default grid line stroke. */
+<b class="fc">&nbsp;    public static final Stroke DEFAULT_GRIDLINE_STROKE = new BasicStroke(</b>
+&nbsp;            0.5f, BasicStroke.CAP_BUTT, BasicStroke.JOIN_BEVEL,
+&nbsp;            0.0f, new float[]{2.0f, 2.0f}, 0.0f);
+&nbsp;
+&nbsp;    /** The default grid line paint. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_GRIDLINE_PAINT = Color.GRAY;</b>
+&nbsp;
+&nbsp;    /** The resourceBundle for the localization. */
+<b class="fc">&nbsp;    protected static ResourceBundle localizationResources</b>
+<b class="fc">&nbsp;            = ResourceBundle.getBundle(&quot;org.jfree.chart.plot.LocalizationBundle&quot;);</b>
+&nbsp;
+&nbsp;    /** The angles that are marked with gridlines. */
+&nbsp;    private List&lt;ValueTick&gt; angleTicks;
+&nbsp;
+&nbsp;    /** The range axis (used for the y-values). */
+&nbsp;    private Map&lt;Integer, ValueAxis&gt; axes;
+&nbsp;
+&nbsp;    /** The axis locations. */
+&nbsp;    private final Map&lt;Integer, PolarAxisLocation&gt; axisLocations;
+&nbsp;
+&nbsp;    /** Storage for the datasets. */
+&nbsp;    private Map&lt;Integer, XYDataset&gt; datasets;
+&nbsp;
+&nbsp;    /** Storage for the renderers. */
+&nbsp;    private Map&lt;Integer, PolarItemRenderer&gt; renderers;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The tick unit that controls the spacing between the angular grid lines.
+&nbsp;     */
+&nbsp;    private TickUnit angleTickUnit;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An offset for the angles, to start with 0 degrees at north, east, south
+&nbsp;     * or west.
+&nbsp;     */
+&nbsp;    private double angleOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag indicating if the angles increase counterclockwise or clockwise.
+&nbsp;     */
+&nbsp;    private boolean counterClockwise;
+&nbsp;
+&nbsp;    /** A flag that controls whether or not the angle labels are visible. */
+<b class="fc">&nbsp;    private boolean angleLabelsVisible = true;</b>
+&nbsp;
+&nbsp;    /** The font used to display the angle labels - never null. */
+<b class="fc">&nbsp;    private Font angleLabelFont = new Font(&quot;SansSerif&quot;, Font.PLAIN, 12);</b>
+&nbsp;
+&nbsp;    /** The paint used to display the angle labels. */
+<b class="fc">&nbsp;    private transient Paint angleLabelPaint = Color.BLACK;</b>
+&nbsp;
+&nbsp;    /** A flag that controls whether the angular grid-lines are visible. */
+&nbsp;    private boolean angleGridlinesVisible;
+&nbsp;
+&nbsp;    /** The stroke used to draw the angular grid-lines. */
+&nbsp;    private transient Stroke angleGridlineStroke;
+&nbsp;
+&nbsp;    /** The paint used to draw the angular grid-lines. */
+&nbsp;    private transient Paint angleGridlinePaint;
+&nbsp;
+&nbsp;    /** A flag that controls whether the radius grid-lines are visible. */
+&nbsp;    private boolean radiusGridlinesVisible;
+&nbsp;
+&nbsp;    /** The stroke used to draw the radius grid-lines. */
+&nbsp;    private transient Stroke radiusGridlineStroke;
+&nbsp;
+&nbsp;    /** The paint used to draw the radius grid-lines. */
+&nbsp;    private transient Paint radiusGridlinePaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether the radial minor grid-lines are visible.
+&nbsp;     */
+&nbsp;    private boolean radiusMinorGridlinesVisible;
+&nbsp;
+&nbsp;    /** The annotations for the plot. */
+<b class="fc">&nbsp;    private List&lt;String&gt; cornerTextItems = new ArrayList&lt;&gt;();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The actual margin in pixels.
+&nbsp;     */
+&nbsp;    private int margin;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An optional collection of legend items that can be returned by the
+&nbsp;     * getLegendItems() method.
+&nbsp;     */
+&nbsp;    private LegendItemCollection fixedLegendItems;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Storage for the mapping between datasets/renderers and range axes.  The
+&nbsp;     * keys in the map are Integer objects, corresponding to the dataset
+&nbsp;     * index.  The values in the map are List&lt;Integer&gt; instances (corresponding 
+&nbsp;     * to the axis indices).  If the map contains no
+&nbsp;     * entry for a dataset, it is assumed to map to the primary domain axis
+&nbsp;     * (index = 0).
+&nbsp;     */
+&nbsp;    private final Map&lt;Integer, List&lt;Integer&gt;&gt; datasetToAxesMap;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor.
+&nbsp;     */
+&nbsp;    public PolarPlot() {
+<b class="fc">&nbsp;        this(null, null, null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;   /**
+&nbsp;     * Creates a new plot.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     * @param radiusAxis  the radius axis ({@code null} permitted).
+&nbsp;     * @param renderer  the renderer ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public PolarPlot(XYDataset dataset, ValueAxis radiusAxis, PolarItemRenderer renderer) {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        this.datasets = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.datasets.put(0, dataset);</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="fc">&nbsp;            dataset.addChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.angleTickUnit = new NumberTickUnit(DEFAULT_ANGLE_TICK_UNIT_SIZE);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.axes = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.datasetToAxesMap = new TreeMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.axes.put(0, radiusAxis);</b>
+<b class="fc">&nbsp;        if (radiusAxis != null) {</b>
+<b class="fc">&nbsp;            radiusAxis.setPlot(this);</b>
+<b class="fc">&nbsp;            radiusAxis.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // define the default locations for up to 8 axes...
+<b class="fc">&nbsp;        this.axisLocations = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.axisLocations.put(0, PolarAxisLocation.EAST_ABOVE);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(1, PolarAxisLocation.NORTH_LEFT);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(2, PolarAxisLocation.WEST_BELOW);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(3, PolarAxisLocation.SOUTH_RIGHT);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(4, PolarAxisLocation.EAST_BELOW);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(5, PolarAxisLocation.NORTH_RIGHT);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(6, PolarAxisLocation.WEST_ABOVE);</b>
+<b class="fc">&nbsp;        this.axisLocations.put(7, PolarAxisLocation.SOUTH_LEFT);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.renderers = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.renderers.put(0, renderer);</b>
+<b class="fc">&nbsp;        if (renderer != null) {</b>
+<b class="fc">&nbsp;            renderer.setPlot(this);</b>
+<b class="fc">&nbsp;            renderer.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        this.angleOffset = DEFAULT_ANGLE_OFFSET;</b>
+<b class="fc">&nbsp;        this.counterClockwise = false;</b>
+<b class="fc">&nbsp;        this.angleGridlinesVisible = true;</b>
+<b class="fc">&nbsp;        this.angleGridlineStroke = DEFAULT_GRIDLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.angleGridlinePaint = DEFAULT_GRIDLINE_PAINT;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.radiusGridlinesVisible = true;</b>
+<b class="fc">&nbsp;        this.radiusMinorGridlinesVisible = true;</b>
+<b class="fc">&nbsp;        this.radiusGridlineStroke = DEFAULT_GRIDLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.radiusGridlinePaint = DEFAULT_GRIDLINE_PAINT;</b>
+<b class="fc">&nbsp;        this.margin = DEFAULT_MARGIN;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the plot type as a string.
+&nbsp;     *
+&nbsp;     * @return A short string describing the type of plot.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getPlotType() {
+<b class="nc">&nbsp;       return PolarPlot.localizationResources.getString(&quot;Polar_Plot&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the primary axis for the plot.
+&nbsp;     *
+&nbsp;     * @return The primary axis (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAxis(ValueAxis)
+&nbsp;     */
+&nbsp;    public ValueAxis getAxis() {
+<b class="fc">&nbsp;        return getAxis(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an axis for the plot.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     *
+&nbsp;     * @return The axis ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setAxis(int, ValueAxis)
+&nbsp;     */
+&nbsp;    public ValueAxis getAxis(int index) {
+<b class="fc">&nbsp;        return this.axes.get(index);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the primary axis for the plot and sends a {@link PlotChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param axis  the new primary axis ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setAxis(ValueAxis axis) {
+<b class="fc">&nbsp;        setAxis(0, axis);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets an axis for the plot and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     * @param axis  the axis ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getAxis(int)
+&nbsp;     */
+&nbsp;    public void setAxis(int index, ValueAxis axis) {
+<b class="fc">&nbsp;        setAxis(index, axis, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets an axis for the plot and, if requested, sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     * @param axis  the axis ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getAxis(int)
+&nbsp;     */
+&nbsp;    public void setAxis(int index, ValueAxis axis, boolean notify) {
+<b class="fc">&nbsp;        ValueAxis existing = getAxis(index);</b>
+<b class="fc">&nbsp;        if (existing != null) {</b>
+<b class="nc">&nbsp;            existing.removeChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (axis != null) {</b>
+<b class="fc">&nbsp;            axis.setPlot(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.axes.put(index, axis);</b>
+<b class="fc">&nbsp;        if (axis != null) {</b>
+<b class="fc">&nbsp;            axis.configure();</b>
+<b class="fc">&nbsp;            axis.addChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the location of the primary axis.
+&nbsp;     *
+&nbsp;     * @return The location (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAxisLocation(PolarAxisLocation)
+&nbsp;     */
+&nbsp;    public PolarAxisLocation getAxisLocation() {
+<b class="nc">&nbsp;        return getAxisLocation(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the location for an axis.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     *
+&nbsp;     * @return The location (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAxisLocation(int, PolarAxisLocation)
+&nbsp;     */
+&nbsp;    public PolarAxisLocation getAxisLocation(int index) {
+<b class="nc">&nbsp;        return this.axisLocations.get(index);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the location of the primary axis and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getAxisLocation()
+&nbsp;     */
+&nbsp;    public void setAxisLocation(PolarAxisLocation location) {
+&nbsp;        // delegate argument checks...
+<b class="nc">&nbsp;        setAxisLocation(0, location, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the location of the primary axis and, if requested, sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getAxisLocation()
+&nbsp;     */
+&nbsp;    public void setAxisLocation(PolarAxisLocation location, boolean notify) {
+&nbsp;        // delegate...
+<b class="nc">&nbsp;        setAxisLocation(0, location, notify);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the location for an axis and sends a {@link PlotChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getAxisLocation(int)
+&nbsp;     */
+&nbsp;    public void setAxisLocation(int index, PolarAxisLocation location) {
+&nbsp;        // delegate...
+<b class="nc">&nbsp;        setAxisLocation(index, location, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis location for an axis and, if requested, sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the axis index.
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     */
+&nbsp;    public void setAxisLocation(int index, PolarAxisLocation location,
+&nbsp;            boolean notify) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(location, &quot;location&quot;);</b>
+<b class="nc">&nbsp;        this.axisLocations.put(index, location);</b>
+<b class="nc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of domain axes.
+&nbsp;     *
+&nbsp;     * @return The axis count.
+&nbsp;     **/
+&nbsp;    public int getAxisCount() {
+<b class="nc">&nbsp;        return this.axes.size();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the primary dataset for the plot.
+&nbsp;     *
+&nbsp;     * @return The primary dataset (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDataset(XYDataset)
+&nbsp;     */
+&nbsp;    public XYDataset getDataset() {
+<b class="nc">&nbsp;        return getDataset(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the dataset with the specified index, if any.
+&nbsp;     *
+&nbsp;     * @param index  the dataset index.
+&nbsp;     *
+&nbsp;     * @return The dataset (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDataset(int, XYDataset)
+&nbsp;     */
+&nbsp;    public XYDataset getDataset(int index) {
+<b class="fc">&nbsp;        return this.datasets.get(index);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the primary dataset for the plot, replacing the existing dataset
+&nbsp;     * if there is one, and sends a {@code link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getDataset()
+&nbsp;     */
+&nbsp;    public void setDataset(XYDataset dataset) {
+<b class="fc">&nbsp;        setDataset(0, dataset);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a dataset for the plot, replacing the existing dataset at the same
+&nbsp;     * index if there is one, and sends a {@code link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the dataset index.
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getDataset(int)
+&nbsp;     */
+&nbsp;    public void setDataset(int index, XYDataset dataset) {
+<b class="fc">&nbsp;        XYDataset existing = getDataset(index);</b>
+<b class="fc">&nbsp;        if (existing != null) {</b>
+<b class="nc">&nbsp;            existing.removeChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.datasets.put(index, dataset);</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="fc">&nbsp;            dataset.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // send a dataset change event to self...
+<b class="fc">&nbsp;        DatasetChangeEvent event = new DatasetChangeEvent(this, dataset);</b>
+<b class="fc">&nbsp;        datasetChanged(event);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of datasets.
+&nbsp;     *
+&nbsp;     * @return The number of datasets.
+&nbsp;     */
+&nbsp;    public int getDatasetCount() {
+<b class="nc">&nbsp;        return this.datasets.size();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the index of the specified dataset, or {@code -1} if the
+&nbsp;     * dataset does not belong to the plot.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The index.
+&nbsp;     */
+&nbsp;    public int indexOf(XYDataset dataset) {
+<b class="nc">&nbsp;        for (Entry&lt;Integer, XYDataset&gt; entry : this.datasets.entrySet()) {</b>
+<b class="nc">&nbsp;            if (entry.getValue() == dataset) {</b>
+<b class="nc">&nbsp;                return entry.getKey();</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return -1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the primary renderer.
+&nbsp;     *
+&nbsp;     * @return The renderer (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRenderer(PolarItemRenderer)
+&nbsp;     */
+&nbsp;    public PolarItemRenderer getRenderer() {
+<b class="nc">&nbsp;        return getRenderer(0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the renderer at the specified index, if there is one.
+&nbsp;     *
+&nbsp;     * @param index  the renderer index.
+&nbsp;     *
+&nbsp;     * @return The renderer (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRenderer(int, PolarItemRenderer)
+&nbsp;     */
+&nbsp;    public PolarItemRenderer getRenderer(int index) {
+<b class="fc">&nbsp;        return this.renderers.get(index);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the primary renderer, and notifies all listeners of a change to the
+&nbsp;     * plot.  If the renderer is set to {@code null}, no data items will
+&nbsp;     * be drawn for the corresponding dataset.
+&nbsp;     *
+&nbsp;     * @param renderer  the new renderer ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getRenderer()
+&nbsp;     */
+&nbsp;    public void setRenderer(PolarItemRenderer renderer) {
+<b class="fc">&nbsp;        setRenderer(0, renderer);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a renderer and sends a {@link PlotChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the index.
+&nbsp;     * @param renderer  the renderer.
+&nbsp;     *
+&nbsp;     * @see #getRenderer(int)
+&nbsp;     */
+&nbsp;    public void setRenderer(int index, PolarItemRenderer renderer) {
+<b class="fc">&nbsp;        setRenderer(index, renderer, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a renderer and, if requested, sends a {@link PlotChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param index  the index.
+&nbsp;     * @param renderer  the renderer.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getRenderer(int)
+&nbsp;     */
+&nbsp;    public void setRenderer(int index, PolarItemRenderer renderer,
+&nbsp;                            boolean notify) {
+<b class="fc">&nbsp;        PolarItemRenderer existing = getRenderer(index);</b>
+<b class="fc">&nbsp;        if (existing != null) {</b>
+<b class="nc">&nbsp;            existing.removeChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.renderers.put(index, renderer);</b>
+<b class="fc">&nbsp;        if (renderer != null) {</b>
+<b class="fc">&nbsp;            renderer.setPlot(this);</b>
+<b class="fc">&nbsp;            renderer.addChangeListener(this);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tick unit that controls the spacing of the angular grid
+&nbsp;     * lines.
+&nbsp;     *
+&nbsp;     * @return The tick unit (never {@code null}).
+&nbsp;     */
+&nbsp;    public TickUnit getAngleTickUnit() {
+<b class="nc">&nbsp;        return this.angleTickUnit;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick unit that controls the spacing of the angular grid
+&nbsp;     * lines, and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param unit  the tick unit ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setAngleTickUnit(TickUnit unit) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(unit, &quot;unit&quot;);</b>
+<b class="fc">&nbsp;        this.angleTickUnit = unit;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the offset that is used for all angles.
+&nbsp;     *
+&nbsp;     * @return The offset for the angles.
+&nbsp;     */
+&nbsp;    public double getAngleOffset() {
+<b class="nc">&nbsp;        return this.angleOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the offset that is used for all angles and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * This is useful to let 0 degrees be at the north, east, south or west
+&nbsp;     * side of the chart.
+&nbsp;     *
+&nbsp;     * @param offset The offset
+&nbsp;     */
+&nbsp;    public void setAngleOffset(double offset) {
+<b class="fc">&nbsp;        this.angleOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get the direction for growing angle degrees.
+&nbsp;     *
+&nbsp;     * @return {@code true} if angle increases counterclockwise,
+&nbsp;     *         {@code false} otherwise.
+&nbsp;     */
+&nbsp;    public boolean isCounterClockwise() {
+<b class="nc">&nbsp;        return this.counterClockwise;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag for increasing angle degrees direction.
+&nbsp;     *
+&nbsp;     * {@code true} for counterclockwise, {@code false} for
+&nbsp;     * clockwise.
+&nbsp;     *
+&nbsp;     * @param counterClockwise The flag.
+&nbsp;     */
+&nbsp;    public void setCounterClockwise(boolean counterClockwise)
+&nbsp;    {
+<b class="nc">&nbsp;        this.counterClockwise = counterClockwise;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not the angle labels are visible.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setAngleLabelsVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean isAngleLabelsVisible() {
+<b class="nc">&nbsp;        return this.angleLabelsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the angle labels are visible,
+&nbsp;     * and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #isAngleLabelsVisible()
+&nbsp;     */
+&nbsp;    public void setAngleLabelsVisible(boolean visible) {
+<b class="fc">&nbsp;        if (this.angleLabelsVisible != visible) {</b>
+<b class="fc">&nbsp;            this.angleLabelsVisible = visible;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font used to display the angle labels.
+&nbsp;     *
+&nbsp;     * @return A font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAngleLabelFont(Font)
+&nbsp;     */
+&nbsp;    public Font getAngleLabelFont() {
+<b class="nc">&nbsp;        return this.angleLabelFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the font used to display the angle labels and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getAngleLabelFont()
+&nbsp;     */
+&nbsp;    public void setAngleLabelFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.angleLabelFont = font;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to display the angle labels.
+&nbsp;     *
+&nbsp;     * @return A paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAngleLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getAngleLabelPaint() {
+<b class="nc">&nbsp;        return this.angleLabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used to display the angle labels and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setAngleLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.angleLabelPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the angular gridlines are visible, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     *
+&nbsp;     * @see #setAngleGridlinesVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean isAngleGridlinesVisible() {
+<b class="nc">&nbsp;        return this.angleGridlinesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the angular grid-lines are
+&nbsp;     * visible.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the flag value is changed, a {@link PlotChangeEvent} is sent to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the new value of the flag.
+&nbsp;     *
+&nbsp;     * @see #isAngleGridlinesVisible()
+&nbsp;     */
+&nbsp;    public void setAngleGridlinesVisible(boolean visible) {
+<b class="fc">&nbsp;        if (this.angleGridlinesVisible != visible) {</b>
+<b class="fc">&nbsp;            this.angleGridlinesVisible = visible;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke for the grid-lines (if any) plotted against the
+&nbsp;     * angular axis.
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAngleGridlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getAngleGridlineStroke() {
+<b class="nc">&nbsp;        return this.angleGridlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke for the grid lines plotted against the angular axis and
+&nbsp;     * sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If you set this to {@code null}, no grid lines will be drawn.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getAngleGridlineStroke()
+&nbsp;     */
+&nbsp;    public void setAngleGridlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        this.angleGridlineStroke = stroke;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the grid lines (if any) plotted against the
+&nbsp;     * angular axis.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAngleGridlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getAngleGridlinePaint() {
+<b class="nc">&nbsp;        return this.angleGridlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint for the grid lines plotted against the angular axis.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If you set this to {@code null}, no grid lines will be drawn.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getAngleGridlinePaint()
+&nbsp;     */
+&nbsp;    public void setAngleGridlinePaint(Paint paint) {
+<b class="fc">&nbsp;        this.angleGridlinePaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the radius axis grid is visible, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     *
+&nbsp;     * @see #setRadiusGridlinesVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean isRadiusGridlinesVisible() {
+<b class="nc">&nbsp;        return this.radiusGridlinesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the radius axis grid lines
+&nbsp;     * are visible.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the flag value is changed, a {@link PlotChangeEvent} is sent to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the new value of the flag.
+&nbsp;     *
+&nbsp;     * @see #isRadiusGridlinesVisible()
+&nbsp;     */
+&nbsp;    public void setRadiusGridlinesVisible(boolean visible) {
+<b class="fc">&nbsp;        if (this.radiusGridlinesVisible != visible) {</b>
+<b class="fc">&nbsp;            this.radiusGridlinesVisible = visible;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke for the grid lines (if any) plotted against the
+&nbsp;     * radius axis.
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRadiusGridlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getRadiusGridlineStroke() {
+<b class="nc">&nbsp;        return this.radiusGridlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke for the grid lines plotted against the radius axis and
+&nbsp;     * sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If you set this to {@code null}, no grid lines will be drawn.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getRadiusGridlineStroke()
+&nbsp;     */
+&nbsp;    public void setRadiusGridlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        this.radiusGridlineStroke = stroke;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the grid lines (if any) plotted against the radius
+&nbsp;     * axis.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRadiusGridlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getRadiusGridlinePaint() {
+<b class="nc">&nbsp;        return this.radiusGridlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint for the grid lines plotted against the radius axis and
+&nbsp;     * sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If you set this to {@code null}, no grid lines will be drawn.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getRadiusGridlinePaint()
+&nbsp;     */
+&nbsp;    public void setRadiusGridlinePaint(Paint paint) {
+<b class="fc">&nbsp;        this.radiusGridlinePaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Return the current value of the flag indicating if radial minor
+&nbsp;     * grid-lines will be drawn or not.
+&nbsp;     *
+&nbsp;     * @return Returns {@code true} if radial minor grid-lines are drawn.
+&nbsp;     */
+&nbsp;    public boolean isRadiusMinorGridlinesVisible() {
+<b class="nc">&nbsp;        return this.radiusMinorGridlinesVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set the flag that determines if radial minor grid-lines will be drawn,
+&nbsp;     * and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param flag {@code true} to draw the radial minor grid-lines,
+&nbsp;     *             {@code false} to hide them.
+&nbsp;     */
+&nbsp;    public void setRadiusMinorGridlinesVisible(boolean flag) {
+<b class="fc">&nbsp;        this.radiusMinorGridlinesVisible = flag;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the margin around the plot area.
+&nbsp;     *
+&nbsp;     * @return The actual margin in pixels.
+&nbsp;     */
+&nbsp;    public int getMargin() {
+<b class="nc">&nbsp;        return this.margin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Set the margin around the plot area and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param margin The new margin in pixels.
+&nbsp;     */
+&nbsp;    public void setMargin(int margin) {
+<b class="fc">&nbsp;        this.margin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the fixed legend items, if any.
+&nbsp;     *
+&nbsp;     * @return The legend items (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setFixedLegendItems(LegendItemCollection)
+&nbsp;     */
+&nbsp;    public LegendItemCollection getFixedLegendItems() {
+<b class="nc">&nbsp;        return this.fixedLegendItems;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the fixed legend items for the plot.  Leave this set to
+&nbsp;     * {@code null} if you prefer the legend items to be created
+&nbsp;     * automatically.
+&nbsp;     *
+&nbsp;     * @param items  the legend items ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getFixedLegendItems()
+&nbsp;     */
+&nbsp;    public void setFixedLegendItems(LegendItemCollection items) {
+<b class="fc">&nbsp;        this.fixedLegendItems = items;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Add text to be displayed in the lower right hand corner and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param text  the text to display ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #removeCornerTextItem(String)
+&nbsp;     */
+&nbsp;    public void addCornerTextItem(String text) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(text, &quot;text&quot;);</b>
+<b class="fc">&nbsp;        this.cornerTextItems.add(text);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Remove the given text from the list of corner text items and
+&nbsp;     * sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param text  the text to remove ({@code null} ignored).
+&nbsp;     *
+&nbsp;     * @see #addCornerTextItem(String)
+&nbsp;     */
+&nbsp;    public void removeCornerTextItem(String text) {
+<b class="nc">&nbsp;        boolean removed = this.cornerTextItems.remove(text);</b>
+<b class="nc">&nbsp;        if (removed) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clear the list of corner text items and sends a {@link PlotChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @see #addCornerTextItem(String)
+&nbsp;     * @see #removeCornerTextItem(String)
+&nbsp;     */
+&nbsp;    public void clearCornerTextItems() {
+<b class="nc">&nbsp;        if (!this.cornerTextItems.isEmpty()) {</b>
+<b class="nc">&nbsp;            this.cornerTextItems.clear();</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Generates a list of tick values for the angular tick marks.
+&nbsp;     *
+&nbsp;     * @return A list of {@link NumberTick} instances.
+&nbsp;     */
+&nbsp;    protected List&lt;ValueTick&gt; refreshAngleTicks() {
+<b class="nc">&nbsp;        List&lt;ValueTick&gt; ticks = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (double currentTickVal = 0.0; currentTickVal &lt; 360.0;</b>
+<b class="nc">&nbsp;                currentTickVal += this.angleTickUnit.getSize()) {</b>
+<b class="nc">&nbsp;            TextAnchor ta = calculateTextAnchor(currentTickVal);</b>
+<b class="nc">&nbsp;            NumberTick tick = new NumberTick(currentTickVal,</b>
+<b class="nc">&nbsp;                this.angleTickUnit.valueToString(currentTickVal),</b>
+&nbsp;                ta, TextAnchor.CENTER, 0.0);
+<b class="nc">&nbsp;            ticks.add(tick);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ticks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculate the text position for the given degrees.
+&nbsp;     *
+&nbsp;     * @param angleDegrees  the angle in degrees.
+&nbsp;     * 
+&nbsp;     * @return The optimal text anchor.
+&nbsp;     */
+&nbsp;    protected TextAnchor calculateTextAnchor(double angleDegrees) {
+<b class="nc">&nbsp;        TextAnchor ta = TextAnchor.CENTER;</b>
+&nbsp;
+&nbsp;        // normalize angle
+<b class="nc">&nbsp;        double offset = this.angleOffset;</b>
+<b class="nc">&nbsp;        while (offset &lt; 0.0) {</b>
+<b class="nc">&nbsp;            offset += 360.0;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        double normalizedAngle = (((this.counterClockwise ? -1 : 1)</b>
+&nbsp;                * angleDegrees) + offset) % 360;
+<b class="nc">&nbsp;        while (this.counterClockwise &amp;&amp; (normalizedAngle &lt; 0.0)) {</b>
+<b class="nc">&nbsp;            normalizedAngle += 360.0;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (normalizedAngle == 0.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.CENTER_LEFT;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle &gt; 0.0 &amp;&amp; normalizedAngle &lt; 90.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.TOP_LEFT;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle == 90.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.TOP_CENTER;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle &gt; 90.0 &amp;&amp; normalizedAngle &lt; 180.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.TOP_RIGHT;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle == 180) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.CENTER_RIGHT;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle &gt; 180.0 &amp;&amp; normalizedAngle &lt; 270.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.BOTTOM_RIGHT;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle == 270) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;        } else if (normalizedAngle &gt; 270.0 &amp;&amp; normalizedAngle &lt; 360.0) {</b>
+<b class="nc">&nbsp;            ta = TextAnchor.BOTTOM_LEFT;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return ta;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps a dataset to a particular axis.  All data will be plotted
+&nbsp;     * against axis zero by default, no mapping is required for this case.
+&nbsp;     *
+&nbsp;     * @param index  the dataset index (zero-based).
+&nbsp;     * @param axisIndex  the axis index.
+&nbsp;     */
+&nbsp;    public void mapDatasetToAxis(int index, int axisIndex) {
+<b class="nc">&nbsp;        List&lt;Integer&gt; axisIndices = new ArrayList&lt;&gt;(1);</b>
+<b class="nc">&nbsp;        axisIndices.add(axisIndex);</b>
+<b class="nc">&nbsp;        mapDatasetToAxes(index, axisIndices);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Maps the specified dataset to the axes in the list.  Note that the
+&nbsp;     * conversion of data values into Java2D space is always performed using
+&nbsp;     * the first axis in the list.
+&nbsp;     *
+&nbsp;     * @param index  the dataset index (zero-based).
+&nbsp;     * @param axisIndices  the axis indices ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void mapDatasetToAxes(int index, List&lt;Integer&gt; axisIndices) {
+<b class="nc">&nbsp;        if (index &lt; 0) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires &#39;index&#39; &gt;= 0.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        checkAxisIndices(axisIndices);</b>
+<b class="nc">&nbsp;        Integer key = index;</b>
+<b class="nc">&nbsp;        this.datasetToAxesMap.put(key, new ArrayList&lt;&gt;(axisIndices));</b>
+&nbsp;        // fake a dataset change event to update axes...
+<b class="nc">&nbsp;        datasetChanged(new DatasetChangeEvent(this, getDataset(index)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is used to perform argument checking on the list of
+&nbsp;     * axis indices passed to mapDatasetToAxes().
+&nbsp;     *
+&nbsp;     * @param indices  the list of indices ({@code null} permitted).
+&nbsp;     */
+&nbsp;    private void checkAxisIndices(List&lt;Integer&gt; indices) {
+&nbsp;        // axisIndices can be:
+&nbsp;        // 1.  null;
+&nbsp;        // 2.  non-empty, containing only Integer objects that are unique.
+<b class="nc">&nbsp;        if (indices == null) {</b>
+&nbsp;            return;  // OK
+&nbsp;        }
+<b class="nc">&nbsp;        if (indices.isEmpty()) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Empty list not permitted.&quot;);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        Set&lt;Integer&gt; set = new HashSet&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (Integer i : indices) {</b>
+<b class="nc">&nbsp;            if (set.contains(i)) {</b>
+<b class="nc">&nbsp;                throw new IllegalArgumentException(&quot;Indices must be unique.&quot;);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            set.add(i);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the axis for a dataset.
+&nbsp;     *
+&nbsp;     * @param index  the dataset index.
+&nbsp;     *
+&nbsp;     * @return The axis.
+&nbsp;     */
+&nbsp;    public ValueAxis getAxisForDataset(int index) {
+&nbsp;        ValueAxis valueAxis;
+<b class="nc">&nbsp;        List&lt;Integer&gt; axisIndices = this.datasetToAxesMap.get(index);</b>
+<b class="nc">&nbsp;        if (axisIndices != null) {</b>
+&nbsp;            // the first axis in the list is used for data &lt;--&gt; Java2D
+<b class="nc">&nbsp;            Integer axisIndex = axisIndices.get(0);</b>
+<b class="nc">&nbsp;            valueAxis = getAxis(axisIndex);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            valueAxis = getAxis(0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return valueAxis;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the index of the given axis.
+&nbsp;     *
+&nbsp;     * @param axis  the axis.
+&nbsp;     *
+&nbsp;     * @return The axis index or -1 if axis is not used in this plot.
+&nbsp;     */
+&nbsp;    public int getAxisIndex(ValueAxis axis) {
+<b class="fc">&nbsp;        for (Entry&lt;Integer, ValueAxis&gt; entry : this.axes.entrySet()) {</b>
+<b class="fc">&nbsp;            if (axis.equals(entry.getValue())) {</b>
+<b class="fc">&nbsp;                return entry.getKey();</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;        // try the parent plot
+<b class="fc">&nbsp;        Plot parent = getParent();</b>
+<b class="fc">&nbsp;        if (parent instanceof PolarPlot) {</b>
+<b class="nc">&nbsp;            PolarPlot p = (PolarPlot) parent;</b>
+<b class="nc">&nbsp;            return p.getAxisIndex(axis);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return -1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the index of the specified renderer, or {@code -1} if the
+&nbsp;     * renderer is not assigned to this plot.
+&nbsp;     *
+&nbsp;     * @param renderer  the renderer ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The renderer index.
+&nbsp;     */
+&nbsp;    public int getIndexOf(PolarItemRenderer renderer) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(renderer, &quot;renderer&quot;);</b>
+<b class="fc">&nbsp;        for (Entry&lt;Integer, PolarItemRenderer&gt; entry : this.renderers.entrySet()) {</b>
+<b class="fc">&nbsp;            if (renderer.equals(entry.getValue())) {</b>
+<b class="fc">&nbsp;                return entry.getKey();</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return -1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives a chart element visitor.  Many plot subclasses will override
+&nbsp;     * this method to handle their subcomponents.
+&nbsp;     * 
+&nbsp;     * @param visitor  the visitor ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void receive(ChartElementVisitor visitor) {
+&nbsp;        // FIXME: handle axes and renderers
+<b class="nc">&nbsp;        visitor.visit(this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the plot on a Java 2D graphics device (such as the screen or a
+&nbsp;     * printer).
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This plot relies on a {@link PolarItemRenderer} to draw each
+&nbsp;     * item in the plot.  This allows the visual representation of the data to
+&nbsp;     * be changed easily.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * The optional info argument collects information about the rendering of
+&nbsp;     * the plot (dimensions, tooltip information etc).  Just pass in
+&nbsp;     * {@code null} if you do not need this information.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area within which the plot (including axes and
+&nbsp;     *              labels) should be drawn.
+&nbsp;     * @param anchor  the anchor point ({@code null} permitted).
+&nbsp;     * @param parentState  ignored.
+&nbsp;     * @param info  collects chart drawing information ({@code null}
+&nbsp;     *              permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,
+&nbsp;            PlotState parentState, PlotRenderingInfo info) {
+&nbsp;
+&nbsp;        // if the plot area is too small, just return...
+<b class="nc">&nbsp;        boolean b1 = (area.getWidth() &lt;= MINIMUM_WIDTH_TO_DRAW);</b>
+<b class="nc">&nbsp;        boolean b2 = (area.getHeight() &lt;= MINIMUM_HEIGHT_TO_DRAW);</b>
+<b class="nc">&nbsp;        if (b1 || b2) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // record the plot area...
+<b class="nc">&nbsp;        if (info != null) {</b>
+<b class="nc">&nbsp;            info.setPlotArea(area);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // adjust the drawing area for the plot insets (if any)...
+<b class="nc">&nbsp;        RectangleInsets insets = getInsets();</b>
+<b class="nc">&nbsp;        insets.trim(area);</b>
+&nbsp;
+<b class="nc">&nbsp;        Rectangle2D dataArea = area;</b>
+<b class="nc">&nbsp;        if (info != null) {</b>
+<b class="nc">&nbsp;            info.setDataArea(dataArea);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the plot background and axes...
+<b class="nc">&nbsp;        drawBackground(g2, dataArea);</b>
+<b class="nc">&nbsp;        int axisCount = this.axes.size();</b>
+<b class="nc">&nbsp;        AxisState state = null;</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; axisCount; i++) {</b>
+<b class="nc">&nbsp;            ValueAxis axis = getAxis(i);</b>
+<b class="nc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                PolarAxisLocation location = this.axisLocations.get(i);</b>
+<b class="nc">&nbsp;                AxisState s = drawAxis(axis, location, g2, dataArea);</b>
+<b class="nc">&nbsp;                if (i == 0) {</b>
+<b class="nc">&nbsp;                    state = s;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // now for each dataset, get the renderer and the appropriate axis
+&nbsp;        // and render the dataset...
+<b class="nc">&nbsp;        Shape originalClip = g2.getClip();</b>
+<b class="nc">&nbsp;        Composite originalComposite = g2.getComposite();</b>
+&nbsp;
+<b class="nc">&nbsp;        g2.clip(dataArea);</b>
+<b class="nc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+<b class="nc">&nbsp;                getForegroundAlpha()));</b>
+<b class="nc">&nbsp;        this.angleTicks = refreshAngleTicks();</b>
+<b class="nc">&nbsp;        drawGridlines(g2, dataArea, this.angleTicks, state.getTicks());</b>
+<b class="nc">&nbsp;        render(g2, dataArea, info);</b>
+<b class="nc">&nbsp;        g2.setClip(originalClip);</b>
+<b class="nc">&nbsp;        g2.setComposite(originalComposite);</b>
+<b class="nc">&nbsp;        drawOutline(g2, dataArea);</b>
+<b class="nc">&nbsp;        drawCornerTextItems(g2, dataArea);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the corner text items.
+&nbsp;     *
+&nbsp;     * @param g2  the drawing surface.
+&nbsp;     * @param area  the area.
+&nbsp;     */
+&nbsp;    protected void drawCornerTextItems(Graphics2D g2, Rectangle2D area) {
+<b class="nc">&nbsp;        if (this.cornerTextItems.isEmpty()) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        g2.setColor(Color.BLACK);</b>
+<b class="nc">&nbsp;        double width = 0.0;</b>
+<b class="nc">&nbsp;        double height = 0.0;</b>
+<b class="nc">&nbsp;        for (String msg : this.cornerTextItems) {</b>
+<b class="nc">&nbsp;            FontMetrics fm = g2.getFontMetrics();</b>
+<b class="nc">&nbsp;            Rectangle2D bounds = TextUtils.getTextBounds(msg, g2, fm);</b>
+<b class="nc">&nbsp;            width = Math.max(width, bounds.getWidth());</b>
+<b class="nc">&nbsp;            height += bounds.getHeight();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="nc">&nbsp;        double xadj = ANNOTATION_MARGIN * 2.0;</b>
+<b class="nc">&nbsp;        double yadj = ANNOTATION_MARGIN;</b>
+<b class="nc">&nbsp;        width += xadj;</b>
+<b class="nc">&nbsp;        height += yadj;</b>
+&nbsp;
+<b class="nc">&nbsp;        double x = area.getMaxX() - width;</b>
+<b class="nc">&nbsp;        double y = area.getMaxY() - height;</b>
+<b class="nc">&nbsp;        g2.drawRect((int) x, (int) y, (int) width, (int) height);</b>
+<b class="nc">&nbsp;        x += ANNOTATION_MARGIN;</b>
+<b class="nc">&nbsp;        for (String msg : this.cornerTextItems) {</b>
+<b class="nc">&nbsp;            Rectangle2D bounds = TextUtils.getTextBounds(msg, g2,</b>
+<b class="nc">&nbsp;                    g2.getFontMetrics());</b>
+<b class="nc">&nbsp;            y += bounds.getHeight();</b>
+<b class="nc">&nbsp;            g2.drawString(msg, (int) x, (int) y);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the axis with the specified index.
+&nbsp;     *
+&nbsp;     * @param axis  the axis.
+&nbsp;     * @param location  the axis location.
+&nbsp;     * @param g2  the graphics target.
+&nbsp;     * @param plotArea  the plot area.
+&nbsp;     *
+&nbsp;     * @return The axis state.
+&nbsp;     */
+&nbsp;    protected AxisState drawAxis(ValueAxis axis, PolarAxisLocation location,
+&nbsp;            Graphics2D g2, Rectangle2D plotArea) {
+&nbsp;
+<b class="nc">&nbsp;        double centerX = plotArea.getCenterX();</b>
+<b class="nc">&nbsp;        double centerY = plotArea.getCenterY();</b>
+<b class="nc">&nbsp;        double r = Math.min(plotArea.getWidth() / 2.0,</b>
+<b class="nc">&nbsp;                plotArea.getHeight() / 2.0) - this.margin;</b>
+<b class="nc">&nbsp;        double x = centerX - r;</b>
+<b class="nc">&nbsp;        double y = centerY - r;</b>
+&nbsp;
+<b class="nc">&nbsp;        Rectangle2D dataArea = null;</b>
+<b class="nc">&nbsp;        AxisState result = null;</b>
+<b class="nc">&nbsp;        if (location == PolarAxisLocation.NORTH_RIGHT) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(x, y, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerX, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.RIGHT, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.NORTH_LEFT) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(centerX, y, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerX, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.LEFT, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.SOUTH_LEFT) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(centerX, centerY, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerX, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.LEFT, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.SOUTH_RIGHT) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(x, centerY, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerX, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.RIGHT, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.EAST_ABOVE) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(centerX, centerY, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerY, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.TOP, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.EAST_BELOW) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(centerX, y, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerY, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.BOTTOM, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.WEST_ABOVE) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(x, centerY, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerY, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.TOP, null);
+&nbsp;        }
+<b class="nc">&nbsp;        else if (location == PolarAxisLocation.WEST_BELOW) {</b>
+<b class="nc">&nbsp;            dataArea = new Rectangle2D.Double(x, y, r, r);</b>
+<b class="nc">&nbsp;            result = axis.draw(g2, centerY, plotArea, dataArea,</b>
+&nbsp;                    RectangleEdge.BOTTOM, null);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a representation of the data within the dataArea region, using the
+&nbsp;     * current m_Renderer.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the region in which the data is to be drawn.
+&nbsp;     * @param info  an optional object for collection dimension
+&nbsp;     *              information ({@code null} permitted).
+&nbsp;     */
+&nbsp;    protected void render(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            PlotRenderingInfo info) {
+&nbsp;
+&nbsp;        // now get the data and plot it (the visual representation will depend
+&nbsp;        // on the m_Renderer that has been set)...
+<b class="nc">&nbsp;        boolean hasData = false;</b>
+<b class="nc">&nbsp;        int datasetCount = this.datasets.size();</b>
+<b class="nc">&nbsp;        for (int i = datasetCount - 1; i &gt;= 0; i--) {</b>
+<b class="nc">&nbsp;            XYDataset dataset = getDataset(i);</b>
+<b class="nc">&nbsp;            if (dataset == null) {</b>
+<b class="nc">&nbsp;                continue;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            PolarItemRenderer renderer = getRenderer(i);</b>
+<b class="nc">&nbsp;            if (renderer == null) {</b>
+<b class="nc">&nbsp;                continue;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (!DatasetUtils.isEmptyOrNull(dataset)) {</b>
+<b class="nc">&nbsp;                hasData = true;</b>
+<b class="nc">&nbsp;                int seriesCount = dataset.getSeriesCount();</b>
+<b class="nc">&nbsp;                for (int series = 0; series &lt; seriesCount; series++) {</b>
+<b class="nc">&nbsp;                    renderer.drawSeries(g2, dataArea, info, this, dataset,</b>
+&nbsp;                            series);
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (!hasData) {</b>
+<b class="nc">&nbsp;            drawNoDataMessage(g2, dataArea);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the gridlines for the plot, if they are visible.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param angularTicks  the ticks for the angular axis.
+&nbsp;     * @param radialTicks  the ticks for the radial axis.
+&nbsp;     */
+&nbsp;    protected void drawGridlines(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            List&lt;ValueTick&gt; angularTicks, List&lt;ValueTick&gt; radialTicks) {
+&nbsp;
+<b class="nc">&nbsp;        PolarItemRenderer renderer = getRenderer();</b>
+&nbsp;        // no renderer, no gridlines...
+<b class="nc">&nbsp;        if (renderer == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the domain grid lines, if any...
+<b class="nc">&nbsp;        if (isAngleGridlinesVisible()) {</b>
+<b class="nc">&nbsp;            Stroke gridStroke = getAngleGridlineStroke();</b>
+<b class="nc">&nbsp;            Paint gridPaint = getAngleGridlinePaint();</b>
+<b class="nc">&nbsp;            if ((gridStroke != null) &amp;&amp; (gridPaint != null)) {</b>
+<b class="nc">&nbsp;                renderer.drawAngularGridLines(g2, this, angularTicks,</b>
+&nbsp;                        dataArea);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the radius grid lines, if any...
+<b class="nc">&nbsp;        if (isRadiusGridlinesVisible()) {</b>
+<b class="nc">&nbsp;            Stroke gridStroke = getRadiusGridlineStroke();</b>
+<b class="nc">&nbsp;            Paint gridPaint = getRadiusGridlinePaint();</b>
+<b class="nc">&nbsp;            if ((gridStroke != null) &amp;&amp; (gridPaint != null)) {</b>
+<b class="nc">&nbsp;                List&lt;ValueTick&gt; ticks = buildRadialTicks(radialTicks);</b>
+<b class="nc">&nbsp;                renderer.drawRadialGridLines(g2, this, getAxis(), ticks, dataArea);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a list of ticks based on the given list and plot properties.
+&nbsp;     * Only ticks of a specific type may be in the result list.
+&nbsp;     *
+&nbsp;     * @param allTicks A list of all available ticks for the primary axis.
+&nbsp;     *        {@code null} not permitted.
+&nbsp;     * @return Ticks to use for radial gridlines.
+&nbsp;     */
+&nbsp;    protected List&lt;ValueTick&gt; buildRadialTicks(List&lt;ValueTick&gt; allTicks) {
+<b class="nc">&nbsp;        List&lt;ValueTick&gt; ticks = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;        for (ValueTick tick : allTicks) {</b>
+<b class="nc">&nbsp;            if (isRadiusMinorGridlinesVisible() || TickType.MAJOR.equals(tick.getTickType())) {</b>
+<b class="nc">&nbsp;                ticks.add(tick);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ticks;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms the axis ranges by the specified percentage about the anchor point.
+&nbsp;     *
+&nbsp;     * @param percent  the amount of the zoom.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoom(double percent) {
+<b class="nc">&nbsp;        for (int axisIdx = 0; axisIdx &lt; getAxisCount(); axisIdx++) {</b>
+<b class="nc">&nbsp;            final ValueAxis axis = getAxis(axisIdx);</b>
+<b class="nc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                if (percent &gt; 0.0) {</b>
+<b class="nc">&nbsp;                    double radius = axis.getUpperBound();</b>
+<b class="nc">&nbsp;                    double scaledRadius = radius * percent;</b>
+<b class="nc">&nbsp;                    axis.setUpperBound(scaledRadius);</b>
+<b class="nc">&nbsp;                    axis.setAutoRange(false);</b>
+<b class="nc">&nbsp;                } else {</b>
+<b class="nc">&nbsp;                    axis.setAutoRange(true);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A utility method that returns a list of datasets that are mapped to a
+&nbsp;     * particular axis.
+&nbsp;     *
+&nbsp;     * @param axisIndex  the axis index ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A list of datasets.
+&nbsp;     */
+&nbsp;    private List&lt;XYDataset&gt; getDatasetsMappedToAxis(Integer axisIndex) { 
+<b class="fc">&nbsp;        Args.nullNotPermitted(axisIndex, &quot;axisIndex&quot;);</b>
+<b class="fc">&nbsp;        List&lt;XYDataset&gt; result = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;       for (Entry&lt;Integer, XYDataset&gt; entry : this.datasets.entrySet()) {</b>
+<b class="fc">&nbsp;            List&lt;Integer&gt; mappedAxes = this.datasetToAxesMap.get(entry.getKey());</b>
+<b class="fc">&nbsp;            if (mappedAxes == null) {</b>
+<b class="fc">&nbsp;                if (axisIndex.equals(ZERO)) {</b>
+<b class="fc">&nbsp;                    result.add(getDataset(entry.getKey()));</b>
+&nbsp;                }
+&nbsp;            } else {
+<b class="nc">&nbsp;                if (mappedAxes.contains(axisIndex)) {</b>
+<b class="nc">&nbsp;                    result.add(getDataset(entry.getKey()));</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range for the specified axis.
+&nbsp;     *
+&nbsp;     * @param axis  the axis.
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range getDataRange(ValueAxis axis) {
+<b class="fc">&nbsp;        Range result = null;</b>
+<b class="fc">&nbsp;        List&lt;XYDataset&gt; mappedDatasets = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        int axisIndex = getAxisIndex(axis);</b>
+<b class="fc">&nbsp;        if (axisIndex &gt;= 0) {</b>
+<b class="fc">&nbsp;            mappedDatasets = getDatasetsMappedToAxis(axisIndex);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // iterate through the datasets that map to the axis and get the union
+&nbsp;        // of the ranges.
+<b class="fc">&nbsp;        for (XYDataset dataset : mappedDatasets) {</b>
+<b class="fc">&nbsp;            if (dataset != null) {</b>
+&nbsp;                // FIXME better ask the renderer instead of DatasetUtilities
+<b class="fc">&nbsp;                result = Range.combine(result, DatasetUtils.findRangeBounds(dataset));</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a change to the plot&#39;s m_Dataset.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * The axis ranges are updated if necessary.
+&nbsp;     *
+&nbsp;     * @param event  information about the event (not used here).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void datasetChanged(DatasetChangeEvent event) {
+<b class="fc">&nbsp;        for (int i = 0; i &lt; this.axes.size(); i++) {</b>
+<b class="fc">&nbsp;            final ValueAxis axis = (ValueAxis) this.axes.get(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                axis.configure();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        if (getParent() != null) {</b>
+<b class="nc">&nbsp;            getParent().datasetChanged(event);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            super.datasetChanged(event);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Notifies all registered listeners of a property change.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * One source of property change events is the plot&#39;s m_Renderer.
+&nbsp;     *
+&nbsp;     * @param event  information about the property change.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void rendererChanged(RendererChangeEvent event) {
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend items for the plot.  Each legend item is generated by
+&nbsp;     * the plot&#39;s m_Renderer, since the m_Renderer is responsible for the visual
+&nbsp;     * representation of the data.
+&nbsp;     *
+&nbsp;     * @return The legend items.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItemCollection getLegendItems() {
+<b class="fc">&nbsp;        if (this.fixedLegendItems != null) {</b>
+<b class="nc">&nbsp;            return this.fixedLegendItems;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        LegendItemCollection result = new LegendItemCollection();</b>
+<b class="fc">&nbsp;        int count = this.datasets.size();</b>
+<b class="fc">&nbsp;        for (int datasetIndex = 0; datasetIndex &lt; count; datasetIndex++) {</b>
+<b class="fc">&nbsp;            XYDataset dataset = getDataset(datasetIndex);</b>
+<b class="fc">&nbsp;            PolarItemRenderer renderer = getRenderer(datasetIndex);</b>
+<b class="fc">&nbsp;            if (dataset != null &amp;&amp; renderer != null) {</b>
+<b class="fc">&nbsp;                int seriesCount = dataset.getSeriesCount();</b>
+<b class="fc">&nbsp;                for (int i = 0; i &lt; seriesCount; i++) {</b>
+<b class="fc">&nbsp;                    LegendItem item = renderer.getLegendItem(i);</b>
+<b class="fc">&nbsp;                    result.add(item);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this plot for equality with another object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof PolarPlot)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PolarPlot that = (PolarPlot) obj;</b>
+<b class="fc">&nbsp;        if (!this.axes.equals(that.axes)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.axisLocations.equals(that.axisLocations)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.renderers.equals(that.renderers)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.angleTickUnit.equals(that.angleTickUnit)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.angleGridlinesVisible != that.angleGridlinesVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.angleOffset != that.angleOffset)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.counterClockwise != that.counterClockwise)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.angleLabelsVisible != that.angleLabelsVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.angleLabelFont.equals(that.angleLabelFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.angleLabelPaint, that.angleLabelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.angleGridlineStroke, that.angleGridlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(</b>
+&nbsp;            this.angleGridlinePaint, that.angleGridlinePaint
+&nbsp;        )) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.radiusGridlinesVisible != that.radiusGridlinesVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.radiusGridlineStroke, that.radiusGridlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.radiusGridlinePaint,</b>
+&nbsp;                that.radiusGridlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.radiusMinorGridlinesVisible !=</b>
+&nbsp;            that.radiusMinorGridlinesVisible) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.cornerTextItems.equals(that.cornerTextItems)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.margin != that.margin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.fixedLegendItems, that.fixedLegendItems)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the plot.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException  this can occur if some component of
+&nbsp;     *         the plot cannot be cloned.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        PolarPlot clone = (PolarPlot) super.clone();</b>
+<b class="fc">&nbsp;        clone.axes = CloneUtils.clone(this.axes);</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; this.axes.size(); i++) {</b>
+<b class="fc">&nbsp;            ValueAxis axis = (ValueAxis) this.axes.get(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="fc">&nbsp;                ValueAxis clonedAxis = (ValueAxis) axis.clone();</b>
+<b class="fc">&nbsp;                clone.axes.put(i, clonedAxis);</b>
+<b class="fc">&nbsp;                clonedAxis.setPlot(clone);</b>
+<b class="fc">&nbsp;                clonedAxis.addChangeListener(clone);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // the datasets are not cloned, but listeners need to be added...
+<b class="fc">&nbsp;        clone.datasets = CloneUtils.clone(this.datasets);</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; clone.datasets.size(); ++i) {</b>
+<b class="fc">&nbsp;            XYDataset d = getDataset(i);</b>
+<b class="fc">&nbsp;            if (d != null) {</b>
+<b class="fc">&nbsp;                d.addChangeListener(clone);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        clone.renderers = CloneUtils.clone(this.renderers);</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; this.renderers.size(); i++) {</b>
+<b class="fc">&nbsp;            PolarItemRenderer renderer2 = (PolarItemRenderer) this.renderers.get(i);</b>
+<b class="fc">&nbsp;            if (renderer2 instanceof PublicCloneable) {</b>
+<b class="nc">&nbsp;                PublicCloneable pc = (PublicCloneable) renderer2;</b>
+<b class="nc">&nbsp;                PolarItemRenderer rc = (PolarItemRenderer) pc.clone();</b>
+<b class="nc">&nbsp;                clone.renderers.put(i, rc);</b>
+<b class="nc">&nbsp;                rc.setPlot(clone);</b>
+<b class="nc">&nbsp;                rc.addChangeListener(clone);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        clone.cornerTextItems = new ArrayList&lt;&gt;(this.cornerTextItems);</b>
+&nbsp;
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.angleGridlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.angleGridlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.radiusGridlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.radiusGridlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.angleLabelPaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+&nbsp;
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.angleGridlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.angleGridlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.radiusGridlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.radiusGridlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.angleLabelPaint = SerialUtils.readPaint(stream);</b>
+&nbsp;
+<b class="fc">&nbsp;        int rangeAxisCount = this.axes.size();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rangeAxisCount; i++) {</b>
+<b class="fc">&nbsp;            Axis axis = (Axis) this.axes.get(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                axis.setPlot(this);</b>
+<b class="nc">&nbsp;                axis.addChangeListener(this);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        int datasetCount = this.datasets.size();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; datasetCount; i++) {</b>
+<b class="fc">&nbsp;            Dataset dataset = (Dataset) this.datasets.get(i);</b>
+<b class="fc">&nbsp;            if (dataset != null) {</b>
+<b class="nc">&nbsp;                dataset.addChangeListener(this);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        int rendererCount = this.renderers.size();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rendererCount; i++) {</b>
+<b class="fc">&nbsp;            PolarItemRenderer renderer = (PolarItemRenderer) this.renderers.get(i);</b>
+<b class="fc">&nbsp;            if (renderer != null) {</b>
+<b class="nc">&nbsp;                renderer.addChangeListener(this);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is required by the {@link Zoomable} interface, but since
+&nbsp;     * the plot does not have any domain axes, it does nothing.
+&nbsp;     *
+&nbsp;     * @param factor  the zoom factor.
+&nbsp;     * @param state  the plot state.
+&nbsp;     * @param source  the source point (in Java2D coordinates).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomDomainAxes(double factor, PlotRenderingInfo state,
+&nbsp;                               Point2D source) {
+&nbsp;        // do nothing
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is required by the {@link Zoomable} interface, but since
+&nbsp;     * the plot does not have any domain axes, it does nothing.
+&nbsp;     *
+&nbsp;     * @param factor  the zoom factor.
+&nbsp;     * @param state  the plot state.
+&nbsp;     * @param source  the source point (in Java2D coordinates).
+&nbsp;     * @param useAnchor  use source point as zoom anchor?
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomDomainAxes(double factor, PlotRenderingInfo state,
+&nbsp;                               Point2D source, boolean useAnchor) {
+&nbsp;        // do nothing
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is required by the {@link Zoomable} interface, but since
+&nbsp;     * the plot does not have any domain axes, it does nothing.
+&nbsp;     *
+&nbsp;     * @param lowerPercent  the new lower bound.
+&nbsp;     * @param upperPercent  the new upper bound.
+&nbsp;     * @param state  the plot state.
+&nbsp;     * @param source  the source point (in Java2D coordinates).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomDomainAxes(double lowerPercent, double upperPercent,
+&nbsp;                               PlotRenderingInfo state, Point2D source) {
+&nbsp;        // do nothing
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Multiplies the range on the range axis/axes by the specified factor.
+&nbsp;     *
+&nbsp;     * @param factor  the zoom factor.
+&nbsp;     * @param state  the plot state.
+&nbsp;     * @param source  the source point (in Java2D coordinates).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomRangeAxes(double factor, PlotRenderingInfo state,
+&nbsp;                              Point2D source) {
+<b class="nc">&nbsp;        zoom(factor);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Multiplies the range on the range axis by the specified factor.
+&nbsp;     *
+&nbsp;     * @param factor  the zoom factor.
+&nbsp;     * @param info  the plot rendering info.
+&nbsp;     * @param source  the source point (in Java2D space).
+&nbsp;     * @param useAnchor  use source point as zoom anchor?
+&nbsp;     *
+&nbsp;     * @see #zoomDomainAxes(double, PlotRenderingInfo, Point2D, boolean)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomRangeAxes(double factor, PlotRenderingInfo info,
+&nbsp;                              Point2D source, boolean useAnchor) {
+&nbsp;        // get the source coordinate - this plot has always a VERTICAL
+&nbsp;        // orientation
+<b class="nc">&nbsp;        final double sourceX = source.getX();</b>
+&nbsp;
+<b class="nc">&nbsp;        for (int axisIdx = 0; axisIdx &lt; getAxisCount(); axisIdx++) {</b>
+<b class="nc">&nbsp;            final ValueAxis axis = getAxis(axisIdx);</b>
+<b class="nc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                if (useAnchor) {</b>
+<b class="nc">&nbsp;                    double anchorX = axis.java2DToValue(sourceX,</b>
+<b class="nc">&nbsp;                            info.getDataArea(), RectangleEdge.BOTTOM);</b>
+<b class="nc">&nbsp;                    axis.resizeRange(factor, anchorX);</b>
+<b class="nc">&nbsp;                }</b>
+&nbsp;                else {
+<b class="nc">&nbsp;                    axis.resizeRange(factor);</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms in on the range axes.
+&nbsp;     *
+&nbsp;     * @param lowerPercent  the new lower bound.
+&nbsp;     * @param upperPercent  the new upper bound.
+&nbsp;     * @param state  the plot state.
+&nbsp;     * @param source  the source point (in Java2D coordinates).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomRangeAxes(double lowerPercent, double upperPercent,
+&nbsp;                              PlotRenderingInfo state, Point2D source) {
+<b class="nc">&nbsp;        zoom((upperPercent + lowerPercent) / 2.0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code false} always.
+&nbsp;     *
+&nbsp;     * @return {@code false} always.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isDomainZoomable() {
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} to indicate that the range axis is zoomable.
+&nbsp;     *
+&nbsp;     * @return {@code true}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean isRangeZoomable() {
+<b class="nc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the orientation of the plot.
+&nbsp;     *
+&nbsp;     * @return The orientation.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public PlotOrientation getOrientation() {
+<b class="nc">&nbsp;        return PlotOrientation.HORIZONTAL;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates a (theta, radius) pair into Java2D coordinates.  If
+&nbsp;     * {@code radius} is less than the lower bound of the axis, then
+&nbsp;     * this method returns the centre point.
+&nbsp;     *
+&nbsp;     * @param angleDegrees  the angle in degrees.
+&nbsp;     * @param radius  the radius.
+&nbsp;     * @param axis  the axis.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     *
+&nbsp;     * @return A point in Java2D space.
+&nbsp;     */
+&nbsp;    public Point translateToJava2D(double angleDegrees, double radius,
+&nbsp;            ValueAxis axis, Rectangle2D dataArea) {
+&nbsp;
+<b class="fc">&nbsp;        if (counterClockwise) {</b>
+<b class="nc">&nbsp;            angleDegrees = -angleDegrees;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double radians = Math.toRadians(angleDegrees + this.angleOffset);</b>
+&nbsp;
+<b class="fc">&nbsp;        double minx = dataArea.getMinX() + this.margin;</b>
+<b class="fc">&nbsp;        double maxx = dataArea.getMaxX() - this.margin;</b>
+<b class="fc">&nbsp;        double miny = dataArea.getMinY() + this.margin;</b>
+<b class="fc">&nbsp;        double maxy = dataArea.getMaxY() - this.margin;</b>
+&nbsp;
+<b class="fc">&nbsp;        double halfWidth = (maxx - minx) / 2.0;</b>
+<b class="fc">&nbsp;        double halfHeight = (maxy - miny) / 2.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        double midX = minx + halfWidth;</b>
+<b class="fc">&nbsp;        double midY = miny + halfHeight;</b>
+&nbsp;
+<b class="fc">&nbsp;        double l = Math.min(halfWidth, halfHeight);</b>
+<b class="fc">&nbsp;        Rectangle2D quadrant = new Rectangle2D.Double(midX, midY, l, l);</b>
+&nbsp;
+<b class="fc">&nbsp;        double axisMin = axis.getLowerBound();</b>
+<b class="fc">&nbsp;        double adjustedRadius = Math.max(radius, axisMin);</b>
+&nbsp;
+<b class="fc">&nbsp;        double length = axis.valueToJava2D(adjustedRadius, quadrant, RectangleEdge.BOTTOM) - midX;</b>
+<b class="fc">&nbsp;        float x = (float) (midX + Math.cos(radians) * length);</b>
+<b class="fc">&nbsp;        float y = (float) (midY + Math.sin(radians) * length);</b>
+&nbsp;
+<b class="fc">&nbsp;        int ix = Math.round(x);</b>
+<b class="fc">&nbsp;        int iy = Math.round(y);</b>
+&nbsp;
+<b class="fc">&nbsp;        Point p = new Point(ix, iy);</b>
+<b class="fc">&nbsp;        return p;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

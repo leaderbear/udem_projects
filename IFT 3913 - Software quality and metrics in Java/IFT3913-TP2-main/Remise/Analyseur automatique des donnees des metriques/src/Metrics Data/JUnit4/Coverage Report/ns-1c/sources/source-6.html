@@ -1,0 +1,490 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PaintAlpha</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.util</a>
+</div>
+
+<h1>Coverage Summary for Class: PaintAlpha (org.jfree.chart.util)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PaintAlpha</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/10)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/92)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Java is a trademark or registered trademark of Sun Microsystems, Inc.
+&nbsp; * in the United States and other countries.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * PaintAlpha.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2011-2020 by DaveLaw and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  DaveLaw (dave ATT davelaw D0TT de);
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.util;
+&nbsp;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.GradientPaint;
+&nbsp;import java.awt.LinearGradientPaint;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.RadialGradientPaint;
+&nbsp;import java.awt.TexturePaint;
+&nbsp;import java.awt.image.BufferedImage;
+&nbsp;import java.awt.image.IndexColorModel;
+&nbsp;import java.awt.image.WritableRaster;
+&nbsp;import java.util.Hashtable;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class contains static methods for the manipulation
+&nbsp; * of objects of type {@code Paint}
+&nbsp; * &lt;p&gt;
+&nbsp; * The intention is to honour the alpha-channel in the process.
+&nbsp; * {@code PaintAlpha} was originally conceived to improve the
+&nbsp; * rendering of 3D Shapes with transparent colours and to allow
+&nbsp; * invisible bars by making them completely transparent.
+&nbsp; * &lt;p&gt;
+&nbsp; * Previously {@link Color#darker()} was used for this,
+&nbsp; * which always returns an opaque colour.
+&nbsp; * &lt;p&gt;
+&nbsp; * Additionally there are methods to control the behaviour and
+&nbsp; * in particular a {@link PaintAlpha#cloneImage(BufferedImage) cloneImage(..)}
+&nbsp; * method which is needed to darken objects of type {@link TexturePaint}.
+&nbsp; *
+&nbsp; * @author  DaveLaw
+&nbsp; * 
+&nbsp; * @since 1.0.15
+&nbsp; */
+<b class="nc">&nbsp;public class PaintAlpha {</b>
+&nbsp;    // TODO Revert to SVN revision 2469 in JFreeChart 1.0.16
+&nbsp;    //      (MultipleGradientPaint&#39;s / JDK issues)
+&nbsp;    // TODO THEN: change visibility of ALL darker(...) Methods EXCEPT
+&nbsp;    //      darker(Paint) to private!
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Multiplier for the {@code darker} Methods.&lt;br&gt;
+&nbsp;     * (taken from {@link java.awt.Color}.FACTOR)
+&nbsp;     */
+&nbsp;    private static final double FACTOR = 0.7;
+&nbsp;
+<b class="nc">&nbsp;    private static boolean legacyAlpha = false;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Per default {@code PaintAlpha} will try to honour alpha-channel
+&nbsp;     * information.  In the past this was not the case.
+&nbsp;     * If you wish legacy functionality for your application you can request
+&nbsp;     * this here.
+&nbsp;     *
+&nbsp;     * @param legacyAlpha boolean
+&nbsp;     *
+&nbsp;     * @return the previous setting
+&nbsp;     */
+&nbsp;    public static boolean setLegacyAlpha(boolean legacyAlpha) {
+<b class="nc">&nbsp;        boolean old = PaintAlpha.legacyAlpha;</b>
+<b class="nc">&nbsp;        PaintAlpha.legacyAlpha = legacyAlpha;</b>
+<b class="nc">&nbsp;        return old;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new (if possible, darker) {@code Paint} of the same Type.
+&nbsp;     * If the Type is not supported, the original {@code Paint} is returned.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * @param paint a {@code Paint} implementation
+&nbsp;     * (e.g. {@link Color}, {@link GradientPaint}, {@link TexturePaint},..)
+&nbsp;     * &lt;p&gt;
+&nbsp;     * @return a (usually new, see above) {@code Paint}
+&nbsp;     */
+&nbsp;    public static Paint darker(Paint paint) {
+&nbsp;
+<b class="nc">&nbsp;        if (paint instanceof Color) {</b>
+<b class="nc">&nbsp;            return darker((Color) paint);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (legacyAlpha == true) {</b>
+&nbsp;            /*
+&nbsp;             * Legacy? Just return the original Paint.
+&nbsp;             * (this corresponds EXACTLY to how Paints used to be darkened)
+&nbsp;             */
+<b class="nc">&nbsp;            return paint;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (paint instanceof GradientPaint) {</b>
+<b class="nc">&nbsp;            return darker((GradientPaint) paint);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (paint instanceof LinearGradientPaint) {</b>
+<b class="nc">&nbsp;            return darkerLinearGradientPaint((LinearGradientPaint) paint);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (paint instanceof RadialGradientPaint) {</b>
+<b class="nc">&nbsp;            return darkerRadialGradientPaint((RadialGradientPaint) paint);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (paint instanceof TexturePaint) {</b>
+&nbsp;            try {
+<b class="nc">&nbsp;                return darkerTexturePaint((TexturePaint) paint);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            catch (Exception e) {</b>
+&nbsp;                /*
+&nbsp;                 * Lots can go wrong while fiddling with Images, Color Models
+&nbsp;                 * &amp; such!  If anything at all goes awry, just return the original
+&nbsp;                 * TexturePaint.  (TexturePaint&#39;s are immutable anyway, so no harm
+&nbsp;                 * done)
+&nbsp;                 */
+<b class="nc">&nbsp;                return paint;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Similar to {@link Color#darker()}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The essential difference is that this method
+&nbsp;     * maintains the alpha-channel unchanged&lt;br&gt;
+&nbsp;     *
+&nbsp;     * @param paint a {@code Color}
+&nbsp;     *
+&nbsp;     * @return a darker version of the {@code Color}
+&nbsp;     */
+&nbsp;    private static Color darker(Color paint) {
+<b class="nc">&nbsp;        return new Color(</b>
+<b class="nc">&nbsp;                (int)(paint.getRed  () * FACTOR),</b>
+<b class="nc">&nbsp;                (int)(paint.getGreen() * FACTOR),</b>
+<b class="nc">&nbsp;                (int)(paint.getBlue () * FACTOR), paint.getAlpha());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new {@code GradientPaint} with its colors darkened.
+&nbsp;     *
+&nbsp;     * @param paint  the gradient paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return a darker version of the {@code GradientPaint}
+&nbsp;     */
+&nbsp;    private static GradientPaint darker(GradientPaint paint) {
+<b class="nc">&nbsp;        return new GradientPaint(</b>
+<b class="nc">&nbsp;                paint.getPoint1(), darker(paint.getColor1()),</b>
+<b class="nc">&nbsp;                paint.getPoint2(), darker(paint.getColor2()),</b>
+<b class="nc">&nbsp;                paint.isCyclic());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new Gradient with its colours darkened.
+&nbsp;     *
+&nbsp;     * @param paint a {@code LinearGradientPaint}
+&nbsp;     *
+&nbsp;     * @return a darker version of the {@code LinearGradientPaint}
+&nbsp;     */
+&nbsp;    private static Paint darkerLinearGradientPaint(LinearGradientPaint paint) {
+<b class="nc">&nbsp;        final Color[] paintColors = paint.getColors();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; paintColors.length; i++) {</b>
+<b class="nc">&nbsp;            paintColors[i] = darker(paintColors[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new LinearGradientPaint(paint.getStartPoint(),</b>
+<b class="nc">&nbsp;                paint.getEndPoint(), paint.getFractions(), paintColors,</b>
+<b class="nc">&nbsp;                paint.getCycleMethod(), paint.getColorSpace(), </b>
+<b class="nc">&nbsp;                paint.getTransform());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new Gradient with its colours darkened.
+&nbsp;     *
+&nbsp;     * @param paint a {@code RadialGradientPaint}
+&nbsp;     *
+&nbsp;     * @return a darker version of the {@code RadialGradientPaint}
+&nbsp;     */
+&nbsp;    private static Paint darkerRadialGradientPaint(RadialGradientPaint paint) {
+<b class="nc">&nbsp;        final Color[] paintColors = paint.getColors();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; paintColors.length; i++) {</b>
+<b class="nc">&nbsp;            paintColors[i] = darker(paintColors[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return new RadialGradientPaint(paint.getCenterPoint(), </b>
+<b class="nc">&nbsp;                paint.getRadius(), paint.getFocusPoint(), </b>
+<b class="nc">&nbsp;                paint.getFractions(), paintColors, paint.getCycleMethod(),</b>
+<b class="nc">&nbsp;                paint.getColorSpace(), paint.getTransform());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new {@code TexturePaint} with its colors darkened.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This entails cloning the underlying {@code BufferedImage},
+&nbsp;     * then darkening each color-pixel individually!
+&nbsp;     *
+&nbsp;     * @param paint a {@code TexturePaint}
+&nbsp;     *
+&nbsp;     * @return a darker version of the {@code TexturePaint}
+&nbsp;     */
+&nbsp;    private static TexturePaint darkerTexturePaint(TexturePaint paint) {
+&nbsp;        /**
+&nbsp;         * Color Models with pre-multiplied Alpha tested OK without any
+&nbsp;         * special logic
+&nbsp;         *
+&nbsp;         * BufferedImage.TYPE_INT_ARGB_PRE:    // Type 03: tested OK 2011.02.27
+&nbsp;         * BufferedImage.TYPE_4BYTE_ABGR_PRE:  // Type 07: tested OK 2011.02.27
+&nbsp;         */
+<b class="nc">&nbsp;        if (paint.getImage().getColorModel().isAlphaPremultiplied()) {</b>
+&nbsp;            /* Placeholder */
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        BufferedImage img = cloneImage(paint.getImage());</b>
+&nbsp;
+<b class="nc">&nbsp;        WritableRaster ras = img.copyData(null);</b>
+&nbsp;
+<b class="nc">&nbsp;        final int miX = ras.getMinX();</b>
+<b class="nc">&nbsp;        final int miY = ras.getMinY();</b>
+<b class="nc">&nbsp;        final int maY = ras.getMinY() + ras.getHeight();</b>
+&nbsp;
+<b class="nc">&nbsp;        final int   wid = ras.getWidth();</b>
+&nbsp;
+<b class="nc">&nbsp;        /**/  int[] pix = new int[wid * img.getSampleModel().getNumBands()];</b>
+&nbsp;        /* (pix-buffer is large enough for all pixels of one row) */
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Indexed Color Models (sort of a Palette) CANNOT be simply
+&nbsp;         * multiplied (the pixel-value is just an index into the Palette).
+&nbsp;         *
+&nbsp;         * Fortunately, IndexColorModel.getComponents(..) resolves the colors.
+&nbsp;         * The resolved colors can then be multiplied by our FACTOR.
+&nbsp;         * IndexColorModel.getDataElement(..) then tries to map the computed
+&nbsp;         * color to the &quot;nearest&quot; in the Palette.
+&nbsp;         *
+&nbsp;         * It is quite possible that the &quot;nearest&quot; color is the ORIGINAL
+&nbsp;         * color!  In the worst case, the returned Image will be identical to
+&nbsp;         * the original.
+&nbsp;         *
+&nbsp;         * Applies to following Image Types:
+&nbsp;         *
+&nbsp;         * BufferedImage.TYPE_BYTE_BINARY:    // Type 12: tested OK 2011.02.27
+&nbsp;         * BufferedImage.TYPE_BYTE_INDEXED:   // Type 13: tested OK 2011.02.27
+&nbsp;         */
+<b class="nc">&nbsp;        if (img.getColorModel() instanceof IndexColorModel) {</b>
+&nbsp;
+<b class="nc">&nbsp;            int[] nco = new int[4]; // RGB (+ optional Alpha which we leave</b>
+&nbsp;                                    // unchanged)
+&nbsp;
+<b class="nc">&nbsp;            for (int y = miY; y &lt; maY; y++)  {</b>
+&nbsp;
+<b class="nc">&nbsp;                pix = ras.getPixels(miX, y, wid, 1, pix);</b>
+&nbsp;
+<b class="nc">&nbsp;                for (int p = 0; p &lt; pix.length; p++) {</b>
+<b class="nc">&nbsp;                    nco    =  img.getColorModel().getComponents(pix[p], nco, 0);</b>
+<b class="nc">&nbsp;                    nco[0] *= FACTOR; // Red</b>
+<b class="nc">&nbsp;                    nco[1] *= FACTOR; // Green</b>
+<b class="nc">&nbsp;                    nco[2] *= FACTOR; // Blue. Now map computed colour to</b>
+&nbsp;                                      // nearest in Palette...
+<b class="nc">&nbsp;                    pix[p] = img.getColorModel().getDataElement(nco, 0);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                /**/ ras.setPixels(miX, y, wid, 1, pix);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            img.setData(ras);</b>
+&nbsp;
+<b class="nc">&nbsp;            return new TexturePaint(img, paint.getAnchorRect());</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * For the other 2 Color Models, java.awt.image.ComponentColorModel and
+&nbsp;         * java.awt.image.DirectColorModel, the order of subpixels returned by
+&nbsp;         * ras.getPixels(..) was observed to correspond to the following...
+&nbsp;         */
+<b class="nc">&nbsp;        if (img.getSampleModel().getNumBands() == 4) {</b>
+&nbsp;            /**
+&nbsp;             * The following Image Types have an Alpha-channel which we will
+&nbsp;             * leave unchanged:
+&nbsp;             *
+&nbsp;             * BufferedImage.TYPE_INT_ARGB:   // Type 02: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_4BYTE_ABGR: // Type 06: tested OK 2011.02.27
+&nbsp;             */
+<b class="nc">&nbsp;            for (int y = miY; y &lt; maY; y++)  {</b>
+&nbsp;
+<b class="nc">&nbsp;                pix = ras.getPixels(miX, y, wid, 1, pix);</b>
+&nbsp;
+<b class="nc">&nbsp;                for (int p = 0; p &lt; pix.length;) {</b>
+<b class="nc">&nbsp;                    pix[p] = (int)(pix[p++] * FACTOR); // Red</b>
+<b class="nc">&nbsp;                    pix[p] = (int)(pix[p++] * FACTOR); // Green</b>
+<b class="nc">&nbsp;                    pix[p] = (int)(pix[p++] * FACTOR); // Blue</b>
+<b class="nc">&nbsp;                    /* Ignore alpha-channel -&gt; */p++;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                /**/  ras.setPixels(miX, y, wid, 1, pix);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            img.setData(ras);</b>
+<b class="nc">&nbsp;            return new TexturePaint(img, paint.getAnchorRect());</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            for (int y = miY; y &lt; maY; y++)  {</b>
+&nbsp;
+<b class="nc">&nbsp;                pix = ras.getPixels(miX, y, wid, 1, pix);</b>
+&nbsp;
+<b class="nc">&nbsp;                for (int p = 0; p &lt; pix.length; p++) {</b>
+<b class="nc">&nbsp;                    pix[p] = (int)(pix[p] * FACTOR);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                /**/  ras.setPixels(miX, y, wid, 1, pix);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            img.setData(ras);</b>
+<b class="nc">&nbsp;            return new TexturePaint(img, paint.getAnchorRect());</b>
+&nbsp;            /**
+&nbsp;             * Above, we multiplied every pixel by our FACTOR because the
+&nbsp;             * applicable Image Types consist only of color or grey channels:
+&nbsp;             *
+&nbsp;             * BufferedImage.TYPE_INT_RGB:        // Type 01: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_INT_BGR:        // Type 04: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_3BYTE_BGR:      // Type 05: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_BYTE_GRAY:      // Type 10: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_USHORT_GRAY:    // Type 11: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_USHORT_565_RGB: // Type 08: tested OK 2011.02.27
+&nbsp;             * BufferedImage.TYPE_USHORT_555_RGB: // Type 09: tested OK 2011.02.27
+&nbsp;             *
+&nbsp;             * Note: as ras.getPixels(..) returned colours in the order R, G, B, A (optional)
+&nbsp;             * for both TYPE_4BYTE_ABGR &amp; TYPE_3BYTE_BGR,
+&nbsp;             * it is assumed that TYPE_INT_BGR will behave similarly.
+&nbsp;             */
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clone a {@link BufferedImage}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note: when constructing the clone, the original Color Model Object is
+&nbsp;     * reused.&lt;br&gt;  That keeps things simple and should not be a problem, as all
+&nbsp;     * known Color Models&lt;br&gt;
+&nbsp;     * ({@link java.awt.image.IndexColorModel     IndexColorModel},
+&nbsp;     *  {@link java.awt.image.DirectColorModel    DirectColorModel},
+&nbsp;     *  {@link java.awt.image.ComponentColorModel ComponentColorModel}) are
+&nbsp;     * immutable.
+&nbsp;     *
+&nbsp;     * @param image original BufferedImage to clone
+&nbsp;     *
+&nbsp;     * @return a new BufferedImage reusing the original&#39;s Color Model and
+&nbsp;     *         containing a clone of its pixels
+&nbsp;     */
+&nbsp;    public static BufferedImage cloneImage(BufferedImage image) {
+&nbsp;
+<b class="nc">&nbsp;        WritableRaster rin = image.getRaster();</b>
+<b class="nc">&nbsp;        WritableRaster ras = rin.createCompatibleWritableRaster();</b>
+<b class="nc">&nbsp;        /**/ ras.setRect(rin); // &lt;- this is the code that actually COPIES the pixels</b>
+&nbsp;
+&nbsp;        /*
+&nbsp;         * Buffered Images may have properties, but NEVER disclose them!
+&nbsp;         * Nevertheless, just in case someone implements getPropertyNames()
+&nbsp;         * one day...
+&nbsp;         */
+<b class="nc">&nbsp;        Hashtable props = null;</b>
+<b class="nc">&nbsp;        String[] propNames = image.getPropertyNames();</b>
+<b class="nc">&nbsp;        if (propNames != null) { // ALWAYS null</b>
+<b class="nc">&nbsp;            props = new Hashtable();</b>
+<b class="nc">&nbsp;            for (int i = 0; i &lt; propNames.length; i++) {</b>
+<b class="nc">&nbsp;                props.put(propNames[i], image.getProperty(propNames[i]));</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return new BufferedImage(image.getColorModel(), ras,</b>
+<b class="nc">&nbsp;                image.isAlphaPremultiplied(), props);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

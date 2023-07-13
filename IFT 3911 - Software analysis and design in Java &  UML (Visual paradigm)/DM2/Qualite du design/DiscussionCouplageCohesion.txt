@@ -1,0 +1,61 @@
+---   DISCUSSION DU COUPLAGE ET DE LA COHÉSION DES MODULES   ---
+
+Nous avons pu améliorer notre diagramme de classe grâce au corrigé du diagramme de classe et du 
+diagramme de paquet. Cela nous a permis d’améliorer la qualité de notre conception, donc de maximiser 
+la cohésion des modules et de minimiser le couplage des classes. 
+
+
+
+1. Discussion Cohésion sur CompagnieController
+
+D'abord, parlons de CompagniesController. Au départ, lorsque cette classe Controller a été créée,
+notre idée était que ce Controller s'occupe de toutes les fonctions liées aux compagnies. Par exemple, 
+pouvoir gérer ses sections relève des tâches d'une compagnie. Cela dit, après analyse et discussion, 
+nous avons vite réalisé que CompagnieController a une faible cohésion. En effet, si on regarde les 
+fonctions que l'on trouve dedans, on réalise que plusieurs fonctions sont indépendantes entres elles
+et elle se retrouve là seulement car elles font la même chose, c'est-à-dire gérer les compagnies. 
+Nous avons donc appliqué le ISP ( Interface Segregation principle ) et extrait d'autres Controllers. 
+Maintenant CompagnieController, s'occupe seulement de gérer les compagnies (création/suppression/édition/lecture), 
+et pour ce qui est des Véhicules et Séctions, nous avions créé deux nouveaux Controllers. Tout cela, fait
+que maintenant ces trois classes Controller ont une bonne cohésion. 
+
+1. Discussion Cohésion sur Voyage
+
+Ensuite, dans le diagramme précédent, il n'y avait pas de VoyageController. En effet, c'était un autre controller 
+qui s'occupait de gérer les voyages. Cela dit, on a vite réalisé que toutes les fonctions/ attributs liés à la classe 
+Voyage peuvent être indépendants des autres classes. Donc, pour augmenter la cohésion dans les autres modules (et dans 
+le nouveau Controller qu'on va créer) nous avions décidé de créer VoyageController. Qui lui s'occupe maintenant de gérer 
+les voyages. Lorsqu'on veut créer/éditer/supprimer un voyage ou de consulter des voyages il suffit de lui donner le bon input. 
+ 
+
+2. Discussion couplage par données
+
+Ensuite, parlons du couplage. Il est inévitable que plusieurs Modules communiquent entre eux. 
+Par exemple, UtilisateurController communique des données simples à SectionController. En effet,
+lorsqu'un utilisateur crée une réservation avec UtilisateurController, ce dernier va envoyer
+des données à SectionerController pour changer l'état de la place réservée (libre->occupée) 
+Ceci est un couplage par données et il ne peut pas être amélioré. 
+
+La plupart de nos couplages sont par données. Par exemple, si on souhaite créer un véhicule, 
+il faut passer en paramètre la Compagnie en question. Ceci est la même chose si on veut créer un voyage, 
+il y'a plusieurs données à passer en paramètres et VoyagesController les utilise tous. 
+
+
+2. Discussion couplage par Controle
+
+Maintenant, il est important d'identifier les classes qui un couplage par Controle pouvoir identifier, plus tard, les modules 
+réutilisables. Ici, on cherche un module qui connait la structure et logique d’un autre module. C'est-à-dire que c'est impossible 
+de réutiliser l'un sans l'autre. Il est assez logique que les Controllers qui gèrent des objets connaissent leur fonctionnements internes. 
+En effet, on ne peut pas utiliser Utilisateur sans UtilisateursControllers. Puisque UtilisateursController et le seul à connaitre 
+le fonctionnement interne d'Utilisateur. 
+Ceci est la même chose pour : BatimentsController et Batiment. VoyagesControllers et Voyage. SectionController et Section. CompagnieController et Compagnie, etc.
+Enfin, il est important de noter que les interfaces (les Menu) suivent les mêmes règles. Les interfaces connaissent assez les controllers pour 
+leur passer les bonnes commandes. 
+
+3. Résumé: 
+
+Bref, entre les menus et les controllers on a des couplages par Controle. Entre les Controller de certains objets et leurs objets, on a 
+aussi des couplages par Controle. Et Entre les modules qui doivent communiquer entre eux à certains moments pour éviter les conflits, 
+ils ont des couplages par données. En effet, il suffit simplement de passer la bonne donnée au bon module pour qu'il se mette à jour. 
+Par exemple lorsqu'on crée une réservation, on envoie l'id de la place pour que SectionController change son état à occuper. 
+

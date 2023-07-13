@@ -1,0 +1,292 @@
+<!-- saved from url=(0060)http://www-ens.iro.umontreal.ca/~syriani/courses/rapport.htm -->
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFT3911 | DM1</title>
+    <style type="text/css">
+        body{ margin: 0; padding:2.5em 0 2.5em 5px; }
+        h1{
+            margin:0;
+            width:100%; 
+            text-align: center;
+            background-color: black;
+            color:white;
+            position:fixed;
+            top:0;
+            left:0;
+        }
+        h2{
+            border-radius: 4px;
+            width:calc(100% - 10px); 
+            padding: 2px 0 2px 5px;
+            background-color: black;
+            color:white;
+            margin:0 0 0.15em 0;             
+        }
+        h3{ margin:0 0 0.7em 0;}
+        
+        table{
+            border: outset 3px black;           
+            border-collapse: collapse;     
+        }
+        thead{
+            border-bottom: outset 2px black;
+        }
+        tr{
+            border-bottom: outset 1px black;
+        }    
+        tr td:first-of-type , tr th:first-of-type{
+            border-right: outset 2px black;
+        }
+        td{
+            text-align: center;
+        }
+        td:first-child{
+            text-align:left;
+        }
+        section{
+            padding-left:15px;
+        }
+        h4{
+            margin:0;       
+            
+        } 
+        .membre h4{        
+            width:80px;
+            display: inline-block;
+        }
+        .membre{
+            margin: 5px;
+            padding: 5px;
+            width:calc(32.5% - 10px);
+            min-width: 400px;
+            border-radius: 8px;
+            border: 2px solid black;
+            background: rgba(0,0,0,0.1);
+            float:left;
+        }
+        .clr{ clear: both ; }
+        section{
+            padding-left:15px;
+        }
+        img{
+            padding-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IFT 3911 - Devoir 1</h1>
+        <h2>Membres de l'équipe</h2>
+        <div class="membre">
+            <h4>Nom</h4> : Abderrahim Tabta<br>
+            <h4>Matricule</h4> : 3680<br>
+            <h4>Courriel </h4> : abderrahim.tabta@umontreal.ca<br>
+            <h4>Temps mis</h4> : 15<br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : André-Viet Tran<br>
+            <h4>Matricule</h4> : 1185<br>
+            <h4>Courriel </h4> : andre-viet.tran@umontreal.ca<br>
+            <h4>Temps mis</h4> : 15<br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : Juan David Zuniga Omen<br>
+            <h4>Matricule</h4> : 20137012<br>
+            <h4>Courriel </h4> : juan.david.zuniga.omen@umontreal.ca<br>
+            <h4>Temps mis</h4> : 20<br>
+        </div>
+        <div class="clr"></div>
+      
+    </header>
+    <main>
+        <h2>Distribution des tâches</h2>
+        <section>
+            
+        <p><span style="font-weight: bold;">Soumetteur: </span> André-Viet Tran </p>
+        <table cellpadding="7px">
+            <thead>
+                <tr>
+                    <th class="first_col">Tâche</th>
+                    <th>Abderrahim</th>
+                    <th>André</th>
+                    <th>Juan David</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first_col">TACHE 1 : Analyse</td>
+                    <td>25%</td>
+                    <td>50%</td>
+                    <td>25%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 2 : Design</td>
+                    <td>45%</td>
+                    <td>35%</td>
+                    <td>20%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 3 : OCL</td>
+                    <td>5%</td>
+                    <td>5%</td>
+                    <td>90%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 4 : Justification</td>
+                    <td>33,3%</td>
+                    <td>33,3%</td>
+                    <td>33,3%</td>
+                </tr>
+            </tbody>
+            </table><br> 
+        </section>
+              
+        <h2>Tâche 1 : Analyse </h2>
+	    <section>
+            <a href="./1.ConceptionDuModele/modele_domaine.vpp"><h3>Diagramme de classe conceptuel</h3></a>
+            <img src="./img/sc_ModeleDomain.jpg" alt="Diagramme de classe conceptuel">
+            <h3>Diagramme de séquence système</h3>
+
+            <h4>Volet administratif : </h4>
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>1. Création de lieu (Aéroport, Port ou Gare)</h4></a>
+            <img src="./img/DSS/DSS-CreationAeroportPortGare.jpg" alt="Création de lieu">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>2. Modification de lieu (Aéroport, Port ou Gare)</h4></a>
+            <img src="./img/DSS/DSS-ModificationAeroportPortGare.jpg" alt="Modification de lieu">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>3. Suppression de lieu (Aéroport, Port ou Gare)</h4></a>
+            <img src="./img/DSS/DSS-SuppressionAeroportPortGare.jpg" alt="Suppression de lieu">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>4. Création de Compagnie (Aérienne, de croisière ou Ligne de Train)</h4></a>
+            <img src="./img/DSS/DSS-CreationCompagnie.jpg" alt="Création de compagnie">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>5. Modification de Compagnie (Aérienne, de croisière ou Ligne de Train)</h4></a>
+            <img src="./img/DSS/DSS-ModificationCompagnie.jpg" alt="Modification de compagnie">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>6. Supppression de Compagnie (Aérienne, de croisière ou Ligne de Train)</h4></a>
+            <img src="./img/DSS/DSS-SuppressionCompagnie.jpg" alt="Suppression de compagnie">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>7. Création de voyage aérien</h4></a>
+            <img src="./img/DSS/DSS-CreationVoyageAerien.jpg" alt=" Création de voyage aérien">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>8. Modification de voyage aérien</h4></a>
+            <img src="./img/DSS/DSS-ModificationVoyageAerien.jpg" alt="Modification de voyage aérien">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>9. Création de voyage naval</h4></a>
+            <img src="./img/DSS/DSS-CreationVoyageNaval.jpg" alt=" Création de voyage naval">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>10. Modification de voyage naval</h4></a>
+            <img src="./img/DSS/DSS-ModificationVoyageNaval.jpg" alt="Modification de voyage naval">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>11. Création de voyage ferroviaire</h4></a>
+            <img src="./img/DSS/DSS-CreationVoyageFerroviaire.jpg" alt=" Création de voyage ferroviaire">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>12. Modification de voyage ferroviaire</h4></a>
+            <img src="./img/DSS/DSS-ModificationVoyageFerroviaire.jpg" alt="Modification de voyage ferroviaire">
+            <a href="./1.ConceptionDuModele/DiagrammeDeSequenceSystem.vpp"><h4>13. Supppression de voyage (aérien, naval ou ferroviaire)</h4></a>
+            <img src="./img/DSS/DSS-SuppressionVoyageAerienNavalFerroviaire.jpg" alt="Supppression de voyage aérien">
+            <a href="./1.ConceptionDuModele/DSS  création de sections d'un avion.vpp"><h4>14. Création de sections d'un avion</h4></a>
+            <img src="./img/DSS/DSS manquants/sc_DSS_creationSectionsAvion.jpg" alt="Création de sections d'un avion">
+            <a href="./1.ConceptionDuModele/DSS  création de sections d'un bateau.vpp"><h4>15. Création de sections d'un bateau</h4></a>
+            <img src="./img/DSS/DSS manquants/sc_DSS_creationSectionsBateau.jpg" alt="Création de sections d'un bateau">
+            <a href="./1.ConceptionDuModele/DSS  création de sections d'un train.vpp"><h4>16. Création de sections d'un train</h4></a>
+            <img src="./img/DSS/DSS manquants/sc_DSS_creationSectionsTrain.jpg" alt="Création de sections d'un avion">
+            <a href="./1.ConceptionDuModele/DSS  assignation des prix.vpp"><h4>17. Assignation des prix pour sections</h4></a>
+            <img src="./img/DSS/DSS manquants/sc_DSS_AssignationDesPrixPourSection.jpg" alt="Consultation">
+            <a href="./1.ConceptionDuModele/DSS consultation.vpp"><h4>18. Consultation</h4></a>
+            <img src="./img/DSS/DSS manquants/sc_DSS_consultationCompagnieBatiment.jpg" alt="Consultation">
+
+            <h4>Volet Client : </h4>
+            <a href="./1.ConceptionDuModele/DSS-VoletClient.vpp"><h4>19. Vérification des voyages (aérien ou ferroviaire) disponibles</h4></a>
+            <img src="./img/DSS/DSS volet client/DSS-VéréficationDesVolsLignesDisponibles.jpg" alt="Vérification des voyages (aérien ou ferroviaire) disponibles">
+            <a href="./1.ConceptionDuModele/DSS-VoletClient.vpp"><h4>20. Vérification des voyages navaux disponibles</h4></a>
+            <img src="./img/DSS/DSS volet client/DSS-VéréficationDesCabinesDisponibles.jpg"alt="Vérification des voyages navaux disponibles">
+            <a href="./1.ConceptionDuModele/DSS-VoletClient.vpp"><h4>21. Réservation de siège</h4></a>
+            <img src="./img/DSS/DSS volet client/DSS-RéservationSiège.jpg" alt="Réservation de siège">
+            <a href="./1.ConceptionDuModele/DSS-VoletClient.vpp"><h4>22. Réservation de cabine</h4></a>
+            <img src="./img/DSS/DSS volet client/DSS-RéservationCabine.jpg" alt="Réservation de cabine">
+            <a href="./1.ConceptionDuModele/DSS-VoletClient.vpp"><h4>23. Paiement</h4></a>
+            <img src="./img/DSS/DSS volet client/DSS-Paiement.jpg" alt="Paiement">
+
+        </section>
+	
+	    <br>        
+        <h2>Tâche 2 : Design </h2> 
+        <section>
+            <a href="./2.DesignDuLogiciel/classDiagram - proto 2.vpp"><h4>Diagramme de classe logiciel</h4></a>
+            <img src="./img/classDiagram.jpg" alt="Diagramme de classe logiciel">
+
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h3>Diagramme de séqunce</h3></a>
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h4>1. Vérification voyage aérien</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage aérien.jpg" alt="Vérification voyage aérien">
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h4>2. Vérification voyage naval</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage naval.jpg" alt="Vérification voyage naval">
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h4>3. Vérification voyage ferroviaire</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage ferroviaire.jpg" alt="Vérification voyage ferroviaire">
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h4>4. Réservation</h4></a>
+            <h5>fait par : Abderrahim</h5>
+            <img src="./img/Réservation.jpg" alt="Réservation">
+            <a href="./2.DesignDuLogiciel/DiagrammeDeSequenceFinal.vpp"><h4>5. Paiement</h4></a>
+            <h5>fait par : Juan David</h5>
+            <img src="./img/Paiement.jpg" alt="Paiement">
+            
+            <br>
+            <a href="./2.DesignDuLogiciel/DiagrammeDePaquet.vpp"><h4>Diagramme de paquet</h4></a>
+            <img src="./img/DiagrammePaquet.jpg" alt="Diagramme de paquet">
+
+        </section>
+	
+        <br>
+        <h2>Tâche 3 : OCL </h2>
+        <section>
+            <a href="./3.OCL/OCL.md"><h4>OCL</h4></a>
+        </section>
+        
+        <br>
+            <h2>Tâche 4 : Justification</h2>
+        <section>
+            <p>
+                Nous avons décider de regrouper certains diagrammes de séquences système, par example la création, 
+                la modification et la suppression des lieus (aéroprot, port et gare) et des compagnies (aérienne, 
+                de croisière et ligne de train), car les tâches effectuées sont similaires. Le même raisonnement 
+                est appliqué pour la suppression des voyages (aérien, naval et ferroviaire).<br><br>
+				
+				De plus, pour ce qui est de la consultation des voyages, nous avons pu regrouper tout dans un 
+				seul diagramme de séquence système puisque c'est le même pour les trois types de voyages. En effet,
+				c'est seulement la donnée retournée qui peut être présentée différemment. C'est la même chose pour 
+				les DSS d'assignation de prix. En effet, il suffit de sélectionner une section et lui assigner un prix, 
+				donc le type de véhicule (avion/train/bateau) n'a aucune importance. Par contre, pour la création de 
+				sections, nous avons décidé de faire trois DSS, puisque les informations rentrées dans le système (input)
+				ne sont pas les mêmes pour les trois types de voyages.
+            </p>    
+            <p>
+                Dans les Diagrammes de séquences des actions client (réservation), nous avons décidé ajouter que le Client doit 
+                entrer la section qu'il veut réserver.
+				
+            </p>    
+            <br>
+                
+			<p>
+			Pour ce qui est du diagramme de classe, nous avons d'abord une classe interface qui permet à l'utilisateur ou à l'administrateur de lire ou 
+			d'écrire sur la base de données à travers des contrôleurs conçus pour réduire le couplage entre les différents modules.
+			<br><br>
+			D'abord, l'interface a accès aux contrôleurs qui peuvent lire et écrire sur la plupart des répertoires
+			de la base de données. Un contrôleur permet à l'administrateur de gérer les compagnies dans le système. Pour chaque compagnie, il peut ajouter 
+			des véhicules (train/avion/bateau) et leurs sections, autrement dit il peut gérer les sections de chaque véhicule. Un autre contrôleur permet 
+			de gérer les bâtiments dans le système, autrement dit les lieux d'arrivées et de destinations. Pour ce qui est des voyages, un administrateur 
+			peut gérer les voyages de chaque compagnies en utilisant le controlleur compagnie. 
+			<br><br>
+			Ensuite, l'interface donne accès à des contrôleurs qui peuvent lire dans la base de données et écrire dans
+			le répertoire des réservations, ce qui est utile pour l'utilisateur. En effet, chaque utilisateur peut gérer ses propres réservations. Un utilisateur peut accéder aux informations 
+			sur les voyages qu'il peut faire (compagnie, section, date) et ensuite réserver et confirmer sa place en écrivant le tout sur la base de données.<br><br>
+			
+			Nous avons voulu créer un système d'inscription et de connexion pour qu'un utilisateur qui se connecte n'ait pas accès aux mêmes commandes qu'un
+			administrateur qui se connecte. Cependant, nous sommes seulement chargés de concevoir le système et non pas le système d'identification de ce dernier.
+			Nous donnons alors la possibilité dans le menu principal de sélectionner si nous sommes un administrateur avec un booléen. Ceci peut être facilement changé
+			plus tard pour ajouter plus de fonctionnalités et de sécurité. Donc, dans ce diagramme de classe, le menu principal permet de sélectionner si on est un administrateur 
+			ou non. Si on est un administrateur, nous avons accès à plus de commandes. Si nous sommes un utilisateur, nous savons seulement le droit de consulter les voyages
+			(départ/destination/arrivées) et de gérer nos propres réservations.
+			</p> 
+			<br>
+			
+        </section>
+        
+        <br> 
+   </main>
+    
+</body></html>

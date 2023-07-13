@@ -1,0 +1,173 @@
+________________________________________________________________________
+
+				PROJET 1
+
+			  Cours: IFT2935 - H21
+		       Professeur : Michel Boyer
+
+
+		      Skander Ben Ahmed, p1034870
+			Alex Mongrain, 20034572
+		       Abderrahim Tabta, 20133680
+			 Alice Dorion, p1163195 
+
+________________________________________________________________________
+
+
+		     Pour le 16 avril 2021 à 23:59
+
+
+Table of Contents
+_________________
+
+1. Modélisation
+.. 1. TODO insert diagram
+.. 2. TODO explain process
+2. Transformation
+.. 1. TODO explain process; justify with regles de passage
+3. Normalisation
+.. 1. TODO define DFs
+.. 2. TODO normalize ea. table
+.. 3. TODO write final schema of DB after normalization in a .sql file
+4. Q&A
+.. 1. TODO insert values into tables
+.. 2. TODO create 4 questions
+..... 1. translate to relational algebra
+..... 2. translate to SQL
+..... 3. Exprimer l’aspect de l’optimisation des requêtes dans les réponses aux questions.
+5. GUI
+.. 1. TODO add screenshots for user manual
+
+
+
+
+
+1 Modélisation
+==============
+
+1.1 TODO insert diagram
+~~~~~~~~~~~~~~~~~~~~~~~
+
+
+1.2 TODO explain process
+~~~~~~~~~~~~~~~~~~~~~~~~
+Entités
+
+	Livre 
+	-Chaque livre a un et un seul isbn, il est unique et peut donc être utilisé comme clé pour l'entité.
+	-Un livre peut avoir plusieurs auteurs et être catégorisé selon plusieurs genres, par exemple "Roman de science-fiction" et "Roman pour adolescents".
+
+	Exemplaire
+	-Chaque exemplaire a un numéro d'identification unique, c'est sa clé.
+	-Chaque exemplaire a un statut qui peut prendre les valeurs suivantes: "Disponible","Réservé", "Prêté", dunno 
+
+	Membre
+	-Chaque membre a un nom, un prénom, une adresse et une date de naissance (nécessaire de spécifier?).
+	-Un membre a un identifiant unique qui lui est attribué à la création de son compte, c'est la clé de l'entité.
+	-Un membre a attribut frais qui représente les frais impayés qu'il doit à bibliothèque (retard, bris).
+	-Chaque membre a un attribut date_exp qui représente la date à laquelle il devra renouveler son compte pour pouvoir continuer à bénéficier des services de la bibliothèque.
+
+Association
+
+	Livre Exemplaire 
+	-Chaque exemplaire est lié à un livre, un livre peut n'avoir aucun exemplaire dans la bibliothèque ou bien plusieurs. 
+	-Un exemplaire ne peut être une copie que d'un seul livre.
+	-La clé de l'association est la combinaison des clés des deux entités qu'elle lie, l'isbn du livre et le numéro d'exemplaire. 
+
+	Emprunte
+	-Un membre peut emprunter jusqu'à 14 exemplaires et un exemplaire ne peut être emprunté que par un membre à la fois.
+	-Un emprunt a une date d'emprunt, une date due ainsi qu'une date de retour.
+	-En cas de vol ou de perte (membre not nice), il est possible qu'un livre n'ait pas de date de retour.
+	-La clé de l'association est la combinaison du numéro d'exemplaire, l'identificateur du membre et la date d'emprunt.
+
+	Commande
+	-Un membre peut commander au plus 3 exemplaires et un exemplaire peut être commandé par plusieurs membres.
+	-Une commande a une date de commande et une date de disponibilité prévue du livre si l'information est connue.
+	-Une commande a aussi une date d'emprunt si elle est éventuellement honorée.
+	-La clé de l'association est la combinaison du numéro d'exemplaire, l'identificateur du membre et la date de la commande.
+
+
+2 Transformation
+================
+
+  Livre( _isbn_, titre, nom_editeur, nom_auteur, nom_genre )
+  Exemplaire( _isbn_, _no_exemplaire_, statut)
+  Membre( _id_membre_, prenom, nom, frais, jour, mois, annee, no, rue,
+  ville, pays, cp )
+  Emprunte( _id_membre_, _isbn_, _no_exemplaire_, _date_emprunt_,
+  date_retour )
+  Commande( _id_membre_, _isbn_, _no_exemplaire_, _date_commande_,
+  date_dispo, honoree )
+
+
+2.1 TODO explain process; justify with regles de passage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+brouillon: 
+
+Entités significatives transformées relations: 
+
+	Pour ce qui est des entités ayant des associations 1 à 1 avec d'autres entités, lorsqu'on crée la relation, on ajoute l'attribut de l'entité la moins significative à l'entité la plus significative.  
+
+	Livre : D'abord, pour la relation Livre, en plus des attributs de base dont _isbn_ (clé primaire), on ajoute l'attribut nom_éditeur ( venant de l'entité : Éditeur), nom_auteur (Auteur) et nom_genre (Genre). 
+
+	Exemplaire : Ensuite, pour la relation Exemplaire, on a ajoute l'attribut nom_statut (Staut) qui par ailleurs nous informe si l'exemplaire est disponible/emprunté/etc. On ajoute aussi l'attribut _isbn_ 
+	(Livre) qui est une clée étrange nous informant quel exemplaire de livre il s'agit. Enfin, l'attribut de base no_exemplaire qui est la clé primaire permettant d'identifier chaque exemplaire. 
+
+	Membre : Enfin, pour ce qui de l'entité Membre, sa clé primaire est son attribut id_membre, et tous ses autres attributs seront ajoutés dans la relation. Pour ce qui est des attributs multivalués
+	comme date_naissance ou adresse, on ajoute tous les "sous-attributs" (jour, mois année , no , rue ville ,pays, cp) dans la relation.
+
+Associations trasformées en relations: 
+
+	D'abord, on fait de l'association "Emprunte" une relation à part entière pour pouvoir faire le lien entre chaque exemplaire et son emprunteur (Membre) s'il y'a lieu. En effet, pour chaque Emprunte, 
+	on a deux clé étrangeres , une qui identifie de quel exemplaire il s'agit et une autre qui identifie le membre qui a emprunter l'exemplaire en question. D'autres attributs vont s'ajouter à cette relation
+	comme la date de l'emprunt et la date de retour. À noter que date_emprunt, _isbn_ , _id_exemplaire_, _id_membre_ ensemble forment la clé primaire. 
+
+	Enfin, tout comme "Emprunte" , on fait de l'association "Commande" une relation, qui met en lien encore une fois le Membre qui passe la commande d'un exemplaire et l'exemplaire commandé en question. 
+	Une fois de plus, on ajoute d'autres attributs comme la date_commande , la date_dispo et honoree.  À noter que date_commande,  _isbn_ , _id_exemplaire_ et _id_membre_ ensemble forment la clé primaire. 
+
+
+
+3 Normalisation
+===============
+
+3.1 TODO define DFs
+~~~~~~~~~~~~~~~~~~~
+
+
+3.2 TODO normalize ea. table
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+3.3 TODO write final schema of DB after normalization in a .sql file
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+4 Q&A
+=====
+
+4.1 TODO insert values into tables
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+4.2 TODO create 4 questions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+4.2.1 translate to relational algebra
+-------------------------------------
+
+
+4.2.2 translate to SQL
+----------------------
+
+
+4.2.3 Exprimer l’aspect de l’optimisation des requêtes dans les réponses aux questions.
+---------------------------------------------------------------------------------------
+
+
+5 GUI
+=====
+
+5.1 TODO add screenshots for user manual
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

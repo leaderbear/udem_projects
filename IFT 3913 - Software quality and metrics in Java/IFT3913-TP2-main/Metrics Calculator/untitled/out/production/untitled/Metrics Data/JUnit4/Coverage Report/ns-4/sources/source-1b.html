@@ -1,0 +1,1236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > NumberAxis</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.axis</a>
+</div>
+
+<h1>Coverage Summary for Class: NumberAxis (org.jfree.chart.axis)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NumberAxis</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84,6%
+  </span>
+  <span class="absValue">
+    (33/39)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,6%
+  </span>
+  <span class="absValue">
+    (266/326)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * NumberAxis.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Laurence Vanhelsuwe;
+&nbsp; *                   Peter Kolb (patches 1934255 and 2603321);
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.axis;
+&nbsp;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.FontMetrics;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.font.FontRenderContext;
+&nbsp;import java.awt.font.LineMetrics;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.text.DecimalFormat;
+&nbsp;import java.text.NumberFormat;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Locale;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.event.AxisChangeEvent;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.ValueAxisPlot;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.text.TextAnchor;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.RangeType;
+&nbsp;
+&nbsp;/**
+&nbsp; * An axis for displaying numerical data.
+&nbsp; * &lt;P&gt;
+&nbsp; * If the axis is set up to automatically determine its range to fit the data,
+&nbsp; * you can ensure that the range includes zero (statisticians usually prefer
+&nbsp; * this) by setting the {@code autoRangeIncludesZero} flag to
+&nbsp; * {@code true}.
+&nbsp; * &lt;P&gt;
+&nbsp; * The {@code NumberAxis} class has a mechanism for automatically
+&nbsp; * selecting a tick unit that is appropriate for the current axis range.
+&nbsp; */
+&nbsp;public class NumberAxis extends ValueAxis implements Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 2805933088476185789L;
+&nbsp;
+&nbsp;    /** The default value for the autoRangeIncludesZero flag. */
+&nbsp;    public static final boolean DEFAULT_AUTO_RANGE_INCLUDES_ZERO = true;
+&nbsp;
+&nbsp;    /** The default value for the autoRangeStickyZero flag. */
+&nbsp;    public static final boolean DEFAULT_AUTO_RANGE_STICKY_ZERO = true;
+&nbsp;
+&nbsp;    /** The default tick unit. */
+<b class="fc">&nbsp;    public static final NumberTickUnit DEFAULT_TICK_UNIT = new NumberTickUnit(</b>
+&nbsp;            1.0, new DecimalFormat(&quot;0&quot;));
+&nbsp;
+&nbsp;    /** The default setting for the vertical tick labels flag. */
+&nbsp;    public static final boolean DEFAULT_VERTICAL_TICK_LABELS = false;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The range type (can be used to force the axis to display only positive
+&nbsp;     * values or only negative values).
+&nbsp;     */
+&nbsp;    private RangeType rangeType;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that affects the axis range when the range is determined
+&nbsp;     * automatically.  If the auto range does NOT include zero and this flag
+&nbsp;     * is TRUE, then the range is changed to include zero.
+&nbsp;     */
+&nbsp;    private boolean autoRangeIncludesZero;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that affects the size of the margins added to the axis range when
+&nbsp;     * the range is determined automatically.  If the value 0 falls within the
+&nbsp;     * margin and this flag is TRUE, then the margin is truncated at zero.
+&nbsp;     */
+&nbsp;    private boolean autoRangeStickyZero;
+&nbsp;
+&nbsp;    /** The tick unit for the axis. */
+&nbsp;    private NumberTickUnit tickUnit;
+&nbsp;
+&nbsp;    /** The override number format. */
+&nbsp;    private NumberFormat numberFormatOverride;
+&nbsp;
+&nbsp;    /** An optional band for marking regions on the axis. */
+&nbsp;    private MarkerAxisBand markerBand;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Default constructor.
+&nbsp;     */
+&nbsp;    public NumberAxis() {
+<b class="fc">&nbsp;        this(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a number axis, using default values where necessary.
+&nbsp;     *
+&nbsp;     * @param label  the axis label ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public NumberAxis(String label) {
+<b class="fc">&nbsp;        super(label, NumberAxis.createStandardTickUnits());</b>
+<b class="fc">&nbsp;        this.rangeType = RangeType.FULL;</b>
+<b class="fc">&nbsp;        this.autoRangeIncludesZero = DEFAULT_AUTO_RANGE_INCLUDES_ZERO;</b>
+<b class="fc">&nbsp;        this.autoRangeStickyZero = DEFAULT_AUTO_RANGE_STICKY_ZERO;</b>
+<b class="fc">&nbsp;        this.tickUnit = DEFAULT_TICK_UNIT;</b>
+<b class="fc">&nbsp;        this.numberFormatOverride = null;</b>
+<b class="fc">&nbsp;        this.markerBand = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the axis range type.
+&nbsp;     *
+&nbsp;     * @return The axis range type (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRangeType(RangeType)
+&nbsp;     */
+&nbsp;    public RangeType getRangeType() {
+<b class="nc">&nbsp;        return this.rangeType;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis range type.
+&nbsp;     *
+&nbsp;     * @param rangeType  the range type ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getRangeType()
+&nbsp;     */
+&nbsp;    public void setRangeType(RangeType rangeType) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(rangeType, &quot;rangeType&quot;);</b>
+<b class="fc">&nbsp;        this.rangeType = rangeType;</b>
+<b class="fc">&nbsp;        notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that indicates whether or not the automatic axis range
+&nbsp;     * (if indeed it is determined automatically) is forced to include zero.
+&nbsp;     *
+&nbsp;     * @return The flag.
+&nbsp;     */
+&nbsp;    public boolean getAutoRangeIncludesZero() {
+<b class="fc">&nbsp;        return this.autoRangeIncludesZero;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that indicates whether or not the axis range, if
+&nbsp;     * automatically calculated, is forced to include zero.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the flag is changed to {@code true}, the axis range is
+&nbsp;     * recalculated.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Any change to the flag will trigger an {@link AxisChangeEvent}.
+&nbsp;     *
+&nbsp;     * @param flag  the new value of the flag.
+&nbsp;     *
+&nbsp;     * @see #getAutoRangeIncludesZero()
+&nbsp;     */
+&nbsp;    public void setAutoRangeIncludesZero(boolean flag) {
+<b class="fc">&nbsp;        if (this.autoRangeIncludesZero != flag) {</b>
+<b class="fc">&nbsp;            this.autoRangeIncludesZero = flag;</b>
+<b class="fc">&nbsp;            if (isAutoRange()) {</b>
+<b class="fc">&nbsp;                autoAdjustRange();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that affects the auto-range when zero falls outside the
+&nbsp;     * data range but inside the margins defined for the axis.
+&nbsp;     *
+&nbsp;     * @return The flag.
+&nbsp;     *
+&nbsp;     * @see #setAutoRangeStickyZero(boolean)
+&nbsp;     */
+&nbsp;    public boolean getAutoRangeStickyZero() {
+<b class="fc">&nbsp;        return this.autoRangeStickyZero;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that affects the auto-range when zero falls outside the data
+&nbsp;     * range but inside the margins defined for the axis.
+&nbsp;     *
+&nbsp;     * @param flag  the new flag.
+&nbsp;     *
+&nbsp;     * @see #getAutoRangeStickyZero()
+&nbsp;     */
+&nbsp;    public void setAutoRangeStickyZero(boolean flag) {
+<b class="fc">&nbsp;        if (this.autoRangeStickyZero != flag) {</b>
+<b class="fc">&nbsp;            this.autoRangeStickyZero = flag;</b>
+<b class="fc">&nbsp;            if (isAutoRange()) {</b>
+<b class="fc">&nbsp;                autoAdjustRange();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tick unit for the axis.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note: if the {@code autoTickUnitSelection} flag is
+&nbsp;     * {@code true} the tick unit may be changed while the axis is being
+&nbsp;     * drawn, so in that case the return value from this method may be
+&nbsp;     * irrelevant if the method is called before the axis has been drawn.
+&nbsp;     *
+&nbsp;     * @return The tick unit for the axis.
+&nbsp;     *
+&nbsp;     * @see #setTickUnit(NumberTickUnit)
+&nbsp;     * @see ValueAxis#isAutoTickUnitSelection()
+&nbsp;     */
+&nbsp;    public NumberTickUnit getTickUnit() {
+<b class="fc">&nbsp;        return this.tickUnit;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick unit for the axis and sends an {@link AxisChangeEvent} to
+&nbsp;     * all registered listeners.  A side effect of calling this method is that
+&nbsp;     * the &quot;auto-select&quot; feature for tick units is switched off (you can
+&nbsp;     * restore it using the {@link ValueAxis#setAutoTickUnitSelection(boolean)}
+&nbsp;     * method).
+&nbsp;     *
+&nbsp;     * @param unit  the new tick unit ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getTickUnit()
+&nbsp;     * @see #setTickUnit(NumberTickUnit, boolean, boolean)
+&nbsp;     */
+&nbsp;    public void setTickUnit(NumberTickUnit unit) {
+&nbsp;        // defer argument checking...
+<b class="fc">&nbsp;        setTickUnit(unit, true, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick unit for the axis and, if requested, sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.  In addition, an
+&nbsp;     * option is provided to turn off the &quot;auto-select&quot; feature for tick units
+&nbsp;     * (you can restore it using the
+&nbsp;     * {@link ValueAxis#setAutoTickUnitSelection(boolean)} method).
+&nbsp;     *
+&nbsp;     * @param unit  the new tick unit ({@code null} not permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     * @param turnOffAutoSelect  turn off the auto-tick selection?
+&nbsp;     */
+&nbsp;    public void setTickUnit(NumberTickUnit unit, boolean notify,
+&nbsp;            boolean turnOffAutoSelect) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(unit, &quot;unit&quot;);</b>
+<b class="fc">&nbsp;        this.tickUnit = unit;</b>
+<b class="fc">&nbsp;        if (turnOffAutoSelect) {</b>
+<b class="fc">&nbsp;            setAutoTickUnitSelection(false, false);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number format override.  If this is non-null, then it will
+&nbsp;     * be used to format the numbers on the axis.
+&nbsp;     *
+&nbsp;     * @return The number formatter (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setNumberFormatOverride(NumberFormat)
+&nbsp;     */
+&nbsp;    public NumberFormat getNumberFormatOverride() {
+<b class="fc">&nbsp;        return this.numberFormatOverride;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the number format override.  If this is non-null, then it will be
+&nbsp;     * used to format the numbers on the axis.
+&nbsp;     *
+&nbsp;     * @param formatter  the number formatter ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getNumberFormatOverride()
+&nbsp;     */
+&nbsp;    public void setNumberFormatOverride(NumberFormat formatter) {
+<b class="fc">&nbsp;        this.numberFormatOverride = formatter;</b>
+<b class="fc">&nbsp;        notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the (optional) marker band for the axis.
+&nbsp;     *
+&nbsp;     * @return The marker band (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setMarkerBand(MarkerAxisBand)
+&nbsp;     */
+&nbsp;    public MarkerAxisBand getMarkerBand() {
+<b class="nc">&nbsp;        return this.markerBand;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the marker band for the axis.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * The marker band is optional, leave it set to {@code null} if you
+&nbsp;     * don&#39;t require it.
+&nbsp;     *
+&nbsp;     * @param band the new band ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getMarkerBand()
+&nbsp;     */
+&nbsp;    public void setMarkerBand(MarkerAxisBand band) {
+<b class="nc">&nbsp;        this.markerBand = band;</b>
+<b class="nc">&nbsp;        notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Configures the axis to work with the specified plot.  If the axis has
+&nbsp;     * auto-scaling, then sets the maximum and minimum values.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void configure() {
+<b class="fc">&nbsp;        if (isAutoRange()) {</b>
+<b class="fc">&nbsp;            autoAdjustRange();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Rescales the axis to ensure that all data is visible.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected void autoAdjustRange() {
+&nbsp;
+<b class="fc">&nbsp;        Plot plot = getPlot();</b>
+<b class="fc">&nbsp;        if (plot == null) {</b>
+&nbsp;            return;  // no plot, no data
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (plot instanceof ValueAxisPlot) {</b>
+<b class="fc">&nbsp;            ValueAxisPlot vap = (ValueAxisPlot) plot;</b>
+&nbsp;
+<b class="fc">&nbsp;            Range r = vap.getDataRange(this);</b>
+<b class="fc">&nbsp;            if (r == null) {</b>
+<b class="fc">&nbsp;                r = getDefaultAutoRange();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            double upper = r.getUpperBound();</b>
+<b class="fc">&nbsp;            double lower = r.getLowerBound();</b>
+<b class="fc">&nbsp;            if (this.rangeType == RangeType.POSITIVE) {</b>
+<b class="nc">&nbsp;                lower = Math.max(0.0, lower);</b>
+<b class="nc">&nbsp;                upper = Math.max(0.0, upper);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (this.rangeType == RangeType.NEGATIVE) {</b>
+<b class="nc">&nbsp;                lower = Math.min(0.0, lower);</b>
+<b class="nc">&nbsp;                upper = Math.min(0.0, upper);</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (getAutoRangeIncludesZero()) {</b>
+<b class="fc">&nbsp;                lower = Math.min(lower, 0.0);</b>
+<b class="fc">&nbsp;                upper = Math.max(upper, 0.0);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            double range = upper - lower;</b>
+&nbsp;
+&nbsp;            // if fixed auto range, then derive lower bound...
+<b class="fc">&nbsp;            double fixedAutoRange = getFixedAutoRange();</b>
+<b class="fc">&nbsp;            if (fixedAutoRange &gt; 0.0) {</b>
+<b class="nc">&nbsp;                lower = upper - fixedAutoRange;</b>
+&nbsp;            }
+&nbsp;            else {
+&nbsp;                // ensure the autorange is at least &lt;minRange&gt; in size...
+<b class="fc">&nbsp;                double minRange = getAutoRangeMinimumSize();</b>
+<b class="fc">&nbsp;                if (range &lt; minRange) {</b>
+<b class="fc">&nbsp;                    double expand = (minRange - range) / 2;</b>
+<b class="fc">&nbsp;                    upper = upper + expand;</b>
+<b class="fc">&nbsp;                    lower = lower - expand;</b>
+<b class="fc">&nbsp;                    if (lower == upper) { // see bug report 1549218</b>
+<b class="nc">&nbsp;                        double adjust = Math.abs(lower) / 10.0;</b>
+<b class="nc">&nbsp;                        lower = lower - adjust;</b>
+<b class="nc">&nbsp;                        upper = upper + adjust;</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (this.rangeType == RangeType.POSITIVE) {</b>
+<b class="nc">&nbsp;                        if (lower &lt; 0.0) {</b>
+<b class="nc">&nbsp;                            upper = upper - lower;</b>
+<b class="nc">&nbsp;                            lower = 0.0;</b>
+&nbsp;                        }
+&nbsp;                    }
+<b class="fc">&nbsp;                    else if (this.rangeType == RangeType.NEGATIVE) {</b>
+<b class="nc">&nbsp;                        if (upper &gt; 0.0) {</b>
+<b class="nc">&nbsp;                            lower = lower - upper;</b>
+<b class="nc">&nbsp;                            upper = 0.0;</b>
+&nbsp;                        }
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                if (getAutoRangeStickyZero()) {</b>
+<b class="fc">&nbsp;                    if (upper &lt;= 0.0) {</b>
+<b class="nc">&nbsp;                        upper = Math.min(0.0, upper + getUpperMargin() * range);</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="fc">&nbsp;                        upper = upper + getUpperMargin() * range;</b>
+&nbsp;                    }
+<b class="fc">&nbsp;                    if (lower &gt;= 0.0) {</b>
+<b class="fc">&nbsp;                        lower = Math.max(0.0, lower - getLowerMargin() * range);</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="fc">&nbsp;                        lower = lower - getLowerMargin() * range;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    upper = upper + getUpperMargin() * range;</b>
+<b class="nc">&nbsp;                    lower = lower - getLowerMargin() * range;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            setRange(new Range(lower, upper), false, false);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a data value to a coordinate in Java2D space, assuming that the
+&nbsp;     * axis runs along one edge of the specified dataArea.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note that it is possible for the coordinate to fall outside the plotArea.
+&nbsp;     *
+&nbsp;     * @param value  the data value.
+&nbsp;     * @param area  the area for plotting the data.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The Java2D coordinate.
+&nbsp;     *
+&nbsp;     * @see #java2DToValue(double, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double valueToJava2D(double value, Rectangle2D area,
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        Range range = getRange();</b>
+<b class="fc">&nbsp;        double axisMin = range.getLowerBound();</b>
+<b class="fc">&nbsp;        double axisMax = range.getUpperBound();</b>
+&nbsp;
+<b class="fc">&nbsp;        double min = 0.0;</b>
+<b class="fc">&nbsp;        double max = 0.0;</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            min = area.getX();</b>
+<b class="fc">&nbsp;            max = area.getMaxX();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            max = area.getMinY();</b>
+<b class="fc">&nbsp;            min = area.getMaxY();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (isInverted()) {</b>
+<b class="nc">&nbsp;            return max</b>
+&nbsp;                   - ((value - axisMin) / (axisMax - axisMin)) * (max - min);
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            return min</b>
+&nbsp;                   + ((value - axisMin) / (axisMax - axisMin)) * (max - min);
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Converts a coordinate in Java2D space to the corresponding data value,
+&nbsp;     * assuming that the axis runs along one edge of the specified dataArea.
+&nbsp;     *
+&nbsp;     * @param java2DValue  the coordinate in Java2D space.
+&nbsp;     * @param area  the area in which the data is plotted.
+&nbsp;     * @param edge  the location.
+&nbsp;     *
+&nbsp;     * @return The data value.
+&nbsp;     *
+&nbsp;     * @see #valueToJava2D(double, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double java2DToValue(double java2DValue, Rectangle2D area,
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        Range range = getRange();</b>
+<b class="fc">&nbsp;        double axisMin = range.getLowerBound();</b>
+<b class="fc">&nbsp;        double axisMax = range.getUpperBound();</b>
+&nbsp;
+<b class="fc">&nbsp;        double min = 0.0;</b>
+<b class="fc">&nbsp;        double max = 0.0;</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            min = area.getX();</b>
+<b class="fc">&nbsp;            max = area.getMaxX();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            min = area.getMaxY();</b>
+<b class="fc">&nbsp;            max = area.getY();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (isInverted()) {</b>
+<b class="fc">&nbsp;            return axisMax</b>
+&nbsp;                   - (java2DValue - min) / (max - min) * (axisMax - axisMin);
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            return axisMin</b>
+&nbsp;                   + (java2DValue - min) / (max - min) * (axisMax - axisMin);
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the value of the lowest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @return The value of the lowest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @see #calculateHighestVisibleTickValue()
+&nbsp;     */
+&nbsp;    protected double calculateLowestVisibleTickValue() {
+<b class="fc">&nbsp;        double unit = getTickUnit().getSize();</b>
+<b class="fc">&nbsp;        double index = Math.ceil(getRange().getLowerBound() / unit);</b>
+<b class="fc">&nbsp;        return index * unit;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the value of the highest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @return The value of the highest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @see #calculateLowestVisibleTickValue()
+&nbsp;     */
+&nbsp;    protected double calculateHighestVisibleTickValue() {
+<b class="nc">&nbsp;        double unit = getTickUnit().getSize();</b>
+<b class="nc">&nbsp;        double index = Math.floor(getRange().getUpperBound() / unit);</b>
+<b class="nc">&nbsp;        return index * unit;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the number of visible ticks.
+&nbsp;     *
+&nbsp;     * @return The number of visible ticks on the axis.
+&nbsp;     */
+&nbsp;    protected int calculateVisibleTickCount() {
+<b class="fc">&nbsp;        double unit = getTickUnit().getSize();</b>
+<b class="fc">&nbsp;        Range range = getRange();</b>
+<b class="fc">&nbsp;        return (int) (Math.floor(range.getUpperBound() / unit)</b>
+<b class="fc">&nbsp;                      - Math.ceil(range.getLowerBound() / unit) + 1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the axis on a Java 2D graphics device (such as the screen or a
+&nbsp;     * printer).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     * @param cursor  the cursor location.
+&nbsp;     * @param plotArea  the area within which the axes and data should be drawn
+&nbsp;     *                  ({@code null} not permitted).
+&nbsp;     * @param dataArea  the area within which the data should be drawn
+&nbsp;     *                  ({@code null} not permitted).
+&nbsp;     * @param edge  the location of the axis ({@code null} not permitted).
+&nbsp;     * @param plotState  collects information about the plot
+&nbsp;     *                   ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The axis state (never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public AxisState draw(Graphics2D g2, double cursor, Rectangle2D plotArea,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge,
+&nbsp;            PlotRenderingInfo plotState) {
+&nbsp;
+&nbsp;        AxisState state;
+&nbsp;        // if the axis is not visible, don&#39;t draw it...
+<b class="fc">&nbsp;        if (!isVisible()) {</b>
+<b class="nc">&nbsp;            state = new AxisState(cursor);</b>
+&nbsp;            // even though the axis is not visible, we need ticks for the
+&nbsp;            // gridlines...
+<b class="nc">&nbsp;            List ticks = refreshTicks(g2, state, dataArea, edge);</b>
+<b class="nc">&nbsp;            state.setTicks(ticks);</b>
+<b class="nc">&nbsp;            return state;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the tick marks and labels...
+<b class="fc">&nbsp;        state = drawTickMarksAndLabels(g2, cursor, plotArea, dataArea, edge);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (getAttributedLabel() != null) {</b>
+<b class="nc">&nbsp;            state = drawAttributedLabel(getAttributedLabel(), g2, plotArea, </b>
+&nbsp;                    dataArea, edge, state);
+&nbsp;            
+&nbsp;        } else {
+<b class="fc">&nbsp;            state = drawLabel(getLabel(), g2, plotArea, dataArea, edge, state);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        createAndAddEntity(cursor, state, dataArea, edge, plotState);</b>
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates the standard tick units.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If you don&#39;t like these defaults, create your own instance of TickUnits
+&nbsp;     * and then pass it to the setStandardTickUnits() method in the
+&nbsp;     * NumberAxis class.
+&nbsp;     *
+&nbsp;     * @return The standard tick units.
+&nbsp;     *
+&nbsp;     * @see #setStandardTickUnits(TickUnitSource)
+&nbsp;     * @see #createIntegerTickUnits()
+&nbsp;     */
+&nbsp;    public static TickUnitSource createStandardTickUnits() {
+<b class="fc">&nbsp;        return new NumberTickUnitSource();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a collection of tick units for integer values.
+&nbsp;     *
+&nbsp;     * @return A collection of tick units for integer values.
+&nbsp;     *
+&nbsp;     * @see #setStandardTickUnits(TickUnitSource)
+&nbsp;     * @see #createStandardTickUnits()
+&nbsp;     */
+&nbsp;    public static TickUnitSource createIntegerTickUnits() {
+<b class="fc">&nbsp;        return new NumberTickUnitSource(true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a collection of standard tick units.  The supplied locale is
+&nbsp;     * used to create the number formatter (a localised instance of
+&nbsp;     * {@code NumberFormat}).
+&nbsp;     * &lt;P&gt;
+&nbsp;     * If you don&#39;t like these defaults, create your own instance of
+&nbsp;     * {@link TickUnits} and then pass it to the
+&nbsp;     * {@code setStandardTickUnits()} method.
+&nbsp;     *
+&nbsp;     * @param locale  the locale.
+&nbsp;     *
+&nbsp;     * @return A tick unit collection.
+&nbsp;     *
+&nbsp;     * @see #setStandardTickUnits(TickUnitSource)
+&nbsp;     */
+&nbsp;    public static TickUnitSource createStandardTickUnits(Locale locale) {
+<b class="nc">&nbsp;        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);</b>
+<b class="nc">&nbsp;        return new NumberTickUnitSource(false, numberFormat);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a collection of tick units for integer values.
+&nbsp;     * Uses a given Locale to create the DecimalFormats.
+&nbsp;     *
+&nbsp;     * @param locale the locale to use to represent Numbers.
+&nbsp;     *
+&nbsp;     * @return A collection of tick units for integer values.
+&nbsp;     *
+&nbsp;     * @see #setStandardTickUnits(TickUnitSource)
+&nbsp;     */
+&nbsp;    public static TickUnitSource createIntegerTickUnits(Locale locale) {
+<b class="nc">&nbsp;        NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);</b>
+<b class="nc">&nbsp;        return new NumberTickUnitSource(true, numberFormat);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Estimates the maximum tick label height.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     *
+&nbsp;     * @return The maximum height.
+&nbsp;     */
+&nbsp;    protected double estimateMaximumTickLabelHeight(Graphics2D g2) {
+<b class="fc">&nbsp;        RectangleInsets tickLabelInsets = getTickLabelInsets();</b>
+<b class="fc">&nbsp;        double result = tickLabelInsets.getTop() + tickLabelInsets.getBottom();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        FontRenderContext frc = g2.getFontRenderContext();</b>
+<b class="fc">&nbsp;        result += tickLabelFont.getLineMetrics(&quot;123&quot;, frc).getHeight();</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Estimates the maximum width of the tick labels, assuming the specified
+&nbsp;     * tick unit is used.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Rather than computing the string bounds of every tick on the axis, we
+&nbsp;     * just look at two values: the lower bound and the upper bound for the
+&nbsp;     * axis.  These two values will usually be representative.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param unit  the tick unit to use for calculation.
+&nbsp;     *
+&nbsp;     * @return The estimated maximum width of the tick labels.
+&nbsp;     */
+&nbsp;    protected double estimateMaximumTickLabelWidth(Graphics2D g2,
+&nbsp;                                                   TickUnit unit) {
+&nbsp;
+<b class="fc">&nbsp;        RectangleInsets tickLabelInsets = getTickLabelInsets();</b>
+<b class="fc">&nbsp;        double result = tickLabelInsets.getLeft() + tickLabelInsets.getRight();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (isVerticalTickLabels()) {</b>
+&nbsp;            // all tick labels have the same width (equal to the height of the
+&nbsp;            // font)...
+<b class="nc">&nbsp;            FontRenderContext frc = g2.getFontRenderContext();</b>
+<b class="nc">&nbsp;            LineMetrics lm = getTickLabelFont().getLineMetrics(&quot;0&quot;, frc);</b>
+<b class="nc">&nbsp;            result += lm.getHeight();</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;        else {
+&nbsp;            // look at lower and upper bounds...
+<b class="fc">&nbsp;            FontMetrics fm = g2.getFontMetrics(getTickLabelFont());</b>
+<b class="fc">&nbsp;            Range range = getRange();</b>
+<b class="fc">&nbsp;            double lower = range.getLowerBound();</b>
+<b class="fc">&nbsp;            double upper = range.getUpperBound();</b>
+&nbsp;            String lowerStr, upperStr;
+<b class="fc">&nbsp;            NumberFormat formatter = getNumberFormatOverride();</b>
+<b class="fc">&nbsp;            if (formatter != null) {</b>
+<b class="nc">&nbsp;                lowerStr = formatter.format(lower);</b>
+<b class="nc">&nbsp;                upperStr = formatter.format(upper);</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                lowerStr = unit.valueToString(lower);</b>
+<b class="fc">&nbsp;                upperStr = unit.valueToString(upper);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            double w1 = fm.stringWidth(lowerStr);</b>
+<b class="fc">&nbsp;            double w2 = fm.stringWidth(upperStr);</b>
+<b class="fc">&nbsp;            result += Math.max(w1, w2);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick value for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from an array of &#39;standard&#39;
+&nbsp;     * tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area defined by the axes.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectAutoTickUnit(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            selectHorizontalAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            selectVerticalAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick value for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from an array of &#39;standard&#39;
+&nbsp;     * tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area defined by the axes.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectHorizontalAutoTickUnit(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        TickUnit unit = getTickUnit();</b>
+<b class="fc">&nbsp;        TickUnitSource tickUnitSource = getStandardTickUnits();</b>
+&nbsp; 
+&nbsp;        // we should start with the current tick unit if it gives a count in 
+&nbsp;        // the range 3 to 40 otherwise estimate one that will give a count &lt;= 10
+<b class="fc">&nbsp;        double length = getRange().getLength();</b>
+<b class="fc">&nbsp;        int count = (int) (length / unit.getSize());</b>
+<b class="fc">&nbsp;        if (count &lt; 3 || count &gt; 40) {</b>
+<b class="fc">&nbsp;            unit = tickUnitSource.getCeilingTickUnit(length / 10);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // now consider the label size relative to the width of the tick unit
+&nbsp;        // and make a guess at the ideal size
+<b class="fc">&nbsp;        TickUnit unit1 = tickUnitSource.getCeilingTickUnit(unit);</b>
+<b class="fc">&nbsp;        double tickLabelWidth = estimateMaximumTickLabelWidth(g2, unit1);</b>
+<b class="fc">&nbsp;        double unit1Width = lengthToJava2D(unit1.getSize(), dataArea, edge);</b>
+<b class="fc">&nbsp;        NumberTickUnit unit2 = (NumberTickUnit) unit1;</b>
+<b class="fc">&nbsp;        double guess = (tickLabelWidth / unit1Width) * unit1.getSize();</b>
+&nbsp;
+&nbsp;        // due to limitations of double precision, when you zoom very far into
+&nbsp;        // a chart, eventually the visible axis range will get reported as 
+&nbsp;        // having length 0, and then &#39;guess&#39; above will be infinite ... in that 
+&nbsp;        // case we&#39;ll just stick with the tick unit we have, it&#39;s better than 
+&nbsp;        // throwing an exception 
+&nbsp;        // https://github.com/jfree/jfreechart/issues/64
+<b class="fc">&nbsp;        if (Double.isFinite(guess)) {</b>
+<b class="fc">&nbsp;            unit2 = (NumberTickUnit) tickUnitSource.getCeilingTickUnit(guess);</b>
+<b class="fc">&nbsp;            double unit2Width = lengthToJava2D(unit2.getSize(), dataArea, edge);</b>
+<b class="fc">&nbsp;            tickLabelWidth = estimateMaximumTickLabelWidth(g2, unit2);</b>
+<b class="fc">&nbsp;            if (tickLabelWidth &gt; unit2Width) {</b>
+<b class="fc">&nbsp;                unit2 = (NumberTickUnit) tickUnitSource.getLargerTickUnit(unit2);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        setTickUnit(unit2, false, false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick value for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from an array of &#39;standard&#39;
+&nbsp;     * tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectVerticalAutoTickUnit(Graphics2D g2, 
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        double tickLabelHeight = estimateMaximumTickLabelHeight(g2);</b>
+&nbsp;
+&nbsp;        // start with the current tick unit...
+<b class="fc">&nbsp;        TickUnitSource tickUnits = getStandardTickUnits();</b>
+<b class="fc">&nbsp;        TickUnit unit1 = tickUnits.getCeilingTickUnit(getTickUnit());</b>
+<b class="fc">&nbsp;        double unitHeight = lengthToJava2D(unit1.getSize(), dataArea, edge);</b>
+&nbsp;        double guess;
+<b class="fc">&nbsp;        if (unitHeight &gt; 0) { // then extrapolate...</b>
+<b class="fc">&nbsp;            guess = (tickLabelHeight / unitHeight) * unit1.getSize();</b>
+&nbsp;        } else { 
+<b class="nc">&nbsp;            guess = getRange().getLength() / 20.0;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        NumberTickUnit unit2 = (NumberTickUnit) tickUnits.getCeilingTickUnit(</b>
+&nbsp;                guess);
+<b class="fc">&nbsp;        double unit2Height = lengthToJava2D(unit2.getSize(), dataArea, edge);</b>
+&nbsp;
+<b class="fc">&nbsp;        tickLabelHeight = estimateMaximumTickLabelHeight(g2);</b>
+<b class="fc">&nbsp;        if (tickLabelHeight &gt; unit2Height) {</b>
+<b class="nc">&nbsp;            unit2 = (NumberTickUnit) tickUnits.getLargerTickUnit(unit2);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setTickUnit(unit2, false, false);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the positions of the tick labels for the axis, storing the
+&nbsp;     * results in the tick label list (ready for drawing).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the axis state.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List refreshTicks(Graphics2D g2, AxisState state, 
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List result = new java.util.ArrayList();</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            result = refreshTicksHorizontal(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            result = refreshTicksVertical(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the positions of the tick labels for the axis, storing the
+&nbsp;     * results in the tick label list (ready for drawing).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the data should be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    protected List refreshTicksHorizontal(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List result = new java.util.ArrayList();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        g2.setFont(tickLabelFont);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (isAutoTickUnitSelection()) {</b>
+<b class="fc">&nbsp;            selectAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        TickUnit tu = getTickUnit();</b>
+<b class="fc">&nbsp;        double size = tu.getSize();</b>
+<b class="fc">&nbsp;        int count = calculateVisibleTickCount();</b>
+<b class="fc">&nbsp;        double lowestTickValue = calculateLowestVisibleTickValue();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (count &lt;= ValueAxis.MAXIMUM_TICK_COUNT) {</b>
+<b class="fc">&nbsp;            int minorTickSpaces = getMinorTickCount();</b>
+<b class="fc">&nbsp;            if (minorTickSpaces &lt;= 0) {</b>
+<b class="fc">&nbsp;                minorTickSpaces = tu.getMinorTickCount();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</b>
+<b class="fc">&nbsp;                double minorTickValue = lowestTickValue </b>
+&nbsp;                        - size * minorTick / minorTickSpaces;
+<b class="fc">&nbsp;                if (getRange().contains(minorTickValue)) {</b>
+<b class="fc">&nbsp;                    result.add(new NumberTick(TickType.MINOR, minorTickValue,</b>
+&nbsp;                            &quot;&quot;, TextAnchor.TOP_CENTER, TextAnchor.CENTER,
+&nbsp;                            0.0));
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            for (int i = 0; i &lt; count; i++) {</b>
+<b class="fc">&nbsp;                double currentTickValue = lowestTickValue + (i * size);</b>
+&nbsp;                String tickLabel;
+<b class="fc">&nbsp;                NumberFormat formatter = getNumberFormatOverride();</b>
+<b class="fc">&nbsp;                if (formatter != null) {</b>
+<b class="nc">&nbsp;                    tickLabel = formatter.format(currentTickValue);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    tickLabel = getTickUnit().valueToString(currentTickValue);</b>
+&nbsp;                }
+&nbsp;                TextAnchor anchor, rotationAnchor;
+<b class="fc">&nbsp;                double angle = 0.0;</b>
+<b class="fc">&nbsp;                if (isVerticalTickLabels()) {</b>
+<b class="nc">&nbsp;                    anchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="nc">&nbsp;                    rotationAnchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="nc">&nbsp;                    if (edge == RectangleEdge.TOP) {</b>
+<b class="nc">&nbsp;                        angle = Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        angle = -Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    if (edge == RectangleEdge.TOP) {</b>
+<b class="fc">&nbsp;                        anchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.BOTTOM_CENTER;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="fc">&nbsp;                        anchor = TextAnchor.TOP_CENTER;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.TOP_CENTER;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                Tick tick = new NumberTick(currentTickValue,</b>
+&nbsp;                        tickLabel, anchor, rotationAnchor, angle);
+<b class="fc">&nbsp;                result.add(tick);</b>
+<b class="fc">&nbsp;                double nextTickValue = lowestTickValue + ((i + 1) * size);</b>
+<b class="fc">&nbsp;                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</b>
+<b class="fc">&nbsp;                        minorTick++) {</b>
+<b class="fc">&nbsp;                    double minorTickValue = currentTickValue</b>
+&nbsp;                            + (nextTickValue - currentTickValue)
+&nbsp;                            * minorTick / minorTickSpaces;
+<b class="fc">&nbsp;                    if (getRange().contains(minorTickValue)) {</b>
+<b class="fc">&nbsp;                        result.add(new NumberTick(TickType.MINOR,</b>
+&nbsp;                                minorTickValue, &quot;&quot;, TextAnchor.TOP_CENTER,
+&nbsp;                                TextAnchor.CENTER, 0.0));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the positions of the tick labels for the axis, storing the
+&nbsp;     * results in the tick label list (ready for drawing).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    protected List refreshTicksVertical(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List result = new java.util.ArrayList();</b>
+<b class="fc">&nbsp;        result.clear();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        g2.setFont(tickLabelFont);</b>
+<b class="fc">&nbsp;        if (isAutoTickUnitSelection()) {</b>
+<b class="fc">&nbsp;            selectAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        TickUnit tu = getTickUnit();</b>
+<b class="fc">&nbsp;        double size = tu.getSize();</b>
+<b class="fc">&nbsp;        int count = calculateVisibleTickCount();</b>
+<b class="fc">&nbsp;        double lowestTickValue = calculateLowestVisibleTickValue();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (count &lt;= ValueAxis.MAXIMUM_TICK_COUNT) {</b>
+<b class="fc">&nbsp;            int minorTickSpaces = getMinorTickCount();</b>
+<b class="fc">&nbsp;            if (minorTickSpaces &lt;= 0) {</b>
+<b class="fc">&nbsp;                minorTickSpaces = tu.getMinorTickCount();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</b>
+<b class="fc">&nbsp;                double minorTickValue = lowestTickValue</b>
+&nbsp;                        - size * minorTick / minorTickSpaces;
+<b class="fc">&nbsp;                if (getRange().contains(minorTickValue)) {</b>
+<b class="fc">&nbsp;                    result.add(new NumberTick(TickType.MINOR, minorTickValue,</b>
+&nbsp;                            &quot;&quot;, TextAnchor.TOP_CENTER, TextAnchor.CENTER,
+&nbsp;                            0.0));
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            for (int i = 0; i &lt; count; i++) {</b>
+<b class="fc">&nbsp;                double currentTickValue = lowestTickValue + (i * size);</b>
+&nbsp;                String tickLabel;
+<b class="fc">&nbsp;                NumberFormat formatter = getNumberFormatOverride();</b>
+<b class="fc">&nbsp;                if (formatter != null) {</b>
+<b class="nc">&nbsp;                    tickLabel = formatter.format(currentTickValue);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    tickLabel = getTickUnit().valueToString(currentTickValue);</b>
+&nbsp;                }
+&nbsp;
+&nbsp;                TextAnchor anchor;
+&nbsp;                TextAnchor rotationAnchor;
+<b class="fc">&nbsp;                double angle = 0.0;</b>
+<b class="fc">&nbsp;                if (isVerticalTickLabels()) {</b>
+<b class="nc">&nbsp;                    if (edge == RectangleEdge.LEFT) {</b>
+<b class="nc">&nbsp;                        anchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                        rotationAnchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                        angle = -Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        anchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                        rotationAnchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                        angle = Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    if (edge == RectangleEdge.LEFT) {</b>
+<b class="fc">&nbsp;                        anchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.CENTER_RIGHT;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        anchor = TextAnchor.CENTER_LEFT;</b>
+<b class="nc">&nbsp;                        rotationAnchor = TextAnchor.CENTER_LEFT;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                Tick tick = new NumberTick(currentTickValue, tickLabel, anchor, </b>
+&nbsp;                        rotationAnchor, angle);
+<b class="fc">&nbsp;                result.add(tick);</b>
+&nbsp;
+<b class="fc">&nbsp;                double nextTickValue = lowestTickValue + ((i + 1) * size);</b>
+<b class="fc">&nbsp;                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</b>
+<b class="fc">&nbsp;                        minorTick++) {</b>
+<b class="fc">&nbsp;                    double minorTickValue = currentTickValue</b>
+&nbsp;                            + (nextTickValue - currentTickValue)
+&nbsp;                            * minorTick / minorTickSpaces;
+<b class="fc">&nbsp;                    if (getRange().contains(minorTickValue)) {</b>
+<b class="fc">&nbsp;                        result.add(new NumberTick(TickType.MINOR,</b>
+&nbsp;                                minorTickValue, &quot;&quot;, TextAnchor.TOP_CENTER,
+&nbsp;                                TextAnchor.CENTER, 0.0));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the axis.
+&nbsp;     *
+&nbsp;     * @return A clone
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the axis does
+&nbsp;     *         not support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        NumberAxis clone = (NumberAxis) super.clone();</b>
+<b class="fc">&nbsp;        if (this.numberFormatOverride != null) {</b>
+<b class="nc">&nbsp;            clone.numberFormatOverride</b>
+<b class="nc">&nbsp;                = (NumberFormat) this.numberFormatOverride.clone();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests the axis for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof NumberAxis)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        NumberAxis that = (NumberAxis) obj;</b>
+<b class="fc">&nbsp;        if (this.autoRangeIncludesZero != that.autoRangeIncludesZero) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoRangeStickyZero != that.autoRangeStickyZero) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.tickUnit, that.tickUnit)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.numberFormatOverride, that.numberFormatOverride)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.rangeType.equals(that.rangeType)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this object.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        return super.hashCode();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

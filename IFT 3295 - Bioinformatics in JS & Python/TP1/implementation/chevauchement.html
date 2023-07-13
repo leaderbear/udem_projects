@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>IFT3295 - TP1</title>
+	<style>
+		#inputs {
+			width: 80%;
+			display: flex;
+			flex-direction: column;
+		}
+		textarea {
+			min-height: 180px;
+			resize: vertical;
+		}
+		#sequenceValue {
+			min-height: 300px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="inputs">
+		<label for="sequenceFASTQ">Choisir ou coller le contenu d'un fichier FASTQ :</label>
+
+		<input type="file" id="fichierSequenceFASTQ" name="sequenceFASTQ" accept=".fq, .fastq"/>
+
+		<textarea id="FASTQvalue">@SEQUENCE_TEST_1
+CATCCTTCT
++
+222222222
+@SEQUENCE_TEST_2
+CCTTTCACC
++
+222222222</textarea>
+
+		<input type="button" id="btnAlignerSequences" value="Aligner les séquences"/>
+
+		<textarea id="sequenceValue"></textarea>
+	</div>
+
+	<script src="alignerSequences.js"></script>
+	<script type="text/javascript">
+
+		// vvvvvv Récupérer le contenu du fichier fastq et l'afficher vvvvvv 
+		document.getElementById("fichierSequenceFASTQ").addEventListener("change", function() {
+			var f = this.files[0]
+			var fileReader = new FileReader();
+
+			fileReader.readAsText(f, "UTF-8");
+
+			fileReader.onload = function(e) {
+				document.getElementById("FASTQvalue").value = e.target.result;
+			};
+		})
+		// ^^^^^^ Récupérer le contenu du fichier fastq et l'afficher ^^^^^^ 
+
+
+		document.getElementById("btnAlignerSequences").addEventListener("click", function() {
+
+			var sequences = [];
+
+			// vvvvvv Partie de code pour isoler les séquences dans le fastq vvvvvv
+			var raw_fastq = document.getElementById("FASTQvalue").value;
+			var raw_fastq_lines = raw_fastq.split("\n");
+
+			raw_fastq_lines.forEach(function(line, index) {
+				if(line.charAt(0) == "@") {
+					sequences.push(raw_fastq_lines[index+1]);
+				}
+			})
+			// ^^^^^^ Partie de code pour isoler les séquences dans le fastq ^^^^^^
+
+
+			if(sequences.length < 2) return; // si moins de 2 séquences dans fastq, ne rien faire
+
+
+			var alignementTest = alignerSequences(sequences[0], sequences[1]);
+
+			document.getElementById("sequenceValue").value = 
+`Xi : ${alignementTest.sequence1}
+Xj : ${alignementTest.sequence2}\n
+${alignementTest.tableau_scores.join("\n")}\n
+${alignementTest.tableau_pointeurs.join("\n")}
+
+Le score d'alignement optimal est ${alignementTest.score_alignement_optimal} à la position i=${alignementTest.position_score_alignement_optimal[0]}, j=${alignementTest.position_score_alignement_optimal[1]}
+
+L'alignement optimal est
+${alignementTest.alignement_optimal}
+
+La longueur de chevauchement optimal est ${alignementTest.longueur_chevauchement}`
+
+		})
+
+		</script>
+
+</body>
+
+</html>

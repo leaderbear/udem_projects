@@ -1,0 +1,492 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > RegularTimePeriod</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.time</a>
+</div>
+
+<h1>Coverage Summary for Class: RegularTimePeriod (org.jfree.data.time)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">RegularTimePeriod</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    92,3%
+  </span>
+  <span class="absValue">
+    (12/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75,5%
+  </span>
+  <span class="absValue">
+    (37/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------------------
+&nbsp; * RegularTimePeriod.java
+&nbsp; * ----------------------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.time;
+&nbsp;
+&nbsp;import java.lang.reflect.Constructor;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.Locale;
+&nbsp;import java.util.TimeZone;
+&nbsp;import java.util.concurrent.atomic.AtomicReference;
+&nbsp;
+&nbsp;import org.jfree.chart.date.MonthConstants;
+&nbsp;
+&nbsp;/**
+&nbsp; * An abstract class representing a unit of time.  Convenient methods are
+&nbsp; * provided for calculating the next and previous time periods.  Conversion
+&nbsp; * methods are defined that return the first and last milliseconds of the time
+&nbsp; * period.  The results from these methods are timezone dependent.
+&nbsp; * &lt;P&gt;
+&nbsp; * This class is immutable, and all subclasses should be immutable also.
+&nbsp; */
+<b class="fc">&nbsp;public abstract class RegularTimePeriod implements TimePeriod, Comparable,</b>
+&nbsp;        MonthConstants {
+&nbsp;
+<b class="fc">&nbsp;    private static final AtomicReference&lt;Calendar&gt; calendarPrototype = new AtomicReference&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;    private static final ThreadLocal&lt;Calendar&gt; threadLocalCalendar = new ThreadLocal&lt;&gt;();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a time period that includes the specified millisecond, assuming
+&nbsp;     * the given time zone.
+&nbsp;     *
+&nbsp;     * @param c  the time period class.
+&nbsp;     * @param millisecond  the time.
+&nbsp;     * @param zone  the time zone.
+&nbsp;     * @param locale  the locale.
+&nbsp;     *
+&nbsp;     * @return The time period.
+&nbsp;     */
+&nbsp;    public static RegularTimePeriod createInstance(Class c, Date millisecond,
+&nbsp;            TimeZone zone, Locale locale) {
+<b class="fc">&nbsp;        RegularTimePeriod result = null;</b>
+&nbsp;        try {
+<b class="fc">&nbsp;            Constructor constructor = c.getDeclaredConstructor(</b>
+&nbsp;                    new Class[] {Date.class, TimeZone.class, Locale.class});
+<b class="fc">&nbsp;            result = (RegularTimePeriod) constructor.newInstance(</b>
+&nbsp;                    new Object[] {millisecond, zone, locale});
+&nbsp;        }
+<b class="nc">&nbsp;        catch (Exception e) {</b>
+&nbsp;            // do nothing, so null is returned
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a subclass of {@link RegularTimePeriod} that is smaller than
+&nbsp;     * the specified class.
+&nbsp;     *
+&nbsp;     * @param c  a subclass of {@link RegularTimePeriod}.
+&nbsp;     *
+&nbsp;     * @return A class.
+&nbsp;     */
+&nbsp;    public static Class downsize(Class c) {
+<b class="fc">&nbsp;        if (c.equals(Year.class)) {</b>
+<b class="fc">&nbsp;            return Quarter.class;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (c.equals(Quarter.class)) {</b>
+<b class="nc">&nbsp;            return Month.class;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (c.equals(Month.class)) {</b>
+<b class="nc">&nbsp;            return Day.class;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (c.equals(Day.class)) {</b>
+<b class="fc">&nbsp;            return Hour.class;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (c.equals(Hour.class)) {</b>
+<b class="nc">&nbsp;            return Minute.class;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (c.equals(Minute.class)) {</b>
+<b class="nc">&nbsp;            return Second.class;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (c.equals(Second.class)) {</b>
+<b class="nc">&nbsp;            return Millisecond.class;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            return Millisecond.class;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates or returns a thread-local Calendar instance.
+&nbsp;     * This function is used by the various subclasses to obtain a calendar for
+&nbsp;     * date-time to/from ms-since-epoch conversions (and to determine
+&nbsp;     * the first day of the week, in case of {@link Week}).
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If a thread-local calendar was set with {@link #setThreadLocalCalendarInstance(Calendar)},
+&nbsp;     * then it is simply returned.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Otherwise, If a global calendar prototype was set with {@link #setCalendarInstancePrototype(Calendar)},
+&nbsp;     * then it is cloned and set as the thread-local calendar instance for future use,
+&nbsp;     * as if it was set with {@link #setThreadLocalCalendarInstance(Calendar)}.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Otherwise, if neither is set, a new instance will be created every
+&nbsp;     * time with {@link Calendar#getInstance()}, resorting to JFreeChart 1.5.0
+&nbsp;     * behavior (leading to huge load on GC and high memory consumption
+&nbsp;     * if many instances are created).
+&nbsp;     *
+&nbsp;     * @return a thread-local Calendar instance
+&nbsp;     */
+&nbsp;    protected static Calendar getCalendarInstance() {
+<b class="fc">&nbsp;        Calendar calendar = threadLocalCalendar.get();</b>
+<b class="fc">&nbsp;        if (calendar == null) {</b>
+<b class="fc">&nbsp;            Calendar prototype = calendarPrototype.get();</b>
+<b class="fc">&nbsp;            if (prototype != null) {</b>
+<b class="fc">&nbsp;                calendar = (Calendar) prototype.clone();</b>
+<b class="fc">&nbsp;                threadLocalCalendar.set(calendar);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return calendar != null ? calendar : Calendar.getInstance();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the thread-local calendar instance for time calculations.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * {@code RegularTimePeriod} instances sometimes need a {@link Calendar}
+&nbsp;     * to perform time calculations (date-time from/to milliseconds-since-epoch).
+&nbsp;     * In JFreeChart 1.5.0, they created a new {@code Calendar} instance
+&nbsp;     * every time they needed one.  This created a huge load on GC and lead
+&nbsp;     * to high memory consumption.  To avoid this, a thread-local {@code Calendar}
+&nbsp;     * instance can be set, which will then be used for time calculations
+&nbsp;     * every time, unless the caller passes a specific {@code Calendar}
+&nbsp;     * instance in places where the API allows it.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the specified calendar is {@code null}, or if this method was never called,
+&nbsp;     * then the next time a calendar instance is needed, a new one will be created by cloning
+&nbsp;     * the global prototype set with {@link #setCalendarInstancePrototype(Calendar)}.
+&nbsp;     * If none was set either, then a new instance will be created every time
+&nbsp;     * with {@link Calendar#getInstance()}, resorting to JFreeChart 1.5.0 behavior.
+&nbsp;     *
+&nbsp;     * @param calendar the new thread-local calendar instance
+&nbsp;     */
+&nbsp;    public static void setThreadLocalCalendarInstance(Calendar calendar) {
+<b class="fc">&nbsp;        threadLocalCalendar.set(calendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a global calendar prototype for time calculations.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * {@code RegularTimePeriod} instances sometimes need a {@link Calendar}
+&nbsp;     * to perform time calculations (date-time from/to milliseconds-since-epoch).
+&nbsp;     * In JFreeChart 1.5.0, they created a new {@code Calendar} instance
+&nbsp;     * every time they needed one.  This created a huge load on GC and lead
+&nbsp;     * to high memory consumption.  To avoid this, a prototype {@code Calendar}
+&nbsp;     * can be set, which will be then cloned by every thread that needs
+&nbsp;     * a {@code Calendar} instance.  The prototype is not cloned right away,
+&nbsp;     * and stored instead for later cloning, therefore the caller must not
+&nbsp;     * alter the prototype after it has been passed to this method.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * If the prototype is {@code null}, then thread-local calendars
+&nbsp;     * set with {@link #setThreadLocalCalendarInstance(Calendar)} will be
+&nbsp;     * used instead.  If none was set for some thread, then a new instance will be
+&nbsp;     * created with {@link Calendar#getInstance()} every time one is needed.
+&nbsp;     * However, if the prototype was already cloned by some thread,
+&nbsp;     * then setting it to {@code null} has no effect, and that thread must
+&nbsp;     * explicitly set its own instance to {@code null} or something else to get
+&nbsp;     * rid of the cloned calendar.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Calling {@code setCalendarInstancePrototype(Calendar.getInstance())}
+&nbsp;     * somewhere early in an application will effectively mimic JFreeChart
+&nbsp;     * 1.5.0 behavior (using the default calendar everywhere unless explicitly
+&nbsp;     * specified), while preventing the many-allocations problem.  There is one
+&nbsp;     * important caveat, however: once a prototype is cloned by some
+&nbsp;     * thread, calling {@link TimeZone#setDefault(TimeZone)}
+&nbsp;     * or {@link Locale#setDefault(Locale)}} will have no
+&nbsp;     * effect on future calculations.  To avoid this problem, simply set
+&nbsp;     * the default time zone and locale before setting the prototype.
+&nbsp;     *
+&nbsp;     * @param calendar the new thread-local calendar instance
+&nbsp;     */
+&nbsp;    public static void setCalendarInstancePrototype(Calendar calendar) {
+<b class="fc">&nbsp;        calendarPrototype.set(calendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the time period preceding this one, or {@code null} if some
+&nbsp;     * lower limit has been reached.
+&nbsp;     *
+&nbsp;     * @return The previous time period (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public abstract RegularTimePeriod previous();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the time period following this one, or {@code null} if some
+&nbsp;     * limit has been reached.
+&nbsp;     *
+&nbsp;     * @return The next time period (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public abstract RegularTimePeriod next();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a serial index number for the time unit.
+&nbsp;     *
+&nbsp;     * @return The serial index number.
+&nbsp;     */
+&nbsp;    public abstract long getSerialIndex();
+&nbsp;
+&nbsp;    //////////////////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recalculates the start date/time and end date/time for this time period
+&nbsp;     * relative to the supplied calendar (which incorporates a time zone).
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @since 1.0.3
+&nbsp;     */
+&nbsp;    public abstract void peg(Calendar calendar);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the date/time that marks the start of the time period.  This
+&nbsp;     * method returns a new {@code Date} instance every time it is called.
+&nbsp;     *
+&nbsp;     * @return The start date/time.
+&nbsp;     *
+&nbsp;     * @see #getFirstMillisecond()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Date getStart() {
+<b class="fc">&nbsp;        return new Date(getFirstMillisecond());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the date/time that marks the end of the time period.  This
+&nbsp;     * method returns a new {@code Date} instance every time it is called.
+&nbsp;     *
+&nbsp;     * @return The end date/time.
+&nbsp;     *
+&nbsp;     * @see #getLastMillisecond()
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Date getEnd() {
+<b class="fc">&nbsp;        return new Date(getLastMillisecond());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the first millisecond of the time period.  This will be
+&nbsp;     * determined relative to the time zone specified in the constructor, or
+&nbsp;     * in the calendar instance passed in the most recent call to the
+&nbsp;     * {@link #peg(Calendar)} method.
+&nbsp;     *
+&nbsp;     * @return The first millisecond of the time period.
+&nbsp;     *
+&nbsp;     * @see #getLastMillisecond()
+&nbsp;     */
+&nbsp;    public abstract long getFirstMillisecond();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the first millisecond of the time period, evaluated using the
+&nbsp;     * supplied calendar (which incorporates a timezone).
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The first millisecond of the time period.
+&nbsp;     *
+&nbsp;     * @throws NullPointerException if {@code calendar} is {@code null}.
+&nbsp;     *
+&nbsp;     * @see #getLastMillisecond(Calendar)
+&nbsp;     */
+&nbsp;    public abstract long getFirstMillisecond(Calendar calendar);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the last millisecond of the time period.  This will be
+&nbsp;     * determined relative to the time zone specified in the constructor, or
+&nbsp;     * in the calendar instance passed in the most recent call to the
+&nbsp;     * {@link #peg(Calendar)} method.
+&nbsp;     *
+&nbsp;     * @return The last millisecond of the time period.
+&nbsp;     *
+&nbsp;     * @see #getFirstMillisecond()
+&nbsp;     */
+&nbsp;    public abstract long getLastMillisecond();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the last millisecond of the time period, evaluated using the
+&nbsp;     * supplied calendar (which incorporates a timezone).
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The last millisecond of the time period.
+&nbsp;     *
+&nbsp;     * @see #getFirstMillisecond(Calendar)
+&nbsp;     */
+&nbsp;    public abstract long getLastMillisecond(Calendar calendar);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the millisecond closest to the middle of the time period.
+&nbsp;     *
+&nbsp;     * @return The middle millisecond.
+&nbsp;     */
+&nbsp;    public long getMiddleMillisecond() {
+<b class="fc">&nbsp;        long m1 = getFirstMillisecond();</b>
+<b class="fc">&nbsp;        long m2 = getLastMillisecond();</b>
+<b class="fc">&nbsp;        return m1 + (m2 - m1) / 2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the millisecond closest to the middle of the time period,
+&nbsp;     * evaluated using the supplied calendar (which incorporates a timezone).
+&nbsp;     *
+&nbsp;     * @param calendar  the calendar.
+&nbsp;     *
+&nbsp;     * @return The middle millisecond.
+&nbsp;     */
+&nbsp;    public long getMiddleMillisecond(Calendar calendar) {
+<b class="fc">&nbsp;        long m1 = getFirstMillisecond(calendar);</b>
+<b class="fc">&nbsp;        long m2 = getLastMillisecond(calendar);</b>
+<b class="fc">&nbsp;        return m1 + (m2 - m1) / 2;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the millisecond (relative to the epoch) corresponding to the 
+&nbsp;     * specified {@code anchor} using the supplied {@code calendar} 
+&nbsp;     * (which incorporates a time zone).
+&nbsp;     * 
+&nbsp;     * @param anchor  the anchor ({@code null} not permitted).
+&nbsp;     * @param calendar  the calendar ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @return Milliseconds since the epoch.
+&nbsp;     * 
+&nbsp;     * @since 1.0.18
+&nbsp;     */
+&nbsp;    public long getMillisecond(TimePeriodAnchor anchor, Calendar calendar) {
+<b class="fc">&nbsp;        if (anchor.equals(TimePeriodAnchor.START)) {</b>
+<b class="fc">&nbsp;            return getFirstMillisecond(calendar);</b>
+<b class="fc">&nbsp;        } else if (anchor.equals(TimePeriodAnchor.MIDDLE)) {</b>
+<b class="fc">&nbsp;            return getMiddleMillisecond(calendar);</b>
+<b class="fc">&nbsp;        } else if (anchor.equals(TimePeriodAnchor.END)) {</b>
+<b class="fc">&nbsp;            return getLastMillisecond(calendar);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Unrecognised anchor: &quot; + anchor);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns a string representation of the time period.
+&nbsp;     *
+&nbsp;     * @return The string.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return String.valueOf(getStart());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

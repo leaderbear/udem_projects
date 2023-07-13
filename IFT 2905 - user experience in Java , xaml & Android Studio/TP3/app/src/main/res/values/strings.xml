@@ -1,0 +1,112 @@
+<resources>
+    <string name="app_name">IFT2905-H21_Devoir3</string>
+    <string name="next">Suivant</string>
+    <string name="previous">Précédent</string>
+    <string name="search">Rechercher</string>
+    <string name="end">Terminer</string>
+    <string name="finalize">Finaliser</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="login_fragment_label">Authentification</string>
+    <string name="news_tab_categories_label">Catégories</string>
+    <string name="news_tab_favorite_label">Favoris</string>
+
+    <!-- Login page -->
+    <!-- Texte des input field -->
+    <string name="login_email">"Courriel étudiant"</string>
+    <string name="login_password">"Mot de passe"</string>
+
+    <!-- Texte des bouttons -->
+    <string name="login_button">"Se connecter"</string>
+    <string name="login_first_connection">"Première Connexion"</string>
+    <string name="login_forgot_password">"Mot de passe oublié?"</string>
+
+    <!-- Password reset page -->
+    <string name="password_reset_title">Réinitialisation du mot de passe</string>
+    <string name="password_reset_text_header">"Réinitialiser votre mot de passe"</string>
+    <string name="password_reset_main_text">"Un lien de réinitialisation sera envoyé à votre courriel étudiant."</string>
+    <string name="password_reset">"Réinitialiser mon mot de passe!"</string>
+    <string name="password_reset_email_sent_toast">"Email envoyé!"</string>
+
+    <!-- Profile creation page -->
+    <string name="profile_creation_title">Créer un profil</string>
+    <string name="profile_creation_email">Courriel étudiant</string>
+    <string name="profile_creation_email_confirm">Confirmer le courriel</string>
+    <string name="profile_creation_password">Choisir un mot de passe</string>
+    <string name="profile_creation_password_confirm">Confirmer le mot de passe</string>
+
+    <!-- Profile page -->
+    <string name="profile_title">Personnaliser votre profil</string>
+    <string name="profile_family_name_field">Nom</string>
+    <string name="profile_name_field">Prénom</string>
+
+    <!--  Cycle selection page  -->
+    <string name="cycle_selection_text">Sélectionner votre cycle</string>
+    <string name="cycle_1">1er cycle</string>
+    <string name="cycle_2">2eme cycle</string>
+    <string name="cycle_3">3eme cycle</string>
+
+    <!--  School selection page  -->
+    <string name="school_selection_text">Sélectionner votre faculté</string>
+    <string name="school_search_field_hint">Rechercher</string>
+    <string name="school_planning">Aménagement</string>
+    <string name="school_art">Art et Musique</string>
+    <string name="school_comm">Communication</string>
+    <string name="school_law">Droit</string>
+    <string name="school_cs">Informatique</string>
+
+    <!--  Classes selection page  -->
+    <string name="classes_selection_text">Sélectionner vos cours</string>
+    <string name="classes_search_result_text">XX résultats trouvés</string>
+    <string name="classes_search_field_hint">COM</string>
+    <string name="classes_1">COM - XXXX</string>
+
+    <!--  Interests selection page  -->
+    <string name="interests_selection_text">Sélectionner vos intérêts ou clubs</string>
+    <string name="interests_search_field_hint">Sport</string>
+    <string name="interests_1">Soccer</string>
+    <string name="interests_2">Hockey</string>
+    <string name="interests_3">Badminton</string>
+    <string name="interests_4">Baseball</string>
+    <string name="interests_5">Football</string>
+    <string name="interests_6">Basketball</string>
+    <string name="interests_7">Sport XX</string>
+    <string name="interests_8">Sport XX</string>
+
+    <!--  Preview profile page  -->
+    <string name="profile_preview_name">Prénom Nom</string>
+    <string name="profile_preview_classes">Cours</string>
+    <string name="profile_preview_interests">Club et intérêts</string>
+
+    <!--  Research page  -->
+    <string name="search_title">Rechercher vos collègues</string>
+    <string name="search_class">Cours :</string>
+    <string name="search_class_hint">IFT2905</string>
+    <string name="search_associations">Associations :</string>
+    <string name="search_association_hint">ex.: Faécum</string>
+    <string name="search_interests_centers">Centre d\'intérêts :</string>
+    <string name="search_interest_hint">ex.: sport, jeux vidéo</string>
+    <string name="search_launch">Lancer la recherche</string>
+
+    <!-- Search result page -->
+    <string name="search_result_title">Rechercher vos collègues</string>
+    <string name="search_result_text">XX résultats</string>
+    <string name="search_result_add_friend_text">Ajouter en ami.e</string>
+    <string name="search_result_name1">John Doe</string>
+    <string name="search_result_name2">Sophie Laplante</string>
+    <string name="search_result_name3">Sylvie Laplante</string>
+    <string name="search_result_name4">John Laplante</string>
+    <string name="search_result_name5">Sophie Doe</string>
+    <string name="search_result_name6">Sylvie Doe</string>
+    <string name="search_result_class1">MAT1905</string>
+    <string name="search_result_class2">IFT2905</string>
+    <string name="search_result_class3">IFT2015</string>
+    <string name="search_result_class4">MAT1903</string>
+
+
+
+    <string name="message_list_title">Messages</string>
+    <string name="message_hint">Entrez un message</string>
+</resources>

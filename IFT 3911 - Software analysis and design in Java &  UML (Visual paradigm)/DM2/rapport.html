@@ -1,0 +1,242 @@
+<!-- saved from url=(0060)http://www-ens.iro.umontreal.ca/~syriani/courses/rapport.htm -->
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IFT3911 | DM2</title>
+    <style type="text/css">
+        body{ margin: 0; padding:2.5em 0 2.5em 5px; }
+        h1{
+            margin:0;
+            width:100%; 
+            text-align: center;
+            background-color: black;
+            color:white;
+            position:fixed;
+            top:0;
+            left:0;
+        }
+        h2{
+            border-radius: 4px;
+            width:calc(100% - 10px); 
+            padding: 2px 0 2px 5px;
+            background-color: black;
+            color:white;
+            margin:0 0 0.15em 0;             
+        }
+        h3{ margin:0 0 0.7em 0;}
+        
+        table{
+            border: outset 3px black;           
+            border-collapse: collapse;     
+        }
+        thead{
+            border-bottom: outset 2px black;
+        }
+        tr{
+            border-bottom: outset 1px black;
+        }    
+        tr td:first-of-type , tr th:first-of-type{
+            border-right: outset 2px black;
+        }
+        td{
+            text-align: center;
+        }
+        td:first-child{
+            text-align:left;
+        }
+        section{
+            padding-left:15px;
+        }
+        h4{
+            margin:0;       
+            
+        } 
+        .membre h4{        
+            width:80px;
+            display: inline-block;
+        }
+        .membre{
+            margin: 5px;
+            padding: 5px;
+            width:calc(32.5% - 10px);
+            min-width: 400px;
+            border-radius: 8px;
+            border: 2px solid black;
+            background: rgba(0,0,0,0.1);
+            float:left;
+        }
+        .clr{ clear: both ; }
+        section{
+            padding-left:15px;
+        }
+        img{
+            padding-top: 5px;
+            max-width: 2000px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>IFT 3911 - Devoir 2</h1>
+        <h2>Membres de l'équipe</h2>
+        <div class="membre">
+            <h4>Nom</h4> : Abderrahim Tabta<br>
+            <h4>Matricule</h4> : 3680<br>
+            <h4>Courriel </h4> : abderrahim.tabta@umontreal.ca<br>
+            <h4>Temps mis</h4> : 15<br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : André-Viet Tran<br>
+            <h4>Matricule</h4> : 1185<br>
+            <h4>Courriel </h4> : andre-viet.tran@umontreal.ca<br>
+            <h4>Temps mis</h4> : 15<br>
+        </div>
+        <div class="membre">
+            <h4>Nom</h4> : Juan David Zuniga Omen<br>
+            <h4>Matricule</h4> : 20137012<br>
+            <h4>Courriel </h4> : juan.david.zuniga.omen@umontreal.ca<br>
+            <h4>Temps mis</h4> : 20<br>
+        </div>
+        <div class="clr"></div>
+      
+    </header>
+    <main>
+        <h2>Distribution des tâches</h2>
+        <section>
+            
+        <p><span style="font-weight: bold;">Soumetteur: </span> André-Viet Tran </p>
+        <table cellpadding="7px">
+            <thead>
+                <tr>
+                    <th class="first_col">Tâche</th>
+                    <th>Abderrahim</th>
+                    <th>André</th>
+                    <th>Juan David</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="first_col">TACHE 1 : Réseau de Pétri</td>
+                    <td>2%</td>
+                    <td>49%</td>
+                    <td>49%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 2 : Statechart</td>
+                    <td>1%</td>
+                    <td>1%</td>
+                    <td>98%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 3 : Design logiciel</td>
+                    <td>59%</td>
+                    <td>40%</td>
+                    <td>1%</td>
+                </tr>
+                <tr>
+                    <td class="first_col">TACHE 4 : Qualité du design</td>
+                    <td>60%</td>
+                    <td>39%</td>
+                    <td>1%</td>
+                </tr>
+            </tbody>
+            </table><br> 
+        </section>
+              
+        <h2>Tâche 1 : Réseau de Pétri</h2>
+	    <section>
+            <a href="./ReseauDePetri/Petri net 1.xml"><h3>Modélisation du réseau de Pétri</h3></a>
+            <img src="./img/ReseauDePetri-Modelisation.png" alt="ReseauDePetri-Modelisation">
+            <br>
+            <h3>Analyse du réseau de Pétri</h3>
+            <div>
+                <p>Avec l'outil "Invariant Analysis" dans le logiciel PIPE, on peut déterminer les lois de conservation.
+                    En effet, on peut conclure que seulle une voiture peut être à l'intérieur du tunnel à la fois ou aucune.
+                    <br>
+                    <b>M(Tunnel1) + M(Tunnel2) = 1 </b>
+                </p>
+                <img src="./img/ReseaudePetri-Analyse1.png" alt="ReseaudePetri-Analyse1"></img>
+                <br>
+                <img src="./img/ReseauDePetri-Graphe.jpg" alt="ReseauDePetri-Graphe"/>
+                <p>
+                    On remarque que le graphe est équitable, car on ne peut pas visiter le même tunnel de suite.
+                    Les transitions (T9 et T5) nous oblige d'alterner les lumières. Donc, seulement une voiture pourra
+                    passer par le même tunnel de suite. Le système est donc équitable. 
+                </p>
+                <p>
+                    On réalise qu'aucune des transitions est terminale dans le graphe de couverture, c'est à dire qu'il 
+                    n'y a pas d'interblocages. Alors, il n'y a pas de famine dans le réseau. 
+                </p>
+                <img src="./img/ReseauDePetri-Analyse3.png" alt="ReseauDePetri-Analyse3">
+            </div>
+        </section>
+	
+	    <br>        
+        <h2>Tâche 2 : Statechart</h2>
+        <section>
+            <a href="./Microwave/Microwave/src/microwave/MicrowaveApp.java"><h3>Modélisation du Statechart</h3></a> 
+            <h3>Génération du code et application</h3> 
+            <img src="./img/microwave.png" alt="microwave">
+        </section>
+        
+
+	
+        <br>
+        <h2>Tâche 3 : Design logiciel</h2>
+
+        <section>
+            <a href="./Révision design logiciel/1. Diagramme de classe (révisé).vpp"><h4>Diagramme de classe logiciel</h4></a>
+            <img src="./img/Class Diagram.jpg" alt="Diagramme de classe logiciel">
+
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h3>Diagramme de séqunce</h3></a>
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h4>1. Vérification voyage aérien</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage aérien.jpg" alt="Vérification voyage aérien">
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h4>2. Vérification voyage naval</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage naval.jpg" alt="Vérification voyage naval">
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h4>3. Vérification voyage ferroviaire</h4></a>
+            <h5>fait par : André</h5>
+            <img src="./img/Véréfication de voyage ferroviaire.jpg" alt="Vérification voyage ferroviaire">
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h4>4. Réservation</h4></a>
+            <h5>fait par : Abderrahim</h5>
+            <img src="./img/Réservation.jpg" alt="Réservation">
+            <a href="./Révision design logiciel/2. Diagramme de sequence (révisé).vpp"><h4>5. Paiement</h4></a>
+            <h5>fait par : Juan David</h5>
+            <img src="./img/Paiement.jpg" alt="Paiement">
+            
+            <br>
+            <a href="./Révision design logiciel/3. Diagramme de paquets (révisé).vpp"><h4>Diagramme de paquet</h4></a>
+            <img src="./img/Package Diagram1.jpg" alt="Diagramme de paquet">
+
+            <a href="./Révision design logiciel/4. OCL (révisé).md"><h4>OCL</h4></a>
+
+            <a href="./Révision design logiciel/5.DiscussionModulesRéutilisables.txt"><h4>Identification des modules réutilisables</h4></a>
+
+
+        </section>
+        <br>
+            <h2>Tâche 4 : Qualité du design</h2>
+        <section>
+            <a href="./Qualite du design/DiscussionCouplageCohesion.txt">
+                <h4>Discussion du couplage et de la cohésion des modules</h4>
+            </a>
+
+            <a href="./Qualite du design/DiscussionFardeau.txt"><h4>Discussion du fardeau des classes</h4></a>
+            <a href="./Qualite du design/DiscussionGrapheIA.txt"><h4>Graphe IA et justification</h4></a>
+            <img src="./img/GrapheIA.png" alt="GrapheIA">
+
+            <a href="./Qualite du design/DiscussionPrincipesConception.txt"><h4>Justification de l'application des principes de conception</h4></a>
+
+
+
+
+
+        </section>
+        
+        <br> 
+   </main>
+    
+</body></html>

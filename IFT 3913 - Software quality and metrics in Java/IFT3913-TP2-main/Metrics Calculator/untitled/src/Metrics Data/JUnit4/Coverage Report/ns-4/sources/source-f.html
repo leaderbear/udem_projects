@@ -1,0 +1,1950 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DateAxis</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.axis</a>
+</div>
+
+<h1>Coverage Summary for Class: DateAxis (org.jfree.chart.axis)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DateAxis</td>
+<td class="coverageStat">
+  <span class="percent">
+    76,9%
+  </span>
+  <span class="absValue">
+    (40/52)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    76,3%
+  </span>
+  <span class="absValue">
+    (458/600)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DateAxis$DefaultTimeline</td>
+<td class="coverageStat">
+  <span class="percent">
+    55,6%
+  </span>
+  <span class="absValue">
+    (5/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53,3%
+  </span>
+  <span class="absValue">
+    (8/15)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    73,8%
+  </span>
+  <span class="absValue">
+    (45/61)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75,8%
+  </span>
+  <span class="absValue">
+    (466/615)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -------------
+&nbsp; * DateAxis.java
+&nbsp; * -------------
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Jonathan Nash;
+&nbsp; *                   David Li;
+&nbsp; *                   Michael Rauch;
+&nbsp; *                   Bill Kelemen;
+&nbsp; *                   Pawel Pabis;
+&nbsp; *                   Chris Boek;
+&nbsp; *                   Peter Kolb (patches 1934255 and 2603321);
+&nbsp; *                   Andrew Mickish (patch 1870189);
+&nbsp; *                   Fawad Halim (bug 2201869);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.axis;
+&nbsp;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.FontMetrics;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.font.FontRenderContext;
+&nbsp;import java.awt.font.LineMetrics;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.text.DateFormat;
+&nbsp;import java.text.SimpleDateFormat;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.Date;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Locale;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.TimeZone;
+&nbsp;
+&nbsp;import org.jfree.chart.event.AxisChangeEvent;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.ValueAxisPlot;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.text.TextAnchor;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.time.DateRange;
+&nbsp;import org.jfree.data.time.Month;
+&nbsp;import org.jfree.data.time.RegularTimePeriod;
+&nbsp;import org.jfree.data.time.Year;
+&nbsp;
+&nbsp;/**
+&nbsp; * The base class for axes that display dates.  You will find it easier to
+&nbsp; * understand how this axis works if you bear in mind that it really
+&nbsp; * displays/measures integer (or long) data, where the integers are
+&nbsp; * milliseconds since midnight, 1-Jan-1970.  When displaying tick labels, the
+&nbsp; * millisecond values are converted back to dates using a {@code DateFormat} 
+&nbsp; * instance.
+&nbsp; * &lt;P&gt;
+&nbsp; * You can also create a {@link org.jfree.chart.axis.Timeline} and supply in
+&nbsp; * the constructor to create an axis that only contains certain domain values.
+&nbsp; * For example, this allows you to create a date axis that only contains
+&nbsp; * working days.
+&nbsp; */
+&nbsp;public class DateAxis extends ValueAxis implements Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -1013460999649007604L;
+&nbsp;
+&nbsp;    /** The default axis range. */
+<b class="fc">&nbsp;    public static final DateRange DEFAULT_DATE_RANGE = new DateRange();</b>
+&nbsp;
+&nbsp;    /** The default minimum auto range size. */
+&nbsp;    public static final double
+&nbsp;            DEFAULT_AUTO_RANGE_MINIMUM_SIZE_IN_MILLISECONDS = 2.0;
+&nbsp;
+&nbsp;    /** The default anchor date. */
+<b class="fc">&nbsp;    public static final Date DEFAULT_ANCHOR_DATE = new Date();</b>
+&nbsp;
+&nbsp;    /** The current tick unit. */
+&nbsp;    private DateTickUnit tickUnit;
+&nbsp;
+&nbsp;    /** The override date format. */
+&nbsp;    private DateFormat dateFormatOverride;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tick marks can be displayed at the start or the middle of the time
+&nbsp;     * period.
+&nbsp;     */
+<b class="fc">&nbsp;    private DateTickMarkPosition tickMarkPosition = DateTickMarkPosition.START;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A timeline that includes all milliseconds (as defined by
+&nbsp;     * {@code java.util.Date}) in the real time line.
+&nbsp;     */
+<b class="fc">&nbsp;    private static class DefaultTimeline implements Timeline, Serializable {</b>
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converts a millisecond into a timeline value.
+&nbsp;         *
+&nbsp;         * @param millisecond  the millisecond.
+&nbsp;         *
+&nbsp;         * @return The timeline value.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public long toTimelineValue(long millisecond) {
+<b class="fc">&nbsp;            return millisecond;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converts a date into a timeline value.
+&nbsp;         *
+&nbsp;         * @param date  the domain value.
+&nbsp;         *
+&nbsp;         * @return The timeline value.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public long toTimelineValue(Date date) {
+<b class="nc">&nbsp;            return date.getTime();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Converts a timeline value into a millisecond (as encoded by
+&nbsp;         * {@code java.util.Date}).
+&nbsp;         *
+&nbsp;         * @param value  the value.
+&nbsp;         *
+&nbsp;         * @return The millisecond.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public long toMillisecond(long value) {
+<b class="fc">&nbsp;            return value;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns {@code true} if the timeline includes the specified
+&nbsp;         * domain value.
+&nbsp;         *
+&nbsp;         * @param millisecond  the millisecond.
+&nbsp;         *
+&nbsp;         * @return {@code true}.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public boolean containsDomainValue(long millisecond) {
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns {@code true} if the timeline includes the specified
+&nbsp;         * domain value.
+&nbsp;         *
+&nbsp;         * @param date  the date.
+&nbsp;         *
+&nbsp;         * @return {@code true}.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public boolean containsDomainValue(Date date) {
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns {@code true} if the timeline includes the specified
+&nbsp;         * domain value range.
+&nbsp;         *
+&nbsp;         * @param from  the start value.
+&nbsp;         * @param to  the end value.
+&nbsp;         *
+&nbsp;         * @return {@code true}.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public boolean containsDomainRange(long from, long to) {
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns {@code true} if the timeline includes the specified
+&nbsp;         * domain value range.
+&nbsp;         *
+&nbsp;         * @param from  the start date.
+&nbsp;         * @param to  the end date.
+&nbsp;         *
+&nbsp;         * @return {@code true}.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public boolean containsDomainRange(Date from, Date to) {
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Tests an object for equality with this instance.
+&nbsp;         *
+&nbsp;         * @param object  the object.
+&nbsp;         *
+&nbsp;         * @return A boolean.
+&nbsp;         */
+&nbsp;        @Override
+&nbsp;        public boolean equals(Object object) {
+<b class="fc">&nbsp;            if (object == null) {</b>
+<b class="nc">&nbsp;                return false;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (object == this) {</b>
+<b class="nc">&nbsp;                return true;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (object instanceof DefaultTimeline) {</b>
+<b class="fc">&nbsp;                return true;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /** A static default timeline shared by all standard DateAxis */
+<b class="fc">&nbsp;    private static final Timeline DEFAULT_TIMELINE = new DefaultTimeline();</b>
+&nbsp;
+&nbsp;    /** The time zone for the axis. */
+&nbsp;    private TimeZone timeZone;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The locale for the axis ({@code null} is not permitted).
+&nbsp;     */
+&nbsp;    private Locale locale;
+&nbsp;
+&nbsp;    /** Our underlying timeline. */
+&nbsp;    private Timeline timeline;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a date axis with no label.
+&nbsp;     */
+&nbsp;    public DateAxis() {
+<b class="fc">&nbsp;        this(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a date axis with the specified label.
+&nbsp;     *
+&nbsp;     * @param label  the axis label ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public DateAxis(String label) {
+<b class="fc">&nbsp;        this(label, TimeZone.getDefault(), Locale.getDefault());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a date axis.
+&nbsp;     *
+&nbsp;     * @param label  the axis label ({@code null} permitted).
+&nbsp;     * @param zone  the time zone.
+&nbsp;     * @param locale  the locale ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public DateAxis(String label, TimeZone zone, Locale locale) {
+<b class="fc">&nbsp;        super(label, DateAxis.createStandardDateTickUnits(zone, locale));</b>
+<b class="fc">&nbsp;        this.tickUnit = new DateTickUnit(DateTickUnitType.DAY, 1, </b>
+&nbsp;                new SimpleDateFormat());
+<b class="fc">&nbsp;        setAutoRangeMinimumSize(</b>
+&nbsp;                DEFAULT_AUTO_RANGE_MINIMUM_SIZE_IN_MILLISECONDS);
+<b class="fc">&nbsp;        setRange(DEFAULT_DATE_RANGE, false, false);</b>
+<b class="fc">&nbsp;        this.dateFormatOverride = null;</b>
+<b class="fc">&nbsp;        this.timeZone = zone;</b>
+<b class="fc">&nbsp;        this.locale = locale;</b>
+<b class="fc">&nbsp;        this.timeline = DEFAULT_TIMELINE;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the time zone for the axis.
+&nbsp;     *
+&nbsp;     * @return The time zone (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTimeZone(TimeZone)
+&nbsp;     */
+&nbsp;    public TimeZone getTimeZone() {
+<b class="nc">&nbsp;        return this.timeZone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the time zone for the axis and sends an {@link AxisChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param zone  the time zone ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getTimeZone()
+&nbsp;     */
+&nbsp;    public void setTimeZone(TimeZone zone) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(zone, &quot;zone&quot;);</b>
+<b class="fc">&nbsp;        this.timeZone = zone;</b>
+<b class="fc">&nbsp;        setStandardTickUnits(createStandardDateTickUnits(zone, this.locale));</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the locale for this axis.
+&nbsp;     * 
+&nbsp;     * @return The locale (never {@code null}).
+&nbsp;     */
+&nbsp;    public Locale getLocale() {
+<b class="nc">&nbsp;        return this.locale;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets the locale for the axis and sends a change event to all registered 
+&nbsp;     * listeners.
+&nbsp;     * 
+&nbsp;     * @param locale  the new locale ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setLocale(Locale locale) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(locale, &quot;locale&quot;);</b>
+<b class="nc">&nbsp;        this.locale = locale;</b>
+<b class="nc">&nbsp;        setStandardTickUnits(createStandardDateTickUnits(this.timeZone, </b>
+&nbsp;                this.locale));
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the underlying timeline used by this axis.
+&nbsp;     *
+&nbsp;     * @return The timeline.
+&nbsp;     */
+&nbsp;    public Timeline getTimeline() {
+<b class="nc">&nbsp;        return this.timeline;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the underlying timeline to use for this axis.  If the timeline is 
+&nbsp;     * changed, an {@link AxisChangeEvent} is sent to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param timeline  the timeline.
+&nbsp;     */
+&nbsp;    public void setTimeline(Timeline timeline) {
+<b class="nc">&nbsp;        if (this.timeline != timeline) {</b>
+<b class="nc">&nbsp;            this.timeline = timeline;</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tick unit for the axis.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * Note: if the {@code autoTickUnitSelection} flag is
+&nbsp;     * {@code true} the tick unit may be changed while the axis is being
+&nbsp;     * drawn, so in that case the return value from this method may be
+&nbsp;     * irrelevant if the method is called before the axis has been drawn.
+&nbsp;     *
+&nbsp;     * @return The tick unit (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTickUnit(DateTickUnit)
+&nbsp;     * @see ValueAxis#isAutoTickUnitSelection()
+&nbsp;     */
+&nbsp;    public DateTickUnit getTickUnit() {
+<b class="fc">&nbsp;        return this.tickUnit;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick unit for the axis.  The auto-tick-unit-selection flag is
+&nbsp;     * set to {@code false}, and registered listeners are notified that
+&nbsp;     * the axis has been changed.
+&nbsp;     *
+&nbsp;     * @param unit  the tick unit.
+&nbsp;     *
+&nbsp;     * @see #getTickUnit()
+&nbsp;     * @see #setTickUnit(DateTickUnit, boolean, boolean)
+&nbsp;     */
+&nbsp;    public void setTickUnit(DateTickUnit unit) {
+<b class="fc">&nbsp;        setTickUnit(unit, true, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick unit attribute and, if requested, sends an 
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param unit  the new tick unit.
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     * @param turnOffAutoSelection  turn off auto selection?
+&nbsp;     *
+&nbsp;     * @see #getTickUnit()
+&nbsp;     */
+&nbsp;    public void setTickUnit(DateTickUnit unit, boolean notify,
+&nbsp;                            boolean turnOffAutoSelection) {
+&nbsp;
+<b class="fc">&nbsp;        this.tickUnit = unit;</b>
+<b class="fc">&nbsp;        if (turnOffAutoSelection) {</b>
+<b class="fc">&nbsp;            setAutoTickUnitSelection(false, false);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the date format override.  If this is non-null, then it will be
+&nbsp;     * used to format the dates on the axis.
+&nbsp;     *
+&nbsp;     * @return The formatter (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public DateFormat getDateFormatOverride() {
+<b class="fc">&nbsp;        return this.dateFormatOverride;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the date format override and sends an {@link AxisChangeEvent} to 
+&nbsp;     * all registered listeners.  If this is non-null, then it will be
+&nbsp;     * used to format the dates on the axis.
+&nbsp;     *
+&nbsp;     * @param formatter  the date formatter ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setDateFormatOverride(DateFormat formatter) {
+<b class="fc">&nbsp;        this.dateFormatOverride = formatter;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the upper and lower bounds for the axis and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.  As a side-effect,
+&nbsp;     * the auto-range flag is set to false.
+&nbsp;     *
+&nbsp;     * @param range  the new range ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setRange(Range range) {
+<b class="fc">&nbsp;        setRange(range, true, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the range for the axis, if requested, sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.  As a side-effect,
+&nbsp;     * the auto-range flag is set to {@code false} (optional).
+&nbsp;     *
+&nbsp;     * @param range  the range ({@code null} not permitted).
+&nbsp;     * @param turnOffAutoRange  a flag that controls whether or not the auto
+&nbsp;     *                          range is turned off.
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setRange(Range range, boolean turnOffAutoRange,
+&nbsp;                         boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(range, &quot;range&quot;);</b>
+&nbsp;        // usually the range will be a DateRange, but if it isn&#39;t do a
+&nbsp;        // conversion...
+<b class="fc">&nbsp;        if (!(range instanceof DateRange)) {</b>
+<b class="nc">&nbsp;            range = new DateRange(range);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        super.setRange(range, turnOffAutoRange, notify);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis range and sends an {@link AxisChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param lower  the lower bound for the axis.
+&nbsp;     * @param upper  the upper bound for the axis.
+&nbsp;     */
+&nbsp;    public void setRange(Date lower, Date upper) {
+<b class="fc">&nbsp;        if (lower.getTime() &gt;= upper.getTime()) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires &#39;lower&#39; &lt; &#39;upper&#39;.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setRange(new DateRange(lower, upper));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis range and sends an {@link AxisChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param lower  the lower bound for the axis.
+&nbsp;     * @param upper  the upper bound for the axis.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void setRange(double lower, double upper) {
+<b class="fc">&nbsp;        if (lower &gt;= upper) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires &#39;lower&#39; &lt; &#39;upper&#39;.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setRange(new DateRange(lower, upper));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the earliest date visible on the axis.
+&nbsp;     *
+&nbsp;     * @return The date.
+&nbsp;     *
+&nbsp;     * @see #setMinimumDate(Date)
+&nbsp;     * @see #getMaximumDate()
+&nbsp;     */
+&nbsp;    public Date getMinimumDate() {
+&nbsp;        Date result;
+<b class="fc">&nbsp;        Range range = getRange();</b>
+<b class="fc">&nbsp;        if (range instanceof DateRange) {</b>
+<b class="fc">&nbsp;            DateRange r = (DateRange) range;</b>
+<b class="fc">&nbsp;            result = r.getLowerDate();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            result = new Date((long) range.getLowerBound());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the minimum date visible on the axis and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.  If
+&nbsp;     * {@code date} is on or after the current maximum date for
+&nbsp;     * the axis, the maximum date will be shifted to preserve the current
+&nbsp;     * length of the axis.
+&nbsp;     *
+&nbsp;     * @param date  the date ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getMinimumDate()
+&nbsp;     * @see #setMaximumDate(Date)
+&nbsp;     */
+&nbsp;    public void setMinimumDate(Date date) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(date, &quot;date&quot;);</b>
+&nbsp;        // check the new minimum date relative to the current maximum date
+<b class="fc">&nbsp;        Date maxDate = getMaximumDate();</b>
+<b class="fc">&nbsp;        long maxMillis = maxDate.getTime();</b>
+<b class="fc">&nbsp;        long newMinMillis = date.getTime();</b>
+<b class="fc">&nbsp;        if (maxMillis &lt;= newMinMillis) {</b>
+<b class="fc">&nbsp;            Date oldMin = getMinimumDate();</b>
+<b class="fc">&nbsp;            long length = maxMillis - oldMin.getTime();</b>
+<b class="fc">&nbsp;            maxDate = new Date(newMinMillis + length);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setRange(new DateRange(date, maxDate), true, false);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the latest date visible on the axis.
+&nbsp;     *
+&nbsp;     * @return The date.
+&nbsp;     *
+&nbsp;     * @see #setMaximumDate(Date)
+&nbsp;     * @see #getMinimumDate()
+&nbsp;     */
+&nbsp;    public Date getMaximumDate() {
+&nbsp;        Date result;
+<b class="fc">&nbsp;        Range range = getRange();</b>
+<b class="fc">&nbsp;        if (range instanceof DateRange) {</b>
+<b class="fc">&nbsp;            DateRange r = (DateRange) range;</b>
+<b class="fc">&nbsp;            result = r.getUpperDate();</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="nc">&nbsp;            result = new Date((long) range.getUpperBound());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum date visible on the axis and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.  If
+&nbsp;     * {@code maximumDate} is on or before the current minimum date for
+&nbsp;     * the axis, the minimum date will be shifted to preserve the current
+&nbsp;     * length of the axis.
+&nbsp;     *
+&nbsp;     * @param maximumDate  the date ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getMinimumDate()
+&nbsp;     * @see #setMinimumDate(Date)
+&nbsp;     */
+&nbsp;    public void setMaximumDate(Date maximumDate) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(maximumDate, &quot;maximumDate&quot;);</b>
+&nbsp;        // check the new maximum date relative to the current minimum date
+<b class="fc">&nbsp;        Date minDate = getMinimumDate();</b>
+<b class="fc">&nbsp;        long minMillis = minDate.getTime();</b>
+<b class="fc">&nbsp;        long newMaxMillis = maximumDate.getTime();</b>
+<b class="fc">&nbsp;        if (minMillis &gt;= newMaxMillis) {</b>
+<b class="fc">&nbsp;            Date oldMax = getMaximumDate();</b>
+<b class="fc">&nbsp;            long length = oldMax.getTime() - minMillis;</b>
+<b class="fc">&nbsp;            minDate = new Date(newMaxMillis - length);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setRange(new DateRange(minDate, maximumDate), true, false);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tick mark position (start, middle or end of the time period).
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     */
+&nbsp;    public DateTickMarkPosition getTickMarkPosition() {
+<b class="nc">&nbsp;        return this.tickMarkPosition;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick mark position (start, middle or end of the time period)
+&nbsp;     * and sends an {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setTickMarkPosition(DateTickMarkPosition position) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(position, &quot;position&quot;);</b>
+<b class="fc">&nbsp;        this.tickMarkPosition = position;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Configures the axis to work with the specified plot.  If the axis has
+&nbsp;     * auto-scaling, then sets the maximum and minimum values.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void configure() {
+<b class="fc">&nbsp;        if (isAutoRange()) {</b>
+<b class="fc">&nbsp;            autoAdjustRange();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the axis hides this value, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param millis  the data value.
+&nbsp;     *
+&nbsp;     * @return A value.
+&nbsp;     */
+&nbsp;    public boolean isHiddenValue(long millis) {
+<b class="fc">&nbsp;        return (!this.timeline.containsDomainValue(new Date(millis)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates the data value to the display coordinates (Java 2D User Space)
+&nbsp;     * of the chart.
+&nbsp;     *
+&nbsp;     * @param value  the date to be plotted.
+&nbsp;     * @param area  the rectangle (in Java2D space) where the data is to be
+&nbsp;     *              plotted.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The coordinate corresponding to the supplied data value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double valueToJava2D(double value, Rectangle2D area,
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        value = this.timeline.toTimelineValue((long) value);</b>
+&nbsp;
+<b class="fc">&nbsp;        DateRange range = (DateRange) getRange();</b>
+<b class="fc">&nbsp;        double axisMin = this.timeline.toTimelineValue(range.getLowerMillis());</b>
+<b class="fc">&nbsp;        double axisMax = this.timeline.toTimelineValue(range.getUpperMillis());</b>
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            double minX = area.getX();</b>
+<b class="fc">&nbsp;            double maxX = area.getMaxX();</b>
+<b class="fc">&nbsp;            if (isInverted()) {</b>
+<b class="nc">&nbsp;                result = maxX + ((value - axisMin) / (axisMax - axisMin))</b>
+&nbsp;                         * (minX - maxX);
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                result = minX + ((value - axisMin) / (axisMax - axisMin))</b>
+&nbsp;                         * (maxX - minX);
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="nc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="nc">&nbsp;            double minY = area.getMinY();</b>
+<b class="nc">&nbsp;            double maxY = area.getMaxY();</b>
+<b class="nc">&nbsp;            if (isInverted()) {</b>
+<b class="nc">&nbsp;                result = minY + (((value - axisMin) / (axisMax - axisMin))</b>
+&nbsp;                         * (maxY - minY));
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                result = maxY - (((value - axisMin) / (axisMax - axisMin))</b>
+&nbsp;                         * (maxY - minY));
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates a date to Java2D coordinates, based on the range displayed by
+&nbsp;     * this axis for the specified data area.
+&nbsp;     *
+&nbsp;     * @param date  the date.
+&nbsp;     * @param area  the rectangle (in Java2D space) where the data is to be
+&nbsp;     *              plotted.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The coordinate corresponding to the supplied date.
+&nbsp;     */
+&nbsp;    public double dateToJava2D(Date date, Rectangle2D area, 
+&nbsp;            RectangleEdge edge) {
+<b class="nc">&nbsp;        double value = date.getTime();</b>
+<b class="nc">&nbsp;        return valueToJava2D(value, area, edge);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Translates a Java2D coordinate into the corresponding data value.  To
+&nbsp;     * perform this translation, you need to know the area used for plotting
+&nbsp;     * data, and which edge the axis is located on.
+&nbsp;     *
+&nbsp;     * @param java2DValue  the coordinate in Java2D space.
+&nbsp;     * @param area  the rectangle (in Java2D space) where the data is to be
+&nbsp;     *              plotted.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return A data value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double java2DToValue(double java2DValue, Rectangle2D area, 
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        DateRange range = (DateRange) getRange();</b>
+<b class="fc">&nbsp;        double axisMin = this.timeline.toTimelineValue(range.getLowerMillis());</b>
+<b class="fc">&nbsp;        double axisMax = this.timeline.toTimelineValue(range.getUpperMillis());</b>
+&nbsp;
+<b class="fc">&nbsp;        double min = 0.0;</b>
+<b class="fc">&nbsp;        double max = 0.0;</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            min = area.getX();</b>
+<b class="fc">&nbsp;            max = area.getMaxX();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            min = area.getMaxY();</b>
+<b class="fc">&nbsp;            max = area.getY();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        double result;
+<b class="fc">&nbsp;        if (isInverted()) {</b>
+<b class="fc">&nbsp;             result = axisMax - ((java2DValue - min) / (max - min)</b>
+&nbsp;                      * (axisMax - axisMin));
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;             result = axisMin + ((java2DValue - min) / (max - min)</b>
+&nbsp;                      * (axisMax - axisMin));
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return this.timeline.toMillisecond((long) result);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the value of the lowest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @param unit  date unit to use.
+&nbsp;     *
+&nbsp;     * @return The value of the lowest visible tick on the axis.
+&nbsp;     */
+&nbsp;    public Date calculateLowestVisibleTickValue(DateTickUnit unit) {
+<b class="fc">&nbsp;        return nextStandardDate(getMinimumDate(), unit);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the value of the highest visible tick on the axis.
+&nbsp;     *
+&nbsp;     * @param unit  date unit to use.
+&nbsp;     *
+&nbsp;     * @return The value of the highest visible tick on the axis.
+&nbsp;     */
+&nbsp;    public Date calculateHighestVisibleTickValue(DateTickUnit unit) {
+<b class="nc">&nbsp;        return previousStandardDate(getMaximumDate(), unit);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the previous &quot;standard&quot; date, for a given date and tick unit.
+&nbsp;     *
+&nbsp;     * @param date  the reference date.
+&nbsp;     * @param unit  the tick unit.
+&nbsp;     *
+&nbsp;     * @return The previous &quot;standard&quot; date.
+&nbsp;     */
+&nbsp;    protected Date previousStandardDate(Date date, DateTickUnit unit) {
+&nbsp;
+&nbsp;        int milliseconds;
+&nbsp;        int seconds;
+&nbsp;        int minutes;
+&nbsp;        int hours;
+&nbsp;        int days;
+&nbsp;        int months;
+&nbsp;        int years;
+&nbsp;
+<b class="fc">&nbsp;        Calendar calendar = Calendar.getInstance(this.timeZone, this.locale);</b>
+<b class="fc">&nbsp;        calendar.setTime(date);</b>
+<b class="fc">&nbsp;        int count = unit.getMultiple();</b>
+<b class="fc">&nbsp;        int current = calendar.get(unit.getCalendarField());</b>
+<b class="fc">&nbsp;        int value = count * (current / count);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (DateTickUnitType.MILLISECOND.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            months = calendar.get(Calendar.MONTH);</b>
+<b class="fc">&nbsp;            days = calendar.get(Calendar.DATE);</b>
+<b class="fc">&nbsp;            hours = calendar.get(Calendar.HOUR_OF_DAY);</b>
+<b class="fc">&nbsp;            minutes = calendar.get(Calendar.MINUTE);</b>
+<b class="fc">&nbsp;            seconds = calendar.get(Calendar.SECOND);</b>
+<b class="fc">&nbsp;            calendar.set(years, months, days, hours, minutes, seconds);</b>
+<b class="fc">&nbsp;            calendar.set(Calendar.MILLISECOND, value);</b>
+<b class="fc">&nbsp;            Date mm = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (mm.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.MILLISECOND, value - count);</b>
+<b class="fc">&nbsp;                mm = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return mm;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.SECOND.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            months = calendar.get(Calendar.MONTH);</b>
+<b class="fc">&nbsp;            days = calendar.get(Calendar.DATE);</b>
+<b class="fc">&nbsp;            hours = calendar.get(Calendar.HOUR_OF_DAY);</b>
+<b class="fc">&nbsp;            minutes = calendar.get(Calendar.MINUTE);</b>
+<b class="fc">&nbsp;            if (this.tickMarkPosition == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;                milliseconds = 0;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</b>
+<b class="fc">&nbsp;                milliseconds = 500;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                milliseconds = 999;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            calendar.set(Calendar.MILLISECOND, milliseconds);</b>
+<b class="fc">&nbsp;            calendar.set(years, months, days, hours, minutes, value);</b>
+<b class="fc">&nbsp;            Date dd = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (dd.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.SECOND, value - count);</b>
+<b class="fc">&nbsp;                dd = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return dd;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.MINUTE.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            months = calendar.get(Calendar.MONTH);</b>
+<b class="fc">&nbsp;            days = calendar.get(Calendar.DATE);</b>
+<b class="fc">&nbsp;            hours = calendar.get(Calendar.HOUR_OF_DAY);</b>
+<b class="fc">&nbsp;            if (this.tickMarkPosition == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;                seconds = 0;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</b>
+<b class="nc">&nbsp;                seconds = 30;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                seconds = 59;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            calendar.clear(Calendar.MILLISECOND);</b>
+<b class="fc">&nbsp;            calendar.set(years, months, days, hours, value, seconds);</b>
+<b class="fc">&nbsp;            Date d0 = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (d0.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.MINUTE, value - count);</b>
+<b class="fc">&nbsp;                d0 = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return d0;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.HOUR.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            months = calendar.get(Calendar.MONTH);</b>
+<b class="fc">&nbsp;            days = calendar.get(Calendar.DATE);</b>
+<b class="fc">&nbsp;            if (this.tickMarkPosition == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;                minutes = 0;</b>
+<b class="fc">&nbsp;                seconds = 0;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</b>
+<b class="fc">&nbsp;                minutes = 30;</b>
+<b class="fc">&nbsp;                seconds = 0;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                minutes = 59;</b>
+<b class="fc">&nbsp;                seconds = 59;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            calendar.clear(Calendar.MILLISECOND);</b>
+<b class="fc">&nbsp;            calendar.set(years, months, days, value, minutes, seconds);</b>
+<b class="fc">&nbsp;            Date d1 = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (d1.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.HOUR_OF_DAY, value - count);</b>
+<b class="fc">&nbsp;                d1 = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return d1;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.DAY.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            months = calendar.get(Calendar.MONTH);</b>
+<b class="fc">&nbsp;            if (this.tickMarkPosition == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;                hours = 0;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</b>
+<b class="fc">&nbsp;                hours = 12;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                hours = 23;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            calendar.clear(Calendar.MILLISECOND);</b>
+<b class="fc">&nbsp;            calendar.set(years, months, value, hours, 0, 0);</b>
+&nbsp;            // long result = calendar.getTimeInMillis();
+&nbsp;                // won&#39;t work with JDK 1.3
+<b class="fc">&nbsp;            Date d2 = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (d2.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.DATE, value - count);</b>
+<b class="fc">&nbsp;                d2 = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return d2;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.MONTH.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            value = count * ((current + 1) / count) - 1;</b>
+<b class="fc">&nbsp;            years = calendar.get(Calendar.YEAR);</b>
+<b class="fc">&nbsp;            calendar.clear(Calendar.MILLISECOND);</b>
+<b class="fc">&nbsp;            calendar.set(years, value, 1, 0, 0, 0);</b>
+<b class="fc">&nbsp;            Month month = new Month(calendar.getTime(), this.timeZone,</b>
+&nbsp;                    this.locale);
+<b class="fc">&nbsp;            Date standardDate = calculateDateForPosition(</b>
+&nbsp;                    month, this.tickMarkPosition);
+<b class="fc">&nbsp;            long millis = standardDate.getTime();</b>
+<b class="fc">&nbsp;            if (millis &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                for (int i = 0; i &lt; count; i++) {</b>
+<b class="fc">&nbsp;                    month = (Month) month.previous();</b>
+&nbsp;                }
+&nbsp;                // need to peg the month in case the time zone isn&#39;t the
+&nbsp;                // default - see bug 2078057
+<b class="fc">&nbsp;                month.peg(Calendar.getInstance(this.timeZone));</b>
+<b class="fc">&nbsp;                standardDate = calculateDateForPosition(</b>
+&nbsp;                        month, this.tickMarkPosition);
+&nbsp;            }
+<b class="fc">&nbsp;            return standardDate;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (DateTickUnitType.YEAR.equals(unit.getUnitType())) {</b>
+<b class="fc">&nbsp;            if (this.tickMarkPosition == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;                months = 0;</b>
+<b class="fc">&nbsp;                days = 1;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (this.tickMarkPosition == DateTickMarkPosition.MIDDLE) {</b>
+<b class="fc">&nbsp;                months = 6;</b>
+<b class="fc">&nbsp;                days = 1;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                months = 11;</b>
+<b class="fc">&nbsp;                days = 31;</b>
+&nbsp;            }
+<b class="fc">&nbsp;            calendar.clear(Calendar.MILLISECOND);</b>
+<b class="fc">&nbsp;            calendar.set(value, months, days, 0, 0, 0);</b>
+<b class="fc">&nbsp;            Date d3 = calendar.getTime();</b>
+<b class="fc">&nbsp;            if (d3.getTime() &gt;= date.getTime()) {</b>
+<b class="fc">&nbsp;                calendar.set(Calendar.YEAR, value - count);</b>
+<b class="fc">&nbsp;                d3 = calendar.getTime();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            return d3;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a {@link java.util.Date} corresponding to the specified position
+&nbsp;     * within a {@link RegularTimePeriod}.
+&nbsp;     *
+&nbsp;     * @param period  the period.
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A date.
+&nbsp;     */
+&nbsp;    private Date calculateDateForPosition(RegularTimePeriod period,
+&nbsp;            DateTickMarkPosition position) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(period, &quot;period&quot;);</b>
+<b class="fc">&nbsp;        Date result = null;</b>
+<b class="fc">&nbsp;        if (position == DateTickMarkPosition.START) {</b>
+<b class="fc">&nbsp;            result = new Date(period.getFirstMillisecond());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (position == DateTickMarkPosition.MIDDLE) {</b>
+<b class="fc">&nbsp;            result = new Date(period.getMiddleMillisecond());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (position == DateTickMarkPosition.END) {</b>
+<b class="fc">&nbsp;            result = new Date(period.getLastMillisecond());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the first &quot;standard&quot; date (based on the specified field and
+&nbsp;     * units).
+&nbsp;     *
+&nbsp;     * @param date  the reference date.
+&nbsp;     * @param unit  the date tick unit.
+&nbsp;     *
+&nbsp;     * @return The next &quot;standard&quot; date.
+&nbsp;     */
+&nbsp;    protected Date nextStandardDate(Date date, DateTickUnit unit) {
+<b class="fc">&nbsp;        Date previous = previousStandardDate(date, unit);</b>
+<b class="fc">&nbsp;        Calendar calendar = Calendar.getInstance(this.timeZone, this.locale);</b>
+<b class="fc">&nbsp;        calendar.setTime(previous);</b>
+<b class="fc">&nbsp;        calendar.add(unit.getCalendarField(), unit.getMultiple());</b>
+<b class="fc">&nbsp;        return calendar.getTime();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a collection of standard date tick units that uses the default
+&nbsp;     * time zone.  This collection will be used by default, but you are free
+&nbsp;     * to create your own collection if you want to (see the
+&nbsp;     * {@link ValueAxis#setStandardTickUnits(TickUnitSource)} method inherited
+&nbsp;     * from the {@link ValueAxis} class).
+&nbsp;     *
+&nbsp;     * @return A collection of standard date tick units.
+&nbsp;     */
+&nbsp;    public static TickUnitSource createStandardDateTickUnits() {
+<b class="nc">&nbsp;        return createStandardDateTickUnits(TimeZone.getDefault(),</b>
+<b class="nc">&nbsp;                Locale.getDefault());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a collection of standard date tick units.  This collection will
+&nbsp;     * be used by default, but you are free to create your own collection if
+&nbsp;     * you want to (see the
+&nbsp;     * {@link ValueAxis#setStandardTickUnits(TickUnitSource)} method inherited
+&nbsp;     * from the {@link ValueAxis} class).
+&nbsp;     *
+&nbsp;     * @param zone  the time zone ({@code null} not permitted).
+&nbsp;     * @param locale  the locale ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return A collection of standard date tick units.
+&nbsp;     */
+&nbsp;    public static TickUnitSource createStandardDateTickUnits(TimeZone zone,
+&nbsp;            Locale locale) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(zone, &quot;zone&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(locale, &quot;locale&quot;);</b>
+<b class="fc">&nbsp;        TickUnits units = new TickUnits();</b>
+&nbsp;
+&nbsp;        // date formatters
+<b class="fc">&nbsp;        DateFormat f1 = new SimpleDateFormat(&quot;HH:mm:ss.SSS&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f2 = new SimpleDateFormat(&quot;HH:mm:ss&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f3 = new SimpleDateFormat(&quot;HH:mm&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f4 = new SimpleDateFormat(&quot;d-MMM, HH:mm&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f5 = new SimpleDateFormat(&quot;d-MMM&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f6 = new SimpleDateFormat(&quot;MMM-yyyy&quot;, locale);</b>
+<b class="fc">&nbsp;        DateFormat f7 = new SimpleDateFormat(&quot;yyyy&quot;, locale);</b>
+&nbsp;
+<b class="fc">&nbsp;        f1.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f2.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f3.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f4.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f5.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f6.setTimeZone(zone);</b>
+<b class="fc">&nbsp;        f7.setTimeZone(zone);</b>
+&nbsp;
+&nbsp;        // milliseconds
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 1, f1));</b>
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 5,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 1, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 10,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 1, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 25,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 5, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 50,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 10, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 100,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 10, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 250,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 10, f1));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MILLISECOND, 500,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 50, f1));
+&nbsp;
+&nbsp;        // seconds
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.SECOND, 1,</b>
+&nbsp;                DateTickUnitType.MILLISECOND, 50, f2));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.SECOND, 5,</b>
+&nbsp;                DateTickUnitType.SECOND, 1, f2));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.SECOND, 10,</b>
+&nbsp;                DateTickUnitType.SECOND, 1, f2));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.SECOND, 30,</b>
+&nbsp;                DateTickUnitType.SECOND, 5, f2));
+&nbsp;
+&nbsp;        // minutes
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 1,</b>
+&nbsp;                DateTickUnitType.SECOND, 5, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 2,</b>
+&nbsp;                DateTickUnitType.SECOND, 10, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 5,</b>
+&nbsp;                DateTickUnitType.MINUTE, 1, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 10,</b>
+&nbsp;                DateTickUnitType.MINUTE, 1, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 15,</b>
+&nbsp;                DateTickUnitType.MINUTE, 5, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 20,</b>
+&nbsp;                DateTickUnitType.MINUTE, 5, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MINUTE, 30,</b>
+&nbsp;                DateTickUnitType.MINUTE, 5, f3));
+&nbsp;
+&nbsp;        // hours
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.HOUR, 1,</b>
+&nbsp;                DateTickUnitType.MINUTE, 5, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.HOUR, 2,</b>
+&nbsp;                DateTickUnitType.MINUTE, 10, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.HOUR, 4,</b>
+&nbsp;                DateTickUnitType.MINUTE, 30, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.HOUR, 6,</b>
+&nbsp;                DateTickUnitType.HOUR, 1, f3));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.HOUR, 12,</b>
+&nbsp;                DateTickUnitType.HOUR, 1, f4));
+&nbsp;
+&nbsp;        // days
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.DAY, 1,</b>
+&nbsp;                DateTickUnitType.HOUR, 1, f5));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.DAY, 2,</b>
+&nbsp;                DateTickUnitType.HOUR, 1, f5));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.DAY, 7,</b>
+&nbsp;                DateTickUnitType.DAY, 1, f5));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.DAY, 15,</b>
+&nbsp;                DateTickUnitType.DAY, 1, f5));
+&nbsp;
+&nbsp;        // months
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MONTH, 1,</b>
+&nbsp;                DateTickUnitType.DAY, 1, f6));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MONTH, 2,</b>
+&nbsp;                DateTickUnitType.DAY, 1, f6));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MONTH, 3,</b>
+&nbsp;                DateTickUnitType.MONTH, 1, f6));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MONTH, 4,</b>
+&nbsp;                DateTickUnitType.MONTH, 1, f6));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.MONTH, 6,</b>
+&nbsp;                DateTickUnitType.MONTH, 1, f6));
+&nbsp;
+&nbsp;        // years
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 1,</b>
+&nbsp;                DateTickUnitType.MONTH, 1, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 2,</b>
+&nbsp;                DateTickUnitType.MONTH, 3, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 5,</b>
+&nbsp;                DateTickUnitType.YEAR, 1, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 10,</b>
+&nbsp;                DateTickUnitType.YEAR, 1, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 25,</b>
+&nbsp;                DateTickUnitType.YEAR, 5, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 50,</b>
+&nbsp;                DateTickUnitType.YEAR, 10, f7));
+<b class="fc">&nbsp;        units.add(new DateTickUnit(DateTickUnitType.YEAR, 100,</b>
+&nbsp;                DateTickUnitType.YEAR, 20, f7));
+&nbsp;
+<b class="fc">&nbsp;        return units;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Rescales the axis to ensure that all data is visible.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected void autoAdjustRange() {
+&nbsp;
+<b class="fc">&nbsp;        Plot plot = getPlot();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (plot == null) {</b>
+&nbsp;            return;  // no plot, no data
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (plot instanceof ValueAxisPlot) {</b>
+<b class="fc">&nbsp;            ValueAxisPlot vap = (ValueAxisPlot) plot;</b>
+&nbsp;
+<b class="fc">&nbsp;            Range r = vap.getDataRange(this);</b>
+<b class="fc">&nbsp;            if (r == null) {</b>
+<b class="fc">&nbsp;                r = new DateRange();</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            long upper = this.timeline.toTimelineValue(</b>
+<b class="fc">&nbsp;                    (long) r.getUpperBound());</b>
+&nbsp;            long lower;
+<b class="fc">&nbsp;            long fixedAutoRange = (long) getFixedAutoRange();</b>
+<b class="fc">&nbsp;            if (fixedAutoRange &gt; 0.0) {</b>
+<b class="nc">&nbsp;                lower = upper - fixedAutoRange;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                lower = this.timeline.toTimelineValue((long) r.getLowerBound());</b>
+<b class="fc">&nbsp;                double range = upper - lower;</b>
+<b class="fc">&nbsp;                long minRange = (long) getAutoRangeMinimumSize();</b>
+<b class="fc">&nbsp;                if (range &lt; minRange) {</b>
+<b class="fc">&nbsp;                    long expand = (long) (minRange - range) / 2;</b>
+<b class="fc">&nbsp;                    upper = upper + expand;</b>
+<b class="fc">&nbsp;                    lower = lower - expand;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                upper = upper + (long) (range * getUpperMargin());</b>
+<b class="fc">&nbsp;                lower = lower - (long) (range * getLowerMargin());</b>
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            upper = this.timeline.toMillisecond(upper);</b>
+<b class="fc">&nbsp;            lower = this.timeline.toMillisecond(lower);</b>
+<b class="fc">&nbsp;            DateRange dr = new DateRange(new Date(lower), new Date(upper));</b>
+<b class="fc">&nbsp;            setRange(dr, false, false);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick value for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from an array of &#39;standard&#39;
+&nbsp;     * tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area defined by the axes.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectAutoTickUnit(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            selectHorizontalAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="nc">&nbsp;            selectVerticalAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick size for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from a collection of
+&nbsp;     * &#39;standard&#39; tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area defined by the axes.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectHorizontalAutoTickUnit(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        double zero = valueToJava2D(0.0, dataArea, edge);</b>
+<b class="fc">&nbsp;        double tickLabelWidth = estimateMaximumTickLabelWidth(g2,</b>
+<b class="fc">&nbsp;                getTickUnit());</b>
+&nbsp;
+&nbsp;        // start with the current tick unit...
+<b class="fc">&nbsp;        TickUnitSource tickUnits = getStandardTickUnits();</b>
+<b class="fc">&nbsp;        TickUnit unit1 = tickUnits.getCeilingTickUnit(getTickUnit());</b>
+<b class="fc">&nbsp;        double x1 = valueToJava2D(unit1.getSize(), dataArea, edge);</b>
+<b class="fc">&nbsp;        double unit1Width = Math.abs(x1 - zero);</b>
+&nbsp;
+&nbsp;        // then extrapolate...
+<b class="fc">&nbsp;        double guess = (tickLabelWidth / unit1Width) * unit1.getSize();</b>
+<b class="fc">&nbsp;        DateTickUnit unit2 = (DateTickUnit) tickUnits.getCeilingTickUnit(guess);</b>
+<b class="fc">&nbsp;        double x2 = valueToJava2D(unit2.getSize(), dataArea, edge);</b>
+<b class="fc">&nbsp;        double unit2Width = Math.abs(x2 - zero);</b>
+<b class="fc">&nbsp;        tickLabelWidth = estimateMaximumTickLabelWidth(g2, unit2);</b>
+<b class="fc">&nbsp;        if (tickLabelWidth &gt; unit2Width) {</b>
+<b class="nc">&nbsp;            unit2 = (DateTickUnit) tickUnits.getLargerTickUnit(unit2);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        setTickUnit(unit2, false, false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Selects an appropriate tick size for the axis.  The strategy is to
+&nbsp;     * display as many ticks as possible (selected from a collection of
+&nbsp;     * &#39;standard&#39; tick units) without the labels overlapping.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     */
+&nbsp;    protected void selectVerticalAutoTickUnit(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+&nbsp;        // start with the current tick unit...
+<b class="nc">&nbsp;        TickUnitSource tickUnits = getStandardTickUnits();</b>
+<b class="nc">&nbsp;        double zero = valueToJava2D(0.0, dataArea, edge);</b>
+&nbsp;
+&nbsp;        // start with a unit that is at least 1/10th of the axis length
+<b class="nc">&nbsp;        double estimate1 = getRange().getLength() / 10.0;</b>
+<b class="nc">&nbsp;        DateTickUnit candidate1</b>
+<b class="nc">&nbsp;            = (DateTickUnit) tickUnits.getCeilingTickUnit(estimate1);</b>
+<b class="nc">&nbsp;        double labelHeight1 = estimateMaximumTickLabelHeight(g2, candidate1);</b>
+<b class="nc">&nbsp;        double y1 = valueToJava2D(candidate1.getSize(), dataArea, edge);</b>
+<b class="nc">&nbsp;        double candidate1UnitHeight = Math.abs(y1 - zero);</b>
+&nbsp;
+&nbsp;        // now extrapolate based on label height and unit height...
+<b class="nc">&nbsp;        double estimate2</b>
+<b class="nc">&nbsp;            = (labelHeight1 / candidate1UnitHeight) * candidate1.getSize();</b>
+<b class="nc">&nbsp;        DateTickUnit candidate2</b>
+<b class="nc">&nbsp;            = (DateTickUnit) tickUnits.getCeilingTickUnit(estimate2);</b>
+<b class="nc">&nbsp;        double labelHeight2 = estimateMaximumTickLabelHeight(g2, candidate2);</b>
+<b class="nc">&nbsp;        double y2 = valueToJava2D(candidate2.getSize(), dataArea, edge);</b>
+<b class="nc">&nbsp;        double unit2Height = Math.abs(y2 - zero);</b>
+&nbsp;
+&nbsp;       // make final selection...
+&nbsp;       DateTickUnit finalUnit;
+<b class="nc">&nbsp;       if (labelHeight2 &lt; unit2Height) {</b>
+<b class="nc">&nbsp;           finalUnit = candidate2;</b>
+&nbsp;       }
+&nbsp;       else {
+<b class="nc">&nbsp;           finalUnit = (DateTickUnit) tickUnits.getLargerTickUnit(candidate2);</b>
+&nbsp;       }
+<b class="nc">&nbsp;       setTickUnit(finalUnit, false, false);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Estimates the maximum width of the tick labels, assuming the specified
+&nbsp;     * tick unit is used.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Rather than computing the string bounds of every tick on the axis, we
+&nbsp;     * just look at two values: the lower bound and the upper bound for the
+&nbsp;     * axis.  These two values will usually be representative.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param unit  the tick unit to use for calculation.
+&nbsp;     *
+&nbsp;     * @return The estimated maximum width of the tick labels.
+&nbsp;     */
+&nbsp;    private double estimateMaximumTickLabelWidth(Graphics2D g2, 
+&nbsp;            DateTickUnit unit) {
+&nbsp;
+<b class="fc">&nbsp;        RectangleInsets tickLabelInsets = getTickLabelInsets();</b>
+<b class="fc">&nbsp;        double result = tickLabelInsets.getLeft() + tickLabelInsets.getRight();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        FontRenderContext frc = g2.getFontRenderContext();</b>
+<b class="fc">&nbsp;        LineMetrics lm = tickLabelFont.getLineMetrics(&quot;ABCxyz&quot;, frc);</b>
+<b class="fc">&nbsp;        if (isVerticalTickLabels()) {</b>
+&nbsp;            // all tick labels have the same width (equal to the height of
+&nbsp;            // the font)...
+<b class="nc">&nbsp;            result += lm.getHeight();</b>
+&nbsp;        }
+&nbsp;        else {
+&nbsp;            // look at lower and upper bounds...
+<b class="fc">&nbsp;            DateRange range = (DateRange) getRange();</b>
+<b class="fc">&nbsp;            Date lower = range.getLowerDate();</b>
+<b class="fc">&nbsp;            Date upper = range.getUpperDate();</b>
+&nbsp;            String lowerStr, upperStr;
+<b class="fc">&nbsp;            DateFormat formatter = getDateFormatOverride();</b>
+<b class="fc">&nbsp;            if (formatter != null) {</b>
+<b class="nc">&nbsp;                lowerStr = formatter.format(lower);</b>
+<b class="nc">&nbsp;                upperStr = formatter.format(upper);</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                lowerStr = unit.dateToString(lower);</b>
+<b class="fc">&nbsp;                upperStr = unit.dateToString(upper);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            FontMetrics fm = g2.getFontMetrics(tickLabelFont);</b>
+<b class="fc">&nbsp;            double w1 = fm.stringWidth(lowerStr);</b>
+<b class="fc">&nbsp;            double w2 = fm.stringWidth(upperStr);</b>
+<b class="fc">&nbsp;            result += Math.max(w1, w2);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Estimates the maximum width of the tick labels, assuming the specified
+&nbsp;     * tick unit is used.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Rather than computing the string bounds of every tick on the axis, we
+&nbsp;     * just look at two values: the lower bound and the upper bound for the
+&nbsp;     * axis.  These two values will usually be representative.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param unit  the tick unit to use for calculation.
+&nbsp;     *
+&nbsp;     * @return The estimated maximum width of the tick labels.
+&nbsp;     */
+&nbsp;    private double estimateMaximumTickLabelHeight(Graphics2D g2,
+&nbsp;            DateTickUnit unit) {
+&nbsp;
+<b class="nc">&nbsp;        RectangleInsets tickLabelInsets = getTickLabelInsets();</b>
+<b class="nc">&nbsp;        double result = tickLabelInsets.getTop() + tickLabelInsets.getBottom();</b>
+&nbsp;
+<b class="nc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="nc">&nbsp;        FontRenderContext frc = g2.getFontRenderContext();</b>
+<b class="nc">&nbsp;        LineMetrics lm = tickLabelFont.getLineMetrics(&quot;ABCxyz&quot;, frc);</b>
+<b class="nc">&nbsp;        if (!isVerticalTickLabels()) {</b>
+&nbsp;            // all tick labels have the same width (equal to the height of
+&nbsp;            // the font)...
+<b class="nc">&nbsp;            result += lm.getHeight();</b>
+&nbsp;        }
+&nbsp;        else {
+&nbsp;            // look at lower and upper bounds...
+<b class="nc">&nbsp;            DateRange range = (DateRange) getRange();</b>
+<b class="nc">&nbsp;            Date lower = range.getLowerDate();</b>
+<b class="nc">&nbsp;            Date upper = range.getUpperDate();</b>
+&nbsp;            String lowerStr, upperStr;
+<b class="nc">&nbsp;            DateFormat formatter = getDateFormatOverride();</b>
+<b class="nc">&nbsp;            if (formatter != null) {</b>
+<b class="nc">&nbsp;                lowerStr = formatter.format(lower);</b>
+<b class="nc">&nbsp;                upperStr = formatter.format(upper);</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                lowerStr = unit.dateToString(lower);</b>
+<b class="nc">&nbsp;                upperStr = unit.dateToString(upper);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            FontMetrics fm = g2.getFontMetrics(tickLabelFont);</b>
+<b class="nc">&nbsp;            double w1 = fm.stringWidth(lowerStr);</b>
+<b class="nc">&nbsp;            double w2 = fm.stringWidth(upperStr);</b>
+<b class="nc">&nbsp;            result += Math.max(w1, w2);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the positions of the tick labels for the axis, storing the
+&nbsp;     * results in the tick label list (ready for drawing).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the axis state.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List&lt;? extends Tick&gt; refreshTicks(Graphics2D g2, AxisState state, 
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List&lt;? extends Tick&gt; result = null;</b>
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            result = refreshTicksHorizontal(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            result = refreshTicksVertical(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Corrects the given tick date for the position setting.
+&nbsp;     *
+&nbsp;     * @param time  the tick date/time.
+&nbsp;     * @param unit  the tick unit.
+&nbsp;     * @param position  the tick position.
+&nbsp;     *
+&nbsp;     * @return The adjusted time.
+&nbsp;     */
+&nbsp;    private Date correctTickDateForPosition(Date time, DateTickUnit unit,
+&nbsp;            DateTickMarkPosition position) {
+<b class="fc">&nbsp;        Date result = time;</b>
+<b class="fc">&nbsp;        if (unit.getUnitType().equals(DateTickUnitType.MONTH)) {</b>
+<b class="fc">&nbsp;            result = calculateDateForPosition(new Month(time, this.timeZone,</b>
+&nbsp;                    this.locale), position);
+<b class="fc">&nbsp;        } else if (unit.getUnitType().equals(DateTickUnitType.YEAR)) {</b>
+<b class="nc">&nbsp;            result = calculateDateForPosition(new Year(time, this.timeZone,</b>
+&nbsp;                    this.locale), position);
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recalculates the ticks for the date axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the data is to be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    protected List&lt;? extends Tick&gt; refreshTicksHorizontal(Graphics2D g2,
+&nbsp;                Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List&lt;DateTick&gt; result = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        g2.setFont(tickLabelFont);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (isAutoTickUnitSelection()) {</b>
+<b class="fc">&nbsp;            selectAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        DateTickUnit unit = getTickUnit();</b>
+<b class="fc">&nbsp;        Date tickDate = calculateLowestVisibleTickValue(unit);</b>
+<b class="fc">&nbsp;        Date upperDate = getMaximumDate();</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean hasRolled = false;</b>
+<b class="fc">&nbsp;        while (tickDate.before(upperDate)) {</b>
+&nbsp;            // could add a flag to make the following correction optional...
+<b class="fc">&nbsp;            if (!hasRolled) {</b>
+<b class="fc">&nbsp;                tickDate = correctTickDateForPosition(tickDate, unit,</b>
+&nbsp;                     this.tickMarkPosition);
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            long lowestTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;            long distance = unit.addToDate(tickDate, this.timeZone).getTime()</b>
+&nbsp;                    - lowestTickTime;
+<b class="fc">&nbsp;            int minorTickSpaces = getMinorTickCount();</b>
+<b class="fc">&nbsp;            if (minorTickSpaces &lt;= 0) {</b>
+<b class="fc">&nbsp;                minorTickSpaces = unit.getMinorTickCount();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</b>
+<b class="nc">&nbsp;                long minorTickTime = lowestTickTime - distance</b>
+&nbsp;                        * minorTick / minorTickSpaces;
+<b class="nc">&nbsp;                if (minorTickTime &gt; 0 &amp;&amp; getRange().contains(minorTickTime)</b>
+<b class="nc">&nbsp;                        &amp;&amp; (!isHiddenValue(minorTickTime))) {</b>
+<b class="nc">&nbsp;                    result.add(new DateTick(TickType.MINOR,</b>
+&nbsp;                            new Date(minorTickTime), &quot;&quot;, TextAnchor.TOP_CENTER,
+&nbsp;                            TextAnchor.CENTER, 0.0));
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            if (!isHiddenValue(tickDate.getTime())) {</b>
+&nbsp;                // work out the value, label and position
+&nbsp;                String tickLabel;
+<b class="fc">&nbsp;                DateFormat formatter = getDateFormatOverride();</b>
+<b class="fc">&nbsp;                if (formatter != null) {</b>
+<b class="nc">&nbsp;                    tickLabel = formatter.format(tickDate);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    tickLabel = this.tickUnit.dateToString(tickDate);</b>
+&nbsp;                }
+&nbsp;                TextAnchor anchor, rotationAnchor;
+<b class="fc">&nbsp;                double angle = 0.0;</b>
+<b class="fc">&nbsp;                if (isVerticalTickLabels()) {</b>
+<b class="nc">&nbsp;                    anchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="nc">&nbsp;                    rotationAnchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="nc">&nbsp;                    if (edge == RectangleEdge.TOP) {</b>
+<b class="nc">&nbsp;                        angle = Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        angle = -Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    if (edge == RectangleEdge.TOP) {</b>
+<b class="fc">&nbsp;                        anchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.BOTTOM_CENTER;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="fc">&nbsp;                        anchor = TextAnchor.TOP_CENTER;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.TOP_CENTER;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                DateTick tick = new DateTick(tickDate, tickLabel, anchor,</b>
+&nbsp;                        rotationAnchor, angle);
+<b class="fc">&nbsp;                result.add(tick);</b>
+<b class="fc">&nbsp;                hasRolled = false;</b>
+&nbsp;
+<b class="fc">&nbsp;                long currentTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;                tickDate = unit.addToDate(tickDate, this.timeZone);</b>
+<b class="fc">&nbsp;                long nextTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</b>
+<b class="nc">&nbsp;                        minorTick++) {</b>
+<b class="nc">&nbsp;                    long minorTickTime = currentTickTime</b>
+&nbsp;                            + (nextTickTime - currentTickTime)
+&nbsp;                            * minorTick / minorTickSpaces;
+<b class="nc">&nbsp;                    if (getRange().contains(minorTickTime)</b>
+<b class="nc">&nbsp;                            &amp;&amp; (!isHiddenValue(minorTickTime))) {</b>
+<b class="nc">&nbsp;                        result.add(new DateTick(TickType.MINOR,</b>
+&nbsp;                                new Date(minorTickTime), &quot;&quot;,
+&nbsp;                                TextAnchor.TOP_CENTER, TextAnchor.CENTER,
+&nbsp;                                0.0));
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;            }</b>
+&nbsp;            else {
+<b class="nc">&nbsp;                tickDate = unit.rollDate(tickDate, this.timeZone);</b>
+<b class="nc">&nbsp;                hasRolled = true;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Recalculates the ticks for the date axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the plot should be drawn.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    protected List&lt;? extends Tick&gt; refreshTicksVertical(Graphics2D g2,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List&lt;DateTick&gt; result = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        Font tickLabelFont = getTickLabelFont();</b>
+<b class="fc">&nbsp;        g2.setFont(tickLabelFont);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (isAutoTickUnitSelection()) {</b>
+<b class="nc">&nbsp;            selectAutoTickUnit(g2, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DateTickUnit unit = getTickUnit();</b>
+<b class="fc">&nbsp;        Date tickDate = calculateLowestVisibleTickValue(unit);</b>
+<b class="fc">&nbsp;        Date upperDate = getMaximumDate();</b>
+&nbsp;
+<b class="fc">&nbsp;        boolean hasRolled = false;</b>
+<b class="fc">&nbsp;        while (tickDate.before(upperDate)) {</b>
+&nbsp;
+&nbsp;            // could add a flag to make the following correction optional...
+<b class="fc">&nbsp;            if (!hasRolled) {</b>
+<b class="fc">&nbsp;                tickDate = correctTickDateForPosition(tickDate, unit,</b>
+&nbsp;                    this.tickMarkPosition);
+&nbsp;            }
+&nbsp;
+<b class="fc">&nbsp;            long lowestTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;            long distance = unit.addToDate(tickDate, this.timeZone).getTime()</b>
+&nbsp;                    - lowestTickTime;
+<b class="fc">&nbsp;            int minorTickSpaces = getMinorTickCount();</b>
+<b class="fc">&nbsp;            if (minorTickSpaces &lt;= 0) {</b>
+<b class="fc">&nbsp;                minorTickSpaces = unit.getMinorTickCount();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            for (int minorTick = 1; minorTick &lt; minorTickSpaces; minorTick++) {</b>
+<b class="nc">&nbsp;                long minorTickTime = lowestTickTime - distance</b>
+&nbsp;                        * minorTick / minorTickSpaces;
+<b class="nc">&nbsp;                if (minorTickTime &gt; 0 &amp;&amp; getRange().contains(minorTickTime)</b>
+<b class="nc">&nbsp;                        &amp;&amp; (!isHiddenValue(minorTickTime))) {</b>
+<b class="nc">&nbsp;                    result.add(new DateTick(TickType.MINOR,</b>
+&nbsp;                            new Date(minorTickTime), &quot;&quot;, TextAnchor.TOP_CENTER,
+&nbsp;                            TextAnchor.CENTER, 0.0));
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            if (!isHiddenValue(tickDate.getTime())) {</b>
+&nbsp;                // work out the value, label and position
+&nbsp;                String tickLabel;
+<b class="fc">&nbsp;                DateFormat formatter = getDateFormatOverride();</b>
+<b class="fc">&nbsp;                if (formatter != null) {</b>
+<b class="nc">&nbsp;                    tickLabel = formatter.format(tickDate);</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    tickLabel = this.tickUnit.dateToString(tickDate);</b>
+&nbsp;                }
+&nbsp;                TextAnchor anchor, rotationAnchor;
+<b class="fc">&nbsp;                double angle = 0.0;</b>
+<b class="fc">&nbsp;                if (isVerticalTickLabels()) {</b>
+<b class="nc">&nbsp;                    anchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                    rotationAnchor = TextAnchor.BOTTOM_CENTER;</b>
+<b class="nc">&nbsp;                    if (edge == RectangleEdge.LEFT) {</b>
+<b class="nc">&nbsp;                        angle = -Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        angle = Math.PI / 2.0;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;                else {
+<b class="fc">&nbsp;                    if (edge == RectangleEdge.LEFT) {</b>
+<b class="fc">&nbsp;                        anchor = TextAnchor.CENTER_RIGHT;</b>
+<b class="fc">&nbsp;                        rotationAnchor = TextAnchor.CENTER_RIGHT;</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        anchor = TextAnchor.CENTER_LEFT;</b>
+<b class="nc">&nbsp;                        rotationAnchor = TextAnchor.CENTER_LEFT;</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;
+<b class="fc">&nbsp;                DateTick tick = new DateTick(tickDate, tickLabel, anchor,</b>
+&nbsp;                        rotationAnchor, angle);
+<b class="fc">&nbsp;                result.add(tick);</b>
+<b class="fc">&nbsp;                hasRolled = false;</b>
+&nbsp;
+<b class="fc">&nbsp;                long currentTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;                tickDate = unit.addToDate(tickDate, this.timeZone);</b>
+<b class="fc">&nbsp;                long nextTickTime = tickDate.getTime();</b>
+<b class="fc">&nbsp;                for (int minorTick = 1; minorTick &lt; minorTickSpaces;</b>
+<b class="nc">&nbsp;                        minorTick++) {</b>
+<b class="nc">&nbsp;                    long minorTickTime = currentTickTime</b>
+&nbsp;                            + (nextTickTime - currentTickTime)
+&nbsp;                            * minorTick / minorTickSpaces;
+<b class="nc">&nbsp;                    if (getRange().contains(minorTickTime)</b>
+<b class="nc">&nbsp;                            &amp;&amp; (!isHiddenValue(minorTickTime))) {</b>
+<b class="nc">&nbsp;                        result.add(new DateTick(TickType.MINOR,</b>
+&nbsp;                                new Date(minorTickTime), &quot;&quot;,
+&nbsp;                                TextAnchor.TOP_CENTER, TextAnchor.CENTER,
+&nbsp;                                0.0));
+&nbsp;                    }
+&nbsp;                }
+<b class="fc">&nbsp;            }</b>
+&nbsp;            else {
+<b class="nc">&nbsp;                tickDate = unit.rollDate(tickDate, this.timeZone);</b>
+<b class="nc">&nbsp;                hasRolled = true;</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the axis on a Java 2D graphics device (such as the screen or a
+&nbsp;     * printer).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     * @param cursor  the cursor location.
+&nbsp;     * @param plotArea  the area within which the axes and data should be
+&nbsp;     *                  drawn ({@code null} not permitted).
+&nbsp;     * @param dataArea  the area within which the data should be drawn
+&nbsp;     *                  ({@code null} not permitted).
+&nbsp;     * @param edge  the location of the axis ({@code null} not permitted).
+&nbsp;     * @param plotState  collects information about the plot
+&nbsp;     *                   ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The axis state (never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public AxisState draw(Graphics2D g2, double cursor, Rectangle2D plotArea,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge,
+&nbsp;            PlotRenderingInfo plotState) {
+&nbsp;
+&nbsp;        // if the axis is not visible, don&#39;t draw it...
+<b class="fc">&nbsp;        if (!isVisible()) {</b>
+<b class="nc">&nbsp;            AxisState state = new AxisState(cursor);</b>
+&nbsp;            // even though the axis is not visible, we need to refresh ticks in
+&nbsp;            // case the grid is being drawn...
+<b class="nc">&nbsp;            List ticks = refreshTicks(g2, state, dataArea, edge);</b>
+<b class="nc">&nbsp;            state.setTicks(ticks);</b>
+<b class="nc">&nbsp;            return state;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the tick marks and labels...
+<b class="fc">&nbsp;        AxisState state = drawTickMarksAndLabels(g2, cursor, plotArea,</b>
+&nbsp;                dataArea, edge);
+&nbsp;
+&nbsp;        // draw the axis label (note that &#39;state&#39; is passed in *and*
+&nbsp;        // returned)...
+<b class="fc">&nbsp;        if (getAttributedLabel() != null) {</b>
+<b class="nc">&nbsp;            state = drawAttributedLabel(getAttributedLabel(), g2, plotArea, </b>
+&nbsp;                    dataArea, edge, state);
+&nbsp;            
+&nbsp;        } else {
+<b class="fc">&nbsp;            state = drawLabel(getLabel(), g2, plotArea, dataArea, edge, state);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        createAndAddEntity(cursor, state, dataArea, edge, plotState);</b>
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Zooms in on the current range (zoom-in stops once the axis length 
+&nbsp;     * reaches the equivalent of one millisecond).  
+&nbsp;     *
+&nbsp;     * @param lowerPercent  the new lower bound.
+&nbsp;     * @param upperPercent  the new upper bound.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void zoomRange(double lowerPercent, double upperPercent) {
+<b class="nc">&nbsp;        double start = this.timeline.toTimelineValue(</b>
+<b class="nc">&nbsp;                (long) getRange().getLowerBound());</b>
+<b class="nc">&nbsp;        double end = this.timeline.toTimelineValue(</b>
+<b class="nc">&nbsp;                (long) getRange().getUpperBound());</b>
+<b class="nc">&nbsp;        double length = end - start;</b>
+&nbsp;        Range adjusted;
+&nbsp;        long adjStart, adjEnd;
+<b class="nc">&nbsp;        if (isInverted()) {</b>
+<b class="nc">&nbsp;            adjStart = (long) (start + (length * (1 - upperPercent)));</b>
+<b class="nc">&nbsp;            adjEnd = (long) (start + (length * (1 - lowerPercent)));</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            adjStart = (long) (start + length * lowerPercent);</b>
+<b class="nc">&nbsp;            adjEnd = (long) (start + length * upperPercent);</b>
+&nbsp;        }
+&nbsp;        // when zooming to sub-millisecond ranges, it can be the case that
+&nbsp;        // adjEnd == adjStart...and we can&#39;t have an axis with zero length
+&nbsp;        // so we apply this instead:
+<b class="nc">&nbsp;        if (adjEnd &lt;= adjStart) {</b>
+<b class="nc">&nbsp;            adjEnd = adjStart + 1L;</b>
+&nbsp;        } 
+<b class="nc">&nbsp;        adjusted = new DateRange(this.timeline.toMillisecond(adjStart),</b>
+<b class="nc">&nbsp;               this.timeline.toMillisecond(adjEnd));</b>
+<b class="nc">&nbsp;        setRange(adjusted);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this axis for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof DateAxis)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DateAxis that = (DateAxis) obj;</b>
+<b class="fc">&nbsp;        if (!Objects.equals(this.timeZone, that.timeZone)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.locale, that.locale)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.tickUnit, that.tickUnit)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.dateFormatOverride, that.dateFormatOverride)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.tickMarkPosition, that.tickMarkPosition)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.timeline, that.timeline)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this object.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        return super.hashCode();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the object.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the axis does
+&nbsp;     *         not support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        DateAxis clone = (DateAxis) super.clone();</b>
+&nbsp;        // &#39;dateTickUnit&#39; is immutable : no need to clone
+<b class="fc">&nbsp;        if (this.dateFormatOverride != null) {</b>
+<b class="nc">&nbsp;            clone.dateFormatOverride</b>
+<b class="nc">&nbsp;                = (DateFormat) this.dateFormatOverride.clone();</b>
+&nbsp;        }
+&nbsp;        // &#39;tickMarkPosition&#39; is immutable : no need to clone
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

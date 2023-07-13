@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfileFragment">
+
+
+<!--  BEGIN HEADER  -->
+    <RelativeLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="319dp"
+        android:layout_height="52dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTintMode="multiply"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iconProfile"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconEvent"
+            android:src="@drawable/account_circle"
+            app:tint="@color/design_default_color_primary" />
+
+
+        <ImageView
+            android:id="@+id/iconEvent"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconLibrary"
+            android:src="@drawable/event_available"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconLibrary"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconSchool"
+            android:src="@drawable/library"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconSchool"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="20dp"
+            android:layout_toStartOf="@+id/iconBrush"
+            android:src="@drawable/school"
+            app:tint="@color/design_default_color_on_secondary" />
+
+        <ImageView
+            android:id="@+id/iconBrush"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="15dp"
+            android:src="@drawable/brush"
+            app:tint="@color/design_default_color_on_secondary" />
+    </RelativeLayout>
+<!--  END HEADER  -->
+
+
+    <ImageView
+        android:id="@+id/mainIconProfile"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/account_circle"
+        app:layout_constraintBottom_toTopOf="@+id/profileCreationEmail"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"
+        app:tint="@color/grey_400" >
+
+    </ImageView>
+
+    <ImageView
+        android:id="@+id/mainPlusIconProfile"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:layout_marginBottom="0dp"
+        android:src="@drawable/add_circle_full"
+        app:layout_constraintBottom_toBottomOf="@+id/mainIconProfile"
+        app:layout_constraintEnd_toEndOf="@+id/mainIconProfile"
+        app:tint="@color/design_default_color_primary" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profileCreationEmail"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="50dp"
+        android:hint="@string/profile_family_name_field"
+        app:layout_constraintBottom_toTopOf="@+id/profileCreationEmailConfirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.508"
+        app:layout_constraintStart_toStartOf="parent">
+
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/profileCreationEmailConfirm"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="35dp"
+        android:hint="@string/profile_name_field"
+        app:layout_constraintBottom_toTopOf="@+id/profileNextButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <Button
+        android:id="@+id/profileNextButton"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        android:text="@string/next"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

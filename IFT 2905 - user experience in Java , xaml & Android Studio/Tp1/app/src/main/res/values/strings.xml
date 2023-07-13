@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">TempsDeRéaction</string>
+    <string name="counter">Essai X de 5</string>
+    <string name="timer_time">0.000</string>
+    <string name="accept">Ok</string>
+    <string name="alert_message">Hello world!</string>
+    <string name="button_start">TAP ME TO START</string>
+    <string name="button_wait">ATTENDRE QUE LE BOUTON DEVIENNE JAUNE</string>
+    <string name="button_error">ERREUR, ATTENDRE QUE LE BOUTON SOIT JAUNE</string>
+    <string name="button_right">CONGRATS</string>
+    <string name="timer">Chronomètre</string>
+</resources>

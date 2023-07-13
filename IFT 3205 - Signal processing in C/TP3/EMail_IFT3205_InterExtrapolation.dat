@@ -1,0 +1,77 @@
+
+----------------------------------
+---- TP no 3 ---------------------
+----------------------------------
+
+Creer un repertoire TP3
+  --> mkdir TP3
+
+Aller dans TP3
+  --> cd TP3
+
+Copier les differents progs dans votre repertoire
+
+Pour compiler le programme Tp3_IFT3205_2
+ --> ./compilegcc Tp3_IFT3205_2 
+
+Pour executer le programme
+ --> ./Tp3_IFT3205_2 
+
+Pour editer le programme
+ --> emacs Tp3_IFT3205_2.c
+ 
+
+Les fonctions traditionnelles (cf. TP precedents) sont 
+disponibles;
+
+FFTDD(MatriceImgR,MatriceImgI,LENGTH,WIDTH)
+IFFTDD(MatriceImgR,MatriceImgI,LENGTH,WIDTH)
+Mod(MatriceImgM,MatriceImgR,MatriceImgI,LENGTH,WIDTH)
+Mult(MatriceImgM,coef,LENGTH,WIDTH) 
+Recal(MatriceImgM,LENGTH,WIDTH);     
+
+Je rappelle que FFTDD() et IFFTDD() ne s'applique que pour des 
+image de longueur et largeur de puissance 2. La DFT et la IDFT
+s'applique quelquesoit la taille de l'image (mais plus lente 
+et indispensable pour la question 4).
+Vous disposez donc en plus de :
+
+
+/*----------------------------------------------------------------------*/
+ /* Transforme de Fourier bidimensionnelle:                              */
+ /* --------------------------------------                               */
+ /* DFT(MatriceImgR,MatriceImgI,LENGTH,WIDTH)                            */
+ /*                                                                      */
+ /* MatriceImgR: matrice associe a l'image (valeurs reelles)             */
+ /* MatriceImgI: matrice remplies de zero  (valeurs imaginaires)         */
+ /* LENGTH     : Longueur (ou hauteur) de l'image                        */
+ /* WIDTH      : Largeur de l'image                                      */
+ /* ------                                                               */
+ /* Resultat de cette TFD:                                               */
+ /* MatriceImgR: Partie reelle de la TFD                                 */
+ /* MAtriceIMgI: Partie imaginaire de la TFD                             */
+ /*----------------------------------------------------------------------*/
+
+ /*----------------------------------------------------------------------*/
+ /* Transforme de Fourier bidimensionnelle inverse:                      */
+ /* ----------------------------------------------                       */
+ /* IDFT(MatriceImgR,MatriceImgI,LENGTH,WIDTH)                           */
+ /*                                                                      */
+ /* MatriceImgR: Partie reelle de la TFD                                 */
+ /* MatriceImgI: Partie imaginaire de la TFD                             */
+ /* LENGTH     : Longueur (ou hauteur) de la matrice                     */
+ /* WIDTH      : Largeur de la matrice                                   */
+ /* ------                                                               */
+ /* Resultat de cette TFD inverse :                                      */
+ /* MatriceImgR: Partie reelle de cette FFT inverse                      */
+ /* MAtriceIMgI: Partie imaginaire de cette FFT inverse                  */
+ /*----------------------------------------------------------------------*/
+
+
+
+Le programme Tp3_IFT3205_2 chargera l'image lena128.pgm dans un tableau 2D,
+et visualisera le resultat.
+
+ Bon Tp,
+
+ 

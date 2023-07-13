@@ -1,0 +1,1925 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > StandardChartTheme</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart</a>
+</div>
+
+<h1>Coverage Summary for Class: StandardChartTheme (org.jfree.chart)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">StandardChartTheme</td>
+<td class="coverageStat">
+  <span class="percent">
+    49,5%
+  </span>
+  <span class="absValue">
+    (46/93)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59,4%
+  </span>
+  <span class="absValue">
+    (326/549)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">StandardChartTheme$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    48,4%
+  </span>
+  <span class="absValue">
+    (46/95)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    59,2%
+  </span>
+  <span class="absValue">
+    (326/551)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -----------------------
+&nbsp; * StandardChartTheme.java
+&nbsp; * -----------------------
+&nbsp; * (C) Copyright 2008-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart;
+&nbsp;
+&nbsp;import java.awt.BasicStroke;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.annotations.XYAnnotation;
+&nbsp;import org.jfree.chart.annotations.XYTextAnnotation;
+&nbsp;import org.jfree.chart.axis.CategoryAxis;
+&nbsp;import org.jfree.chart.axis.PeriodAxis;
+&nbsp;import org.jfree.chart.axis.PeriodAxisLabelInfo;
+&nbsp;import org.jfree.chart.axis.SubCategoryAxis;
+&nbsp;import org.jfree.chart.axis.SymbolAxis;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.block.Block;
+&nbsp;import org.jfree.chart.block.BlockContainer;
+&nbsp;import org.jfree.chart.block.LabelBlock;
+&nbsp;import org.jfree.chart.plot.CategoryPlot;
+&nbsp;import org.jfree.chart.plot.CombinedDomainCategoryPlot;
+&nbsp;import org.jfree.chart.plot.CombinedDomainXYPlot;
+&nbsp;import org.jfree.chart.plot.CombinedRangeCategoryPlot;
+&nbsp;import org.jfree.chart.plot.CombinedRangeXYPlot;
+&nbsp;import org.jfree.chart.plot.DefaultDrawingSupplier;
+&nbsp;import org.jfree.chart.plot.DrawingSupplier;
+&nbsp;import org.jfree.chart.plot.FastScatterPlot;
+&nbsp;import org.jfree.chart.plot.MeterPlot;
+&nbsp;import org.jfree.chart.plot.pie.MultiplePiePlot;
+&nbsp;import org.jfree.chart.plot.pie.PieLabelLinkStyle;
+&nbsp;import org.jfree.chart.plot.pie.PiePlot;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PolarPlot;
+&nbsp;import org.jfree.chart.plot.SpiderWebPlot;
+&nbsp;import org.jfree.chart.plot.ThermometerPlot;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.renderer.AbstractRenderer;
+&nbsp;import org.jfree.chart.renderer.category.BarPainter;
+&nbsp;import org.jfree.chart.renderer.category.BarRenderer;
+&nbsp;import org.jfree.chart.renderer.category.CategoryItemRenderer;
+&nbsp;import org.jfree.chart.renderer.category.GradientBarPainter;
+&nbsp;import org.jfree.chart.renderer.category.MinMaxCategoryRenderer;
+&nbsp;import org.jfree.chart.renderer.category.StatisticalBarRenderer;
+&nbsp;import org.jfree.chart.renderer.xy.GradientXYBarPainter;
+&nbsp;import org.jfree.chart.renderer.xy.XYBarPainter;
+&nbsp;import org.jfree.chart.renderer.xy.XYBarRenderer;
+&nbsp;import org.jfree.chart.renderer.xy.XYItemRenderer;
+&nbsp;import org.jfree.chart.title.CompositeTitle;
+&nbsp;import org.jfree.chart.legend.LegendTitle;
+&nbsp;import org.jfree.chart.legend.PaintScaleLegend;
+&nbsp;import org.jfree.chart.title.TextTitle;
+&nbsp;import org.jfree.chart.title.Title;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.util.DefaultShadowGenerator;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.chart.util.ShadowGenerator;
+&nbsp;
+&nbsp;/**
+&nbsp; * A default implementation of the {@link ChartTheme} interface.  This
+&nbsp; * implementation just collects a whole bunch of chart attributes and mimics
+&nbsp; * the manual process of applying each attribute to the right sub-object
+&nbsp; * within the JFreeChart instance.  It&#39;s not elegant code, but it works.
+&nbsp; */
+&nbsp;public class StandardChartTheme implements ChartTheme, Cloneable,
+&nbsp;        PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** The name of this theme. */
+&nbsp;    private final String name;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The largest font size.  Use for the main chart title.
+&nbsp;     */
+&nbsp;    private Font extraLargeFont;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A large font.  Used for subtitles.
+&nbsp;     */
+&nbsp;    private Font largeFont;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The regular font size.  Used for axis tick labels, legend items etc.
+&nbsp;     */
+&nbsp;    private Font regularFont;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The small font size.
+&nbsp;     */
+&nbsp;    private Font smallFont;
+&nbsp;
+&nbsp;    /** The paint used to display the main chart title. */
+&nbsp;    private transient Paint titlePaint;
+&nbsp;
+&nbsp;    /** The paint used to display subtitles. */
+&nbsp;    private transient Paint subtitlePaint;
+&nbsp;
+&nbsp;    /** The background paint for the chart. */
+&nbsp;    private transient Paint chartBackgroundPaint;
+&nbsp;
+&nbsp;    /** The legend background paint. */
+&nbsp;    private transient Paint legendBackgroundPaint;
+&nbsp;
+&nbsp;    /** The legend item paint. */
+&nbsp;    private transient Paint legendItemPaint;
+&nbsp;
+&nbsp;    /** The drawing supplier. */
+&nbsp;    private DrawingSupplier drawingSupplier;
+&nbsp;
+&nbsp;    /** The background paint for the plot. */
+&nbsp;    private transient Paint plotBackgroundPaint;
+&nbsp;
+&nbsp;    /** The plot outline paint. */
+&nbsp;    private transient Paint plotOutlinePaint;
+&nbsp;
+&nbsp;    /** The label link style for pie charts. */
+&nbsp;    private PieLabelLinkStyle labelLinkStyle;
+&nbsp;
+&nbsp;    /** The label link paint for pie charts. */
+&nbsp;    private transient Paint labelLinkPaint;
+&nbsp;
+&nbsp;    /** The domain grid line paint. */
+&nbsp;    private transient Paint domainGridlinePaint;
+&nbsp;
+&nbsp;    /** The range grid line paint. */
+&nbsp;    private transient Paint rangeGridlinePaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The baseline paint (used for domain and range zero baselines)
+&nbsp;     */
+&nbsp;    private transient Paint baselinePaint;
+&nbsp;
+&nbsp;    /** The crosshair paint. */
+&nbsp;    private transient Paint crosshairPaint;
+&nbsp;
+&nbsp;    /** The axis offsets. */
+&nbsp;    private RectangleInsets axisOffset;
+&nbsp;
+&nbsp;    /** The axis label paint. */
+&nbsp;    private transient Paint axisLabelPaint;
+&nbsp;
+&nbsp;    /** The tick label paint. */
+&nbsp;    private transient Paint tickLabelPaint;
+&nbsp;
+&nbsp;    /** The item label paint. */
+&nbsp;    private transient Paint itemLabelPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not shadows are visible (for example,
+&nbsp;     * in a bar renderer).
+&nbsp;     */
+&nbsp;    private boolean shadowVisible;
+&nbsp;
+&nbsp;    /** The shadow paint. */
+&nbsp;    private transient Paint shadowPaint;
+&nbsp;
+&nbsp;    /** The bar painter. */
+&nbsp;    private BarPainter barPainter;
+&nbsp;
+&nbsp;    /** The XY bar painter. */
+&nbsp;    private XYBarPainter xyBarPainter;
+&nbsp;
+&nbsp;    /** The thermometer paint. */
+&nbsp;    private transient Paint thermometerPaint;
+&nbsp;
+&nbsp;    /** The error indicator paint for the {@link StatisticalBarRenderer}. */
+&nbsp;    private transient Paint errorIndicatorPaint;
+&nbsp;
+&nbsp;    /** The grid band paint for a {@link SymbolAxis}. */
+<b class="fc">&nbsp;    private transient Paint gridBandPaint = SymbolAxis.DEFAULT_GRID_BAND_PAINT;</b>
+&nbsp;
+&nbsp;    /** The grid band alternate paint for a {@link SymbolAxis}. */
+<b class="fc">&nbsp;    private transient Paint gridBandAlternatePaint</b>
+&nbsp;            = SymbolAxis.DEFAULT_GRID_BAND_ALTERNATE_PAINT;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The shadow generator (can be null).
+&nbsp;     */
+&nbsp;    private ShadowGenerator shadowGenerator;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and returns the default &#39;JFree&#39; chart theme.
+&nbsp;     *
+&nbsp;     * @return A chart theme.
+&nbsp;     */
+&nbsp;    public static ChartTheme createJFreeTheme() {
+<b class="nc">&nbsp;        return new StandardChartTheme(&quot;JFree&quot;);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and returns a theme called &quot;Darkness&quot;.  In this theme, the
+&nbsp;     * charts have a black background.
+&nbsp;     *
+&nbsp;     * @return The &quot;Darkness&quot; theme.
+&nbsp;     */
+&nbsp;    public static ChartTheme createDarknessTheme() {
+<b class="nc">&nbsp;        StandardChartTheme theme = new StandardChartTheme(&quot;Darkness&quot;);</b>
+<b class="nc">&nbsp;        theme.titlePaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.subtitlePaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.legendBackgroundPaint = Color.BLACK;</b>
+<b class="nc">&nbsp;        theme.legendItemPaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.chartBackgroundPaint = Color.BLACK;</b>
+<b class="nc">&nbsp;        theme.plotBackgroundPaint = Color.BLACK;</b>
+<b class="nc">&nbsp;        theme.plotOutlinePaint = Color.YELLOW;</b>
+<b class="nc">&nbsp;        theme.baselinePaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.crosshairPaint = Color.RED;</b>
+<b class="nc">&nbsp;        theme.labelLinkPaint = Color.LIGHT_GRAY;</b>
+<b class="nc">&nbsp;        theme.tickLabelPaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.axisLabelPaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.shadowPaint = Color.DARK_GRAY;</b>
+<b class="nc">&nbsp;        theme.itemLabelPaint = Color.WHITE;</b>
+<b class="nc">&nbsp;        theme.drawingSupplier = new DefaultDrawingSupplier(</b>
+<b class="nc">&nbsp;                new Paint[] {Color.decode(&quot;0xFFFF00&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0x0036CC&quot;), Color.decode(&quot;0xFF0000&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0xFFFF7F&quot;), Color.decode(&quot;0x6681CC&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0xFF7F7F&quot;), Color.decode(&quot;0xFFFFBF&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0x99A6CC&quot;), Color.decode(&quot;0xFFBFBF&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0xA9A938&quot;), Color.decode(&quot;0x2D4587&quot;)},</b>
+<b class="nc">&nbsp;                new Paint[] {Color.decode(&quot;0xFFFF00&quot;),</b>
+<b class="nc">&nbsp;                        Color.decode(&quot;0x0036CC&quot;)},</b>
+&nbsp;                new Stroke[] {new BasicStroke(2.0f)},
+&nbsp;                new Stroke[] {new BasicStroke(0.5f)},
+&nbsp;                DefaultDrawingSupplier.DEFAULT_SHAPE_SEQUENCE);
+<b class="nc">&nbsp;        theme.errorIndicatorPaint = Color.LIGHT_GRAY;</b>
+<b class="nc">&nbsp;        theme.gridBandPaint = new Color(255, 255, 255, 20);</b>
+<b class="nc">&nbsp;        theme.gridBandAlternatePaint = new Color(255, 255, 255, 40);</b>
+<b class="nc">&nbsp;        theme.shadowGenerator = null;</b>
+<b class="nc">&nbsp;        return theme;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and returns a {@link ChartTheme} that doesn&#39;t apply any changes
+&nbsp;     * to the JFreeChart defaults.  This produces the &quot;legacy&quot; look for
+&nbsp;     * JFreeChart.
+&nbsp;     *
+&nbsp;     * @return A legacy theme.
+&nbsp;     */
+&nbsp;    public static ChartTheme createLegacyTheme() {
+<b class="nc">&nbsp;        StandardChartTheme theme = new StandardChartTheme(&quot;Legacy&quot;) {</b>
+&nbsp;            @Override
+&nbsp;            public void apply(JFreeChart chart) {
+&nbsp;                // do nothing at all
+<b class="nc">&nbsp;            }</b>
+&nbsp;        };
+<b class="nc">&nbsp;        return theme;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new default instance.
+&nbsp;     *
+&nbsp;     * @param name  the name of the theme ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public StandardChartTheme(String name) {
+<b class="fc">&nbsp;        this(name, false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new default instance.
+&nbsp;     *
+&nbsp;     * @param name  the name of the theme ({@code null} not permitted).
+&nbsp;     * @param shadow  a flag that controls whether a shadow generator is 
+&nbsp;     *                included.
+&nbsp;     */
+<b class="fc">&nbsp;    public StandardChartTheme(String name, boolean shadow) {</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(name, &quot;name&quot;);</b>
+<b class="fc">&nbsp;        this.name = name;</b>
+<b class="fc">&nbsp;        this.extraLargeFont = new Font(&quot;Tahoma&quot;, Font.BOLD, 20);</b>
+<b class="fc">&nbsp;        this.largeFont = new Font(&quot;Tahoma&quot;, Font.BOLD, 14);</b>
+<b class="fc">&nbsp;        this.regularFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, 12);</b>
+<b class="fc">&nbsp;        this.smallFont = new Font(&quot;Tahoma&quot;, Font.PLAIN, 10);</b>
+<b class="fc">&nbsp;        this.titlePaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.subtitlePaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.legendBackgroundPaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.legendItemPaint = Color.DARK_GRAY;</b>
+<b class="fc">&nbsp;        this.chartBackgroundPaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.drawingSupplier = new DefaultDrawingSupplier();</b>
+<b class="fc">&nbsp;        this.plotBackgroundPaint = Color.LIGHT_GRAY;</b>
+<b class="fc">&nbsp;        this.plotOutlinePaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.labelLinkPaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.labelLinkStyle = PieLabelLinkStyle.CUBIC_CURVE;</b>
+<b class="fc">&nbsp;        this.axisOffset = new RectangleInsets(4, 4, 4, 4);</b>
+<b class="fc">&nbsp;        this.domainGridlinePaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.rangeGridlinePaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.baselinePaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.crosshairPaint = Color.BLUE;</b>
+<b class="fc">&nbsp;        this.axisLabelPaint = Color.DARK_GRAY;</b>
+<b class="fc">&nbsp;        this.tickLabelPaint = Color.DARK_GRAY;</b>
+<b class="fc">&nbsp;        this.barPainter = new GradientBarPainter();</b>
+<b class="fc">&nbsp;        this.xyBarPainter = new GradientXYBarPainter();</b>
+<b class="fc">&nbsp;        this.shadowVisible = false;</b>
+<b class="fc">&nbsp;        this.shadowPaint = Color.GRAY;</b>
+<b class="fc">&nbsp;        this.itemLabelPaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.thermometerPaint = Color.WHITE;</b>
+<b class="fc">&nbsp;        this.errorIndicatorPaint = Color.BLACK;</b>
+<b class="fc">&nbsp;        this.shadowGenerator = shadow ? new DefaultShadowGenerator() : null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the largest font for this theme.
+&nbsp;     *
+&nbsp;     * @return The largest font for this theme.
+&nbsp;     *
+&nbsp;     * @see #setExtraLargeFont(Font)
+&nbsp;     */
+&nbsp;    public Font getExtraLargeFont() {
+<b class="nc">&nbsp;        return this.extraLargeFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the largest font for this theme.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getExtraLargeFont()
+&nbsp;     */
+&nbsp;    public void setExtraLargeFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.extraLargeFont = font;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the large font for this theme.
+&nbsp;     *
+&nbsp;     * @return The large font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLargeFont(Font)
+&nbsp;     */
+&nbsp;    public Font getLargeFont() {
+<b class="nc">&nbsp;        return this.largeFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the large font for this theme.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLargeFont()
+&nbsp;     */
+&nbsp;    public void setLargeFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.largeFont = font;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the regular font.
+&nbsp;     *
+&nbsp;     * @return The regular font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRegularFont(Font)
+&nbsp;     */
+&nbsp;    public Font getRegularFont() {
+<b class="nc">&nbsp;        return this.regularFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the regular font for this theme.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getRegularFont()
+&nbsp;     */
+&nbsp;    public void setRegularFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.regularFont = font;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the small font.
+&nbsp;     *
+&nbsp;     * @return The small font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSmallFont(Font)
+&nbsp;     */
+&nbsp;    public Font getSmallFont() {
+<b class="nc">&nbsp;        return this.smallFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the small font for this theme.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getSmallFont()
+&nbsp;     */
+&nbsp;    public void setSmallFont(Font font) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="nc">&nbsp;        this.smallFont = font;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the title paint.
+&nbsp;     *
+&nbsp;     * @return The title paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTitlePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getTitlePaint() {
+<b class="nc">&nbsp;        return this.titlePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the title paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getTitlePaint()
+&nbsp;     */
+&nbsp;    public void setTitlePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.titlePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the subtitle paint.
+&nbsp;     *
+&nbsp;     * @return The subtitle paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSubtitlePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getSubtitlePaint() {
+<b class="nc">&nbsp;        return this.subtitlePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the subtitle paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getSubtitlePaint()
+&nbsp;     */
+&nbsp;    public void setSubtitlePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.subtitlePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the chart background paint.
+&nbsp;     *
+&nbsp;     * @return The chart background paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setChartBackgroundPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getChartBackgroundPaint() {
+<b class="nc">&nbsp;        return this.chartBackgroundPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the chart background paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getChartBackgroundPaint()
+&nbsp;     */
+&nbsp;    public void setChartBackgroundPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.chartBackgroundPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend background paint.
+&nbsp;     *
+&nbsp;     * @return The legend background paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendBackgroundPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLegendBackgroundPaint() {
+<b class="nc">&nbsp;        return this.legendBackgroundPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend background paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendBackgroundPaint()
+&nbsp;     */
+&nbsp;    public void setLegendBackgroundPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.legendBackgroundPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend item paint.
+&nbsp;     *
+&nbsp;     * @return The legend item paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendItemPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLegendItemPaint() {
+<b class="nc">&nbsp;        return this.legendItemPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend item paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendItemPaint()
+&nbsp;     */
+&nbsp;    public void setLegendItemPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.legendItemPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the plot background paint.
+&nbsp;     *
+&nbsp;     * @return The plot background paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setPlotBackgroundPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getPlotBackgroundPaint() {
+<b class="nc">&nbsp;        return this.plotBackgroundPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the plot background paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getPlotBackgroundPaint()
+&nbsp;     */
+&nbsp;    public void setPlotBackgroundPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.plotBackgroundPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the plot outline paint.
+&nbsp;     *
+&nbsp;     * @return The plot outline paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setPlotOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getPlotOutlinePaint() {
+<b class="nc">&nbsp;        return this.plotOutlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the plot outline paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getPlotOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setPlotOutlinePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.plotOutlinePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the label link style for pie charts.
+&nbsp;     *
+&nbsp;     * @return The label link style (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkStyle(PieLabelLinkStyle)
+&nbsp;     */
+&nbsp;    public PieLabelLinkStyle getLabelLinkStyle() {
+<b class="nc">&nbsp;        return this.labelLinkStyle;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the label link style for pie charts.
+&nbsp;     *
+&nbsp;     * @param style  the style ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkStyle()
+&nbsp;     */
+&nbsp;    public void setLabelLinkStyle(PieLabelLinkStyle style) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(style, &quot;style&quot;);</b>
+<b class="fc">&nbsp;        this.labelLinkStyle = style;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the label link paint for pie charts.
+&nbsp;     *
+&nbsp;     * @return The label link paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLabelLinkPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getLabelLinkPaint() {
+<b class="nc">&nbsp;        return this.labelLinkPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the label link paint for pie charts.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLabelLinkPaint()
+&nbsp;     */
+&nbsp;    public void setLabelLinkPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.labelLinkPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the domain grid line paint.
+&nbsp;     *
+&nbsp;     * @return The domain grid line paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDomainGridlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getDomainGridlinePaint() {
+<b class="nc">&nbsp;        return this.domainGridlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the domain grid line paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDomainGridlinePaint()
+&nbsp;     */
+&nbsp;    public void setDomainGridlinePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.domainGridlinePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range grid line paint.
+&nbsp;     *
+&nbsp;     * @return The range grid line paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setRangeGridlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getRangeGridlinePaint() {
+<b class="nc">&nbsp;        return this.rangeGridlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the range grid line paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getRangeGridlinePaint()
+&nbsp;     */
+&nbsp;    public void setRangeGridlinePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.rangeGridlinePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the baseline paint.
+&nbsp;     *
+&nbsp;     * @return The baseline paint.
+&nbsp;     */
+&nbsp;    public Paint getBaselinePaint() {
+<b class="nc">&nbsp;        return this.baselinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the baseline paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setBaselinePaint(Paint paint) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="nc">&nbsp;        this.baselinePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the crosshair paint.
+&nbsp;     *
+&nbsp;     * @return The crosshair paint.
+&nbsp;     */
+&nbsp;    public Paint getCrosshairPaint() {
+<b class="nc">&nbsp;        return this.crosshairPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the crosshair paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setCrosshairPaint(Paint paint) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="nc">&nbsp;        this.crosshairPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the axis offsets.
+&nbsp;     *
+&nbsp;     * @return The axis offsets (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAxisOffset(RectangleInsets)
+&nbsp;     */
+&nbsp;    public RectangleInsets getAxisOffset() {
+<b class="nc">&nbsp;        return this.axisOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis offset.
+&nbsp;     *
+&nbsp;     * @param offset  the offset ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getAxisOffset()
+&nbsp;     */
+&nbsp;    public void setAxisOffset(RectangleInsets offset) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(offset, &quot;offset&quot;);</b>
+<b class="fc">&nbsp;        this.axisOffset = offset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the axis label paint.
+&nbsp;     *
+&nbsp;     * @return The axis label paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setAxisLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getAxisLabelPaint() {
+<b class="nc">&nbsp;        return this.axisLabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the axis label paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getAxisLabelPaint()
+&nbsp;     */
+&nbsp;    public void setAxisLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.axisLabelPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tick label paint.
+&nbsp;     *
+&nbsp;     * @return The tick label paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTickLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getTickLabelPaint() {
+<b class="nc">&nbsp;        return this.tickLabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tick label paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getTickLabelPaint()
+&nbsp;     */
+&nbsp;    public void setTickLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.tickLabelPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label paint.
+&nbsp;     *
+&nbsp;     * @return The item label paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setItemLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getItemLabelPaint() {
+<b class="nc">&nbsp;        return this.itemLabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getItemLabelPaint()
+&nbsp;     */
+&nbsp;    public void setItemLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.itemLabelPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow visibility flag.
+&nbsp;     *
+&nbsp;     * @return The shadow visibility flag.
+&nbsp;     *
+&nbsp;     * @see #setShadowVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean isShadowVisible() {
+<b class="fc">&nbsp;        return this.shadowVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shadow visibility flag.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #isShadowVisible()
+&nbsp;     */
+&nbsp;    public void setShadowVisible(boolean visible) {
+<b class="fc">&nbsp;        this.shadowVisible = visible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow paint.
+&nbsp;     *
+&nbsp;     * @return The shadow paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setShadowPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getShadowPaint() {
+<b class="nc">&nbsp;        return this.shadowPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shadow paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getShadowPaint()
+&nbsp;     */
+&nbsp;    public void setShadowPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.shadowPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the bar painter.
+&nbsp;     *
+&nbsp;     * @return The bar painter (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setBarPainter(BarPainter)
+&nbsp;     */
+&nbsp;    public BarPainter getBarPainter() {
+<b class="nc">&nbsp;        return this.barPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the bar painter.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getBarPainter()
+&nbsp;     */
+&nbsp;    public void setBarPainter(BarPainter painter) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="fc">&nbsp;        this.barPainter = painter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the XY bar painter.
+&nbsp;     *
+&nbsp;     * @return The XY bar painter (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setXYBarPainter(XYBarPainter)
+&nbsp;     */
+&nbsp;    public XYBarPainter getXYBarPainter() {
+<b class="nc">&nbsp;        return this.xyBarPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the XY bar painter.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getXYBarPainter()
+&nbsp;     */
+&nbsp;    public void setXYBarPainter(XYBarPainter painter) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="fc">&nbsp;        this.xyBarPainter = painter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the thermometer paint.
+&nbsp;     *
+&nbsp;     * @return The thermometer paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setThermometerPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getThermometerPaint() {
+<b class="nc">&nbsp;        return this.thermometerPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the thermometer paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getThermometerPaint()
+&nbsp;     */
+&nbsp;    public void setThermometerPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.thermometerPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the error indicator paint.
+&nbsp;     *
+&nbsp;     * @return The error indicator paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setErrorIndicatorPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getErrorIndicatorPaint() {
+<b class="nc">&nbsp;        return this.errorIndicatorPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the error indicator paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getErrorIndicatorPaint()
+&nbsp;     */
+&nbsp;    public void setErrorIndicatorPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.errorIndicatorPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the grid band paint.
+&nbsp;     *
+&nbsp;     * @return The grid band paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setGridBandPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getGridBandPaint() {
+<b class="nc">&nbsp;        return this.gridBandPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the grid band paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getGridBandPaint()
+&nbsp;     */
+&nbsp;    public void setGridBandPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.gridBandPaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the grid band alternate paint (used for a {@link SymbolAxis}).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setGridBandAlternatePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getGridBandAlternatePaint() {
+<b class="nc">&nbsp;        return this.gridBandAlternatePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the grid band alternate paint (used for a {@link SymbolAxis}).
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getGridBandAlternatePaint()
+&nbsp;     */
+&nbsp;    public void setGridBandAlternatePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.gridBandAlternatePaint = paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the name of this theme.
+&nbsp;     *
+&nbsp;     * @return The name of this theme.
+&nbsp;     */
+&nbsp;    public String getName() {
+<b class="nc">&nbsp;        return this.name;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the drawing supplier for this theme.
+&nbsp;     *
+&nbsp;     * @return A clone of the drawing supplier.
+&nbsp;     */
+&nbsp;    public DrawingSupplier getDrawingSupplier() {
+<b class="fc">&nbsp;        DrawingSupplier result = null;</b>
+<b class="fc">&nbsp;        if (this.drawingSupplier instanceof PublicCloneable) {</b>
+<b class="fc">&nbsp;            PublicCloneable pc = (PublicCloneable) this.drawingSupplier;</b>
+&nbsp;              try {
+<b class="fc">&nbsp;                result = (DrawingSupplier) pc.clone();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            catch (CloneNotSupportedException e) {</b>
+<b class="nc">&nbsp;                throw new RuntimeException(e);</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the drawing supplier for this theme.
+&nbsp;     *
+&nbsp;     * @param supplier  the supplier ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDrawingSupplier()
+&nbsp;     */
+&nbsp;    public void setDrawingSupplier(DrawingSupplier supplier) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(supplier, &quot;supplier&quot;);</b>
+<b class="fc">&nbsp;        this.drawingSupplier = supplier;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies this theme to the supplied chart.
+&nbsp;     *
+&nbsp;     * @param chart  the chart ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void apply(JFreeChart chart) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(chart, &quot;chart&quot;);</b>
+<b class="fc">&nbsp;        TextTitle title = chart.getTitle();</b>
+<b class="fc">&nbsp;        if (title != null) {</b>
+<b class="fc">&nbsp;            title.setFont(this.extraLargeFont);</b>
+<b class="fc">&nbsp;            title.setPaint(this.titlePaint);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        int subtitleCount = chart.getSubtitleCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; subtitleCount; i++) {</b>
+<b class="fc">&nbsp;            applyToTitle(chart.getSubtitle(i));</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        chart.setBackgroundPaint(this.chartBackgroundPaint);</b>
+&nbsp;
+&nbsp;        // now process the plot if there is one
+<b class="fc">&nbsp;        Plot plot = chart.getPlot();</b>
+<b class="fc">&nbsp;        if (plot != null) {</b>
+<b class="fc">&nbsp;            applyToPlot(plot);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to the specified title.
+&nbsp;     *
+&nbsp;     * @param title  the title.
+&nbsp;     */
+&nbsp;    protected void applyToTitle(Title title) {
+<b class="fc">&nbsp;        if (title instanceof TextTitle) {</b>
+<b class="nc">&nbsp;            TextTitle tt = (TextTitle) title;</b>
+<b class="nc">&nbsp;            tt.setFont(this.largeFont);</b>
+<b class="nc">&nbsp;            tt.setPaint(this.subtitlePaint);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        else if (title instanceof LegendTitle) {</b>
+<b class="fc">&nbsp;            LegendTitle lt = (LegendTitle) title;</b>
+<b class="fc">&nbsp;            if (lt.getBackgroundPaint() != null) {</b>
+<b class="fc">&nbsp;                lt.setBackgroundPaint(this.legendBackgroundPaint);</b>
+&nbsp;            }
+<b class="fc">&nbsp;            lt.setItemFont(this.regularFont);</b>
+<b class="fc">&nbsp;            lt.setItemPaint(this.legendItemPaint);</b>
+<b class="fc">&nbsp;            if (lt.getWrapper() != null) {</b>
+<b class="nc">&nbsp;                applyToBlockContainer(lt.getWrapper());</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="nc">&nbsp;        else if (title instanceof PaintScaleLegend) {</b>
+<b class="nc">&nbsp;            PaintScaleLegend psl = (PaintScaleLegend) title;</b>
+<b class="nc">&nbsp;            psl.setBackgroundPaint(this.legendBackgroundPaint);</b>
+<b class="nc">&nbsp;            ValueAxis axis = psl.getAxis();</b>
+<b class="nc">&nbsp;            if (axis != null) {</b>
+<b class="nc">&nbsp;                applyToValueAxis(axis);</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        else if (title instanceof CompositeTitle) {</b>
+<b class="nc">&nbsp;            CompositeTitle ct = (CompositeTitle) title;</b>
+<b class="nc">&nbsp;            BlockContainer bc = ct.getContainer();</b>
+<b class="nc">&nbsp;            for (Block b: bc.getBlocks()) {</b>
+<b class="nc">&nbsp;                if (b instanceof Title) {</b>
+<b class="nc">&nbsp;                    applyToTitle((Title) b);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to the specified container.
+&nbsp;     *
+&nbsp;     * @param bc  a block container ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToBlockContainer(BlockContainer bc) {
+<b class="nc">&nbsp;        for (Block b : bc.getBlocks()) {</b>
+<b class="nc">&nbsp;            applyToBlock(b);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to the specified block.
+&nbsp;     *
+&nbsp;     * @param b  the block.
+&nbsp;     */
+&nbsp;    protected void applyToBlock(Block b) {
+<b class="nc">&nbsp;        if (b instanceof Title) {</b>
+<b class="nc">&nbsp;            applyToTitle((Title) b);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (b instanceof LabelBlock) {</b>
+<b class="nc">&nbsp;            LabelBlock lb = (LabelBlock) b;</b>
+<b class="nc">&nbsp;            lb.setFont(this.regularFont);</b>
+<b class="nc">&nbsp;            lb.setPaint(this.legendItemPaint);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a plot.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToPlot(Plot plot) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(plot, &quot;plot&quot;);</b>
+<b class="fc">&nbsp;        if (plot.getDrawingSupplier() != null) {</b>
+<b class="fc">&nbsp;            plot.setDrawingSupplier(getDrawingSupplier());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (plot.getBackgroundPaint() != null) {</b>
+<b class="fc">&nbsp;            plot.setBackgroundPaint(this.plotBackgroundPaint);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        plot.setOutlinePaint(this.plotOutlinePaint);</b>
+&nbsp;
+&nbsp;        // now handle specific plot types (and yes, I know this is some
+&nbsp;        // really ugly code that has to be manually updated any time a new
+&nbsp;        // plot type is added - I should have written something much cooler,
+&nbsp;        // but I didn&#39;t and neither did anyone else).
+<b class="fc">&nbsp;        if (plot instanceof PiePlot) {</b>
+<b class="fc">&nbsp;            applyToPiePlot((PiePlot) plot);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (plot instanceof MultiplePiePlot) {</b>
+<b class="nc">&nbsp;            applyToMultiplePiePlot((MultiplePiePlot) plot);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (plot instanceof CategoryPlot) {</b>
+<b class="fc">&nbsp;            applyToCategoryPlot((CategoryPlot) plot);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (plot instanceof XYPlot) {</b>
+<b class="fc">&nbsp;            applyToXYPlot((XYPlot) plot);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (plot instanceof FastScatterPlot) {</b>
+<b class="nc">&nbsp;            applyToFastScatterPlot((FastScatterPlot) plot);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (plot instanceof MeterPlot) {</b>
+<b class="nc">&nbsp;            applyToMeterPlot((MeterPlot) plot);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (plot instanceof ThermometerPlot) {</b>
+<b class="nc">&nbsp;            applyToThermometerPlot((ThermometerPlot) plot);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (plot instanceof SpiderWebPlot) {</b>
+<b class="nc">&nbsp;            applyToSpiderWebPlot((SpiderWebPlot) plot);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (plot instanceof PolarPlot) {</b>
+<b class="nc">&nbsp;            applyToPolarPlot((PolarPlot) plot);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link PiePlot} instance.
+&nbsp;     * This method also clears any set values for the section paint, outline
+&nbsp;     * etc, so that the theme&#39;s {@link DrawingSupplier} will be used.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToPiePlot(PiePlot plot) {
+<b class="fc">&nbsp;        plot.setLabelLinkPaint(this.labelLinkPaint);</b>
+<b class="fc">&nbsp;        plot.setLabelLinkStyle(this.labelLinkStyle);</b>
+<b class="fc">&nbsp;        plot.setLabelFont(this.regularFont);</b>
+<b class="fc">&nbsp;        plot.setShadowGenerator(this.shadowGenerator);</b>
+&nbsp;
+&nbsp;        // clear the section attributes so that the theme&#39;s DrawingSupplier
+&nbsp;        // will be used
+<b class="fc">&nbsp;        if (plot.getAutoPopulateSectionPaint()) {</b>
+<b class="fc">&nbsp;            plot.clearSectionPaints(false);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (plot.getAutoPopulateSectionOutlinePaint()) {</b>
+<b class="nc">&nbsp;            plot.clearSectionOutlinePaints(false);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (plot.getAutoPopulateSectionOutlineStroke()) {</b>
+<b class="nc">&nbsp;            plot.clearSectionOutlineStrokes(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link MultiplePiePlot}.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToMultiplePiePlot(MultiplePiePlot plot) {
+<b class="nc">&nbsp;        apply(plot.getPieChart());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link CategoryPlot}.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToCategoryPlot(CategoryPlot plot) {
+<b class="fc">&nbsp;        plot.setAxisOffset(this.axisOffset);</b>
+<b class="fc">&nbsp;        plot.setDomainGridlinePaint(this.domainGridlinePaint);</b>
+<b class="fc">&nbsp;        plot.setRangeGridlinePaint(this.rangeGridlinePaint);</b>
+<b class="fc">&nbsp;        plot.setRangeZeroBaselinePaint(this.baselinePaint);</b>
+<b class="fc">&nbsp;        plot.setShadowGenerator(this.shadowGenerator);</b>
+&nbsp;
+&nbsp;        // process all domain axes
+<b class="fc">&nbsp;        int domainAxisCount = plot.getDomainAxisCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; domainAxisCount; i++) {</b>
+<b class="fc">&nbsp;            CategoryAxis axis = plot.getDomainAxis(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="fc">&nbsp;                applyToCategoryAxis(axis);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // process all range axes
+<b class="fc">&nbsp;        int rangeAxisCount = plot.getRangeAxisCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rangeAxisCount; i++) {</b>
+<b class="fc">&nbsp;            ValueAxis axis = plot.getRangeAxis(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="fc">&nbsp;                applyToValueAxis(axis);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // process all renderers
+<b class="fc">&nbsp;        int rendererCount = plot.getRendererCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rendererCount; i++) {</b>
+<b class="fc">&nbsp;            CategoryItemRenderer r = plot.getRenderer(i);</b>
+<b class="fc">&nbsp;            if (r != null) {</b>
+<b class="fc">&nbsp;                applyToCategoryItemRenderer(r);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (plot instanceof CombinedDomainCategoryPlot) {</b>
+<b class="nc">&nbsp;            CombinedDomainCategoryPlot cp = (CombinedDomainCategoryPlot) plot;</b>
+<b class="nc">&nbsp;            for (CategoryPlot subplot : cp.getSubplots()) {</b>
+<b class="nc">&nbsp;                if (subplot != null) {</b>
+<b class="nc">&nbsp;                    applyToPlot(subplot);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (plot instanceof CombinedRangeCategoryPlot) {</b>
+<b class="nc">&nbsp;            CombinedRangeCategoryPlot cp = (CombinedRangeCategoryPlot) plot;</b>
+<b class="nc">&nbsp;            for (CategoryPlot subplot : cp.getSubplots()) {</b>
+<b class="nc">&nbsp;                if (subplot != null) {</b>
+<b class="nc">&nbsp;                    applyToPlot(subplot);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link XYPlot}.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @param &lt;S&gt; the type for the series keys.
+&nbsp;     */
+&nbsp;    protected &lt;S extends Comparable&lt;S&gt;&gt; void applyToXYPlot(XYPlot&lt;S&gt; plot) {
+<b class="fc">&nbsp;        plot.setAxisOffset(this.axisOffset);</b>
+<b class="fc">&nbsp;        plot.setDomainZeroBaselinePaint(this.baselinePaint);</b>
+<b class="fc">&nbsp;        plot.setRangeZeroBaselinePaint(this.baselinePaint);</b>
+<b class="fc">&nbsp;        plot.setDomainGridlinePaint(this.domainGridlinePaint);</b>
+<b class="fc">&nbsp;        plot.setRangeGridlinePaint(this.rangeGridlinePaint);</b>
+<b class="fc">&nbsp;        plot.setDomainCrosshairPaint(this.crosshairPaint);</b>
+<b class="fc">&nbsp;        plot.setRangeCrosshairPaint(this.crosshairPaint);</b>
+<b class="fc">&nbsp;        plot.setShadowGenerator(this.shadowGenerator);</b>
+&nbsp;
+&nbsp;        // process all domain axes
+<b class="fc">&nbsp;        int domainAxisCount = plot.getDomainAxisCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; domainAxisCount; i++) {</b>
+<b class="fc">&nbsp;            ValueAxis axis = plot.getDomainAxis(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="fc">&nbsp;                applyToValueAxis(axis);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // process all range axes
+<b class="fc">&nbsp;        int rangeAxisCount = plot.getRangeAxisCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rangeAxisCount; i++) {</b>
+<b class="fc">&nbsp;            ValueAxis axis = plot.getRangeAxis(i);</b>
+<b class="fc">&nbsp;            if (axis != null) {</b>
+<b class="fc">&nbsp;                applyToValueAxis(axis);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // process all renderers
+<b class="fc">&nbsp;        int rendererCount = plot.getRendererCount();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; rendererCount; i++) {</b>
+<b class="fc">&nbsp;            XYItemRenderer r = plot.getRenderer(i);</b>
+<b class="fc">&nbsp;            if (r != null) {</b>
+<b class="fc">&nbsp;                applyToXYItemRenderer(r);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        // process all annotations
+&nbsp;
+<b class="fc">&nbsp;        for (XYAnnotation a : plot.getAnnotations()) {</b>
+<b class="nc">&nbsp;            applyToXYAnnotation(a);</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        if (plot instanceof CombinedDomainXYPlot) {</b>
+<b class="nc">&nbsp;            CombinedDomainXYPlot&lt;S&gt; cp = (CombinedDomainXYPlot) plot;</b>
+<b class="nc">&nbsp;            for (XYPlot&lt;S&gt; subplot : cp.getSubplots()) {</b>
+<b class="nc">&nbsp;                if (subplot != null) {</b>
+<b class="nc">&nbsp;                    applyToPlot(subplot);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (plot instanceof CombinedRangeXYPlot) {</b>
+<b class="nc">&nbsp;            CombinedRangeXYPlot&lt;S&gt; cp = (CombinedRangeXYPlot) plot;</b>
+<b class="nc">&nbsp;            for (XYPlot subplot : cp.getSubplots()) {</b>
+<b class="nc">&nbsp;                if (subplot != null) {</b>
+<b class="nc">&nbsp;                    applyToPlot(subplot);</b>
+&nbsp;                }
+<b class="nc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link FastScatterPlot}.
+&nbsp;     * 
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToFastScatterPlot(FastScatterPlot plot) {
+<b class="nc">&nbsp;        plot.setDomainGridlinePaint(this.domainGridlinePaint);</b>
+<b class="nc">&nbsp;        plot.setRangeGridlinePaint(this.rangeGridlinePaint);</b>
+<b class="nc">&nbsp;        ValueAxis xAxis = plot.getDomainAxis();</b>
+<b class="nc">&nbsp;        if (xAxis != null) {</b>
+<b class="nc">&nbsp;            applyToValueAxis(xAxis);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        ValueAxis yAxis = plot.getRangeAxis();</b>
+<b class="nc">&nbsp;        if (yAxis != null) {</b>
+<b class="nc">&nbsp;            applyToValueAxis(yAxis);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link PolarPlot}.  This
+&nbsp;     * method is called from the {@link #applyToPlot(Plot)} method.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToPolarPlot(PolarPlot plot) {
+<b class="nc">&nbsp;        plot.setAngleLabelFont(this.regularFont);</b>
+<b class="nc">&nbsp;        plot.setAngleLabelPaint(this.tickLabelPaint);</b>
+<b class="nc">&nbsp;        plot.setAngleGridlinePaint(this.domainGridlinePaint);</b>
+<b class="nc">&nbsp;        plot.setRadiusGridlinePaint(this.rangeGridlinePaint);</b>
+<b class="nc">&nbsp;        ValueAxis axis = plot.getAxis();</b>
+<b class="nc">&nbsp;        if (axis != null) {</b>
+<b class="nc">&nbsp;            applyToValueAxis(axis);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link SpiderWebPlot}.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToSpiderWebPlot(SpiderWebPlot plot) {
+<b class="nc">&nbsp;        plot.setLabelFont(this.regularFont);</b>
+<b class="nc">&nbsp;        plot.setLabelPaint(this.axisLabelPaint);</b>
+<b class="nc">&nbsp;        plot.setAxisLinePaint(this.axisLabelPaint);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes of this theme to a {@link MeterPlot}.
+&nbsp;     *
+&nbsp;     * @param plot  the plot ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToMeterPlot(MeterPlot plot) {
+<b class="nc">&nbsp;        plot.setDialBackgroundPaint(this.plotBackgroundPaint);</b>
+<b class="nc">&nbsp;        plot.setValueFont(this.largeFont);</b>
+<b class="nc">&nbsp;        plot.setValuePaint(this.axisLabelPaint);</b>
+<b class="nc">&nbsp;        plot.setDialOutlinePaint(this.plotOutlinePaint);</b>
+<b class="nc">&nbsp;        plot.setNeedlePaint(this.thermometerPaint);</b>
+<b class="nc">&nbsp;        plot.setTickLabelFont(this.regularFont);</b>
+<b class="nc">&nbsp;        plot.setTickLabelPaint(this.tickLabelPaint);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to a {@link ThermometerPlot}.
+&nbsp;     * This method is called from the {@link #applyToPlot(Plot)} method.
+&nbsp;     *
+&nbsp;     * @param plot  the plot.
+&nbsp;     */
+&nbsp;    protected void applyToThermometerPlot(ThermometerPlot plot) {
+<b class="nc">&nbsp;        plot.setValueFont(this.largeFont);</b>
+<b class="nc">&nbsp;        plot.setThermometerPaint(this.thermometerPaint);</b>
+<b class="nc">&nbsp;        ValueAxis axis = plot.getRangeAxis();</b>
+<b class="nc">&nbsp;        if (axis != null) {</b>
+<b class="nc">&nbsp;            applyToValueAxis(axis);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to a {@link CategoryAxis}.
+&nbsp;     *
+&nbsp;     * @param axis  the axis ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToCategoryAxis(CategoryAxis axis) {
+<b class="fc">&nbsp;        axis.setLabelFont(this.largeFont);</b>
+<b class="fc">&nbsp;        axis.setLabelPaint(this.axisLabelPaint);</b>
+<b class="fc">&nbsp;        axis.setTickLabelFont(this.regularFont);</b>
+<b class="fc">&nbsp;        axis.setTickLabelPaint(this.tickLabelPaint);</b>
+<b class="fc">&nbsp;        if (axis instanceof SubCategoryAxis) {</b>
+<b class="nc">&nbsp;            SubCategoryAxis sca = (SubCategoryAxis) axis;</b>
+<b class="nc">&nbsp;            sca.setSubLabelFont(this.regularFont);</b>
+<b class="nc">&nbsp;            sca.setSubLabelPaint(this.tickLabelPaint);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to a {@link ValueAxis}.
+&nbsp;     *
+&nbsp;     * @param axis  the axis ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToValueAxis(ValueAxis axis) {
+<b class="fc">&nbsp;        axis.setLabelFont(this.largeFont);</b>
+<b class="fc">&nbsp;        axis.setLabelPaint(this.axisLabelPaint);</b>
+<b class="fc">&nbsp;        axis.setTickLabelFont(this.regularFont);</b>
+<b class="fc">&nbsp;        axis.setTickLabelPaint(this.tickLabelPaint);</b>
+<b class="fc">&nbsp;        if (axis instanceof SymbolAxis) {</b>
+<b class="nc">&nbsp;            applyToSymbolAxis((SymbolAxis) axis);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (axis instanceof PeriodAxis) {</b>
+<b class="nc">&nbsp;            applyToPeriodAxis((PeriodAxis) axis);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to a {@link SymbolAxis}.
+&nbsp;     *
+&nbsp;     * @param axis  the axis ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToSymbolAxis(SymbolAxis axis) {
+<b class="nc">&nbsp;        axis.setGridBandPaint(this.gridBandPaint);</b>
+<b class="nc">&nbsp;        axis.setGridBandAlternatePaint(this.gridBandAlternatePaint);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to a {@link PeriodAxis}.
+&nbsp;     *
+&nbsp;     * @param axis  the axis ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToPeriodAxis(PeriodAxis axis) {
+<b class="nc">&nbsp;        PeriodAxisLabelInfo[] info = axis.getLabelInfo();</b>
+<b class="nc">&nbsp;        for (int i = 0; i &lt; info.length; i++) {</b>
+<b class="nc">&nbsp;            PeriodAxisLabelInfo e = info[i];</b>
+<b class="nc">&nbsp;            PeriodAxisLabelInfo n = new PeriodAxisLabelInfo(e.getPeriodClass(),</b>
+<b class="nc">&nbsp;                    e.getDateFormat(), e.getPadding(), this.regularFont,</b>
+<b class="nc">&nbsp;                    this.tickLabelPaint, e.getDrawDividers(),</b>
+<b class="nc">&nbsp;                    e.getDividerStroke(), e.getDividerPaint());</b>
+<b class="nc">&nbsp;            info[i] = n;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        axis.setLabelInfo(info);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the attributes for this theme to an {@link AbstractRenderer}.
+&nbsp;     *
+&nbsp;     * @param renderer  the renderer ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToAbstractRenderer(AbstractRenderer renderer) {
+<b class="fc">&nbsp;        if (renderer.getAutoPopulateSeriesPaint()) {</b>
+<b class="fc">&nbsp;            renderer.clearSeriesPaints(false);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (renderer.getAutoPopulateSeriesStroke()) {</b>
+<b class="fc">&nbsp;            renderer.clearSeriesStrokes(false);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the settings of this theme to the specified renderer.
+&nbsp;     *
+&nbsp;     * @param renderer  the renderer ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToCategoryItemRenderer(CategoryItemRenderer renderer) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(renderer, &quot;renderer&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        if (renderer instanceof AbstractRenderer) {</b>
+<b class="fc">&nbsp;            applyToAbstractRenderer((AbstractRenderer) renderer);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        renderer.setDefaultItemLabelFont(this.regularFont);</b>
+<b class="fc">&nbsp;        renderer.setDefaultItemLabelPaint(this.itemLabelPaint);</b>
+&nbsp;
+&nbsp;        // now we handle some special cases - yes, UGLY code alert!
+&nbsp;
+&nbsp;        // BarRenderer
+<b class="fc">&nbsp;        if (renderer instanceof BarRenderer) {</b>
+<b class="fc">&nbsp;            BarRenderer br = (BarRenderer) renderer;</b>
+<b class="fc">&nbsp;            br.setBarPainter(this.barPainter);</b>
+<b class="fc">&nbsp;            br.setShadowVisible(this.shadowVisible);</b>
+<b class="fc">&nbsp;            br.setShadowPaint(this.shadowPaint);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;        //  StatisticalBarRenderer
+<b class="fc">&nbsp;        if (renderer instanceof StatisticalBarRenderer) {</b>
+<b class="nc">&nbsp;            StatisticalBarRenderer sbr = (StatisticalBarRenderer) renderer;</b>
+<b class="nc">&nbsp;            sbr.setErrorIndicatorPaint(this.errorIndicatorPaint);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // MinMaxCategoryRenderer
+<b class="fc">&nbsp;        if (renderer instanceof MinMaxCategoryRenderer) {</b>
+<b class="nc">&nbsp;            MinMaxCategoryRenderer mmcr = (MinMaxCategoryRenderer) renderer;</b>
+<b class="nc">&nbsp;            mmcr.setGroupPaint(this.errorIndicatorPaint);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the settings of this theme to the specified renderer.
+&nbsp;     *
+&nbsp;     * @param renderer  the renderer ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void applyToXYItemRenderer(XYItemRenderer renderer) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(renderer, &quot;renderer&quot;);</b>
+<b class="fc">&nbsp;        if (renderer instanceof AbstractRenderer) {</b>
+<b class="fc">&nbsp;            applyToAbstractRenderer((AbstractRenderer) renderer);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        renderer.setDefaultItemLabelFont(this.regularFont);</b>
+<b class="fc">&nbsp;        renderer.setDefaultItemLabelPaint(this.itemLabelPaint);</b>
+<b class="fc">&nbsp;        if (renderer instanceof XYBarRenderer) {</b>
+<b class="fc">&nbsp;            XYBarRenderer br = (XYBarRenderer) renderer;</b>
+<b class="fc">&nbsp;            br.setBarPainter(this.xyBarPainter);</b>
+<b class="fc">&nbsp;            br.setShadowVisible(this.shadowVisible);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Applies the settings of this theme to the specified annotation.
+&nbsp;     *
+&nbsp;     * @param annotation  the annotation.
+&nbsp;     */
+&nbsp;    protected void applyToXYAnnotation(XYAnnotation annotation) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(annotation, &quot;annotation&quot;);</b>
+<b class="nc">&nbsp;        if (annotation instanceof XYTextAnnotation) {</b>
+<b class="nc">&nbsp;            XYTextAnnotation xyta = (XYTextAnnotation) annotation;</b>
+<b class="nc">&nbsp;            xyta.setFont(this.smallFont);</b>
+<b class="nc">&nbsp;            xyta.setPaint(this.itemLabelPaint);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this theme for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof StandardChartTheme)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        StandardChartTheme that = (StandardChartTheme) obj;</b>
+<b class="fc">&nbsp;        if (!this.name.equals(that.name)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.extraLargeFont.equals(that.extraLargeFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.largeFont.equals(that.largeFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.regularFont.equals(that.regularFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.smallFont.equals(that.smallFont)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.titlePaint, that.titlePaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.subtitlePaint, that.subtitlePaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.chartBackgroundPaint,</b>
+&nbsp;                that.chartBackgroundPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.legendBackgroundPaint,</b>
+&nbsp;                that.legendBackgroundPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.legendItemPaint, that.legendItemPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.drawingSupplier.equals(that.drawingSupplier)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.plotBackgroundPaint,</b>
+&nbsp;                that.plotBackgroundPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.plotOutlinePaint,</b>
+&nbsp;                that.plotOutlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.labelLinkStyle.equals(that.labelLinkStyle)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.labelLinkPaint, that.labelLinkPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.domainGridlinePaint,</b>
+&nbsp;                that.domainGridlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.rangeGridlinePaint,</b>
+&nbsp;                that.rangeGridlinePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.crosshairPaint, that.crosshairPaint)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.axisOffset.equals(that.axisOffset)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.axisLabelPaint, that.axisLabelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.tickLabelPaint, that.tickLabelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.itemLabelPaint, that.itemLabelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowVisible != that.shadowVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.shadowPaint, that.shadowPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.barPainter.equals(that.barPainter)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.xyBarPainter.equals(that.xyBarPainter)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.thermometerPaint,</b>
+&nbsp;                that.thermometerPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.errorIndicatorPaint,</b>
+&nbsp;                that.errorIndicatorPaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.gridBandPaint, that.gridBandPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.gridBandAlternatePaint,</b>
+&nbsp;                that.gridBandAlternatePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        int hash = 3;</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.name);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.extraLargeFont);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.largeFont);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.regularFont);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.smallFont);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.titlePaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.subtitlePaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.chartBackgroundPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.legendBackgroundPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.legendItemPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.plotBackgroundPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.plotOutlinePaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.labelLinkStyle);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.labelLinkPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.domainGridlinePaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.rangeGridlinePaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.crosshairPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.axisOffset);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.axisLabelPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.tickLabelPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.itemLabelPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + (this.shadowVisible ? 1 : 0);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.shadowPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.barPainter);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.xyBarPainter);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.thermometerPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.errorIndicatorPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.gridBandPaint);</b>
+<b class="nc">&nbsp;        hash = 71 * hash + Objects.hashCode(this.gridBandAlternatePaint);</b>
+<b class="nc">&nbsp;        return hash;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of this theme.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if the theme cannot be cloned.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        return super.clone();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.titlePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.subtitlePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.chartBackgroundPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.legendBackgroundPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.legendItemPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.plotBackgroundPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.plotOutlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.labelLinkPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.baselinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.domainGridlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.rangeGridlinePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.crosshairPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.axisLabelPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.tickLabelPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.itemLabelPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.shadowPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.thermometerPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.errorIndicatorPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.gridBandPaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.gridBandAlternatePaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.titlePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.subtitlePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.chartBackgroundPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.legendBackgroundPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.legendItemPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.plotBackgroundPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.plotOutlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.labelLinkPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.baselinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.domainGridlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.rangeGridlinePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.crosshairPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.axisLabelPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.tickLabelPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.itemLabelPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.shadowPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.thermometerPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.errorIndicatorPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.gridBandPaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.gridBandAlternatePaint = SerialUtils.readPaint(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

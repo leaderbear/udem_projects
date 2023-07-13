@@ -1,0 +1,473 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > AxisSpace</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.axis</a>
+</div>
+
+<h1>Coverage Summary for Class: AxisSpace (org.jfree.chart.axis)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AxisSpace</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    73,7%
+  </span>
+  <span class="absValue">
+    (14/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    60,2%
+  </span>
+  <span class="absValue">
+    (59/98)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------
+&nbsp; * AxisSpace.java
+&nbsp; * --------------
+&nbsp; * (C) Copyright 2003-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.axis;
+&nbsp;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.Serializable;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;
+&nbsp;/**
+&nbsp; * A record that contains the space required at each edge of a plot.
+&nbsp; */
+&nbsp;public class AxisSpace implements Cloneable, PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -2490732595134766305L;
+&nbsp;
+&nbsp;    /** The top space. */
+&nbsp;    private double top;
+&nbsp;
+&nbsp;    /** The bottom space. */
+&nbsp;    private double bottom;
+&nbsp;
+&nbsp;    /** The left space. */
+&nbsp;    private double left;
+&nbsp;
+&nbsp;    /** The right space. */
+&nbsp;    private double right;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new axis space record.
+&nbsp;     */
+<b class="fc">&nbsp;    public AxisSpace() {</b>
+<b class="fc">&nbsp;        this.top = 0.0;</b>
+<b class="fc">&nbsp;        this.bottom = 0.0;</b>
+<b class="fc">&nbsp;        this.left = 0.0;</b>
+<b class="fc">&nbsp;        this.right = 0.0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the space reserved for axes at the top of the plot area.
+&nbsp;     *
+&nbsp;     * @return The space (in Java2D units).
+&nbsp;     */
+&nbsp;    public double getTop() {
+<b class="fc">&nbsp;        return this.top;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the space reserved for axes at the top of the plot area.
+&nbsp;     *
+&nbsp;     * @param space  the space (in Java2D units).
+&nbsp;     */
+&nbsp;    public void setTop(double space) {
+<b class="fc">&nbsp;        this.top = space;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the space reserved for axes at the bottom of the plot area.
+&nbsp;     *
+&nbsp;     * @return The space (in Java2D units).
+&nbsp;     */
+&nbsp;    public double getBottom() {
+<b class="fc">&nbsp;        return this.bottom;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the space reserved for axes at the bottom of the plot area.
+&nbsp;     *
+&nbsp;     * @param space  the space (in Java2D units).
+&nbsp;     */
+&nbsp;    public void setBottom(double space) {
+<b class="fc">&nbsp;        this.bottom = space;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the space reserved for axes at the left of the plot area.
+&nbsp;     *
+&nbsp;     * @return The space (in Java2D units).
+&nbsp;     */
+&nbsp;    public double getLeft() {
+<b class="nc">&nbsp;        return this.left;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the space reserved for axes at the left of the plot area.
+&nbsp;     *
+&nbsp;     * @param space  the space (in Java2D units).
+&nbsp;     */
+&nbsp;    public void setLeft(double space) {
+<b class="fc">&nbsp;        this.left = space;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the space reserved for axes at the right of the plot area.
+&nbsp;     *
+&nbsp;     * @return The space (in Java2D units).
+&nbsp;     */
+&nbsp;    public double getRight() {
+<b class="nc">&nbsp;        return this.right;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the space reserved for axes at the right of the plot area.
+&nbsp;     *
+&nbsp;     * @param space  the space (in Java2D units).
+&nbsp;     */
+&nbsp;    public void setRight(double space) {
+<b class="fc">&nbsp;        this.right = space;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds space to the top, bottom, left or right edge of the plot area.
+&nbsp;     *
+&nbsp;     * @param space  the space (in Java2D units).
+&nbsp;     * @param edge  the edge ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void add(double space, RectangleEdge edge) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(edge, &quot;edge&quot;);</b>
+<b class="fc">&nbsp;        if (edge == RectangleEdge.TOP) {</b>
+<b class="fc">&nbsp;            this.top += space;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (edge == RectangleEdge.BOTTOM) {</b>
+<b class="fc">&nbsp;            this.bottom += space;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (edge == RectangleEdge.LEFT) {</b>
+<b class="fc">&nbsp;            this.left += space;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;            this.right += space;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;Unrecognised &#39;edge&#39; argument.&quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Ensures that this object reserves at least as much space as another.
+&nbsp;     *
+&nbsp;     * @param space  the other space.
+&nbsp;     */
+&nbsp;    public void ensureAtLeast(AxisSpace space) {
+<b class="fc">&nbsp;        this.top = Math.max(this.top, space.top);</b>
+<b class="fc">&nbsp;        this.bottom = Math.max(this.bottom, space.bottom);</b>
+<b class="fc">&nbsp;        this.left = Math.max(this.left, space.left);</b>
+<b class="fc">&nbsp;        this.right = Math.max(this.right, space.right);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Ensures there is a minimum amount of space at the edge corresponding to
+&nbsp;     * the specified axis location.
+&nbsp;     *
+&nbsp;     * @param space  the space.
+&nbsp;     * @param edge  the location.
+&nbsp;     */
+&nbsp;    public void ensureAtLeast(double space, RectangleEdge edge) {
+<b class="fc">&nbsp;        if (edge == RectangleEdge.TOP) {</b>
+<b class="fc">&nbsp;            if (this.top &lt; space) {</b>
+<b class="nc">&nbsp;                this.top = space;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        else if (edge == RectangleEdge.BOTTOM) {</b>
+<b class="fc">&nbsp;            if (this.bottom &lt; space) {</b>
+<b class="fc">&nbsp;                this.bottom = space;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.LEFT) {</b>
+<b class="nc">&nbsp;            if (this.left &lt; space) {</b>
+<b class="nc">&nbsp;                this.left = space;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;            if (this.right &lt; space) {</b>
+<b class="nc">&nbsp;                this.right = space;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            throw new IllegalStateException(</b>
+&nbsp;                &quot;AxisSpace.ensureAtLeast(): unrecognised AxisLocation.&quot;
+&nbsp;            );
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Shrinks an area by the space attributes.
+&nbsp;     *
+&nbsp;     * @param area  the area to shrink.
+&nbsp;     * @param result  an optional carrier for the result.
+&nbsp;     *
+&nbsp;     * @return The result.
+&nbsp;     */
+&nbsp;    public Rectangle2D shrink(Rectangle2D area, Rectangle2D result) {
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = new Rectangle2D.Double();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result.setRect(</b>
+<b class="fc">&nbsp;            area.getX() + this.left,</b>
+<b class="fc">&nbsp;            area.getY() + this.top,</b>
+<b class="fc">&nbsp;            area.getWidth() - this.left - this.right,</b>
+<b class="fc">&nbsp;            area.getHeight() - this.top - this.bottom</b>
+&nbsp;        );
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Expands an area by the amount of space represented by this object.
+&nbsp;     *
+&nbsp;     * @param area  the area to expand.
+&nbsp;     * @param result  an optional carrier for the result.
+&nbsp;     *
+&nbsp;     * @return The result.
+&nbsp;     */
+&nbsp;    public Rectangle2D expand(Rectangle2D area, Rectangle2D result) {
+<b class="nc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            result = new Rectangle2D.Double();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        result.setRect(</b>
+<b class="nc">&nbsp;            area.getX() - this.left,</b>
+<b class="nc">&nbsp;            area.getY() - this.top,</b>
+<b class="nc">&nbsp;            area.getWidth() + this.left + this.right,</b>
+<b class="nc">&nbsp;            area.getHeight() + this.top + this.bottom</b>
+&nbsp;        );
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the reserved area.
+&nbsp;     *
+&nbsp;     * @param area  the area.
+&nbsp;     * @param edge  the edge.
+&nbsp;     *
+&nbsp;     * @return The reserved area.
+&nbsp;     */
+&nbsp;    public Rectangle2D reserved(Rectangle2D area, RectangleEdge edge) {
+<b class="nc">&nbsp;        Rectangle2D result = null;</b>
+<b class="nc">&nbsp;        if (edge == RectangleEdge.TOP) {</b>
+<b class="nc">&nbsp;            result = new Rectangle2D.Double(</b>
+<b class="nc">&nbsp;                area.getX(), area.getY(), area.getWidth(), this.top</b>
+&nbsp;            );
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.BOTTOM) {</b>
+<b class="nc">&nbsp;            result = new Rectangle2D.Double(</b>
+<b class="nc">&nbsp;                area.getX(), area.getMaxY() - this.top,</b>
+<b class="nc">&nbsp;                area.getWidth(), this.bottom</b>
+&nbsp;            );
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.LEFT) {</b>
+<b class="nc">&nbsp;            result = new Rectangle2D.Double(</b>
+<b class="nc">&nbsp;                area.getX(), area.getY(), this.left, area.getHeight()</b>
+&nbsp;            );
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;            result = new Rectangle2D.Double(</b>
+<b class="nc">&nbsp;                area.getMaxX() - this.right, area.getY(),</b>
+<b class="nc">&nbsp;                this.right, area.getHeight()</b>
+&nbsp;            );
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the object.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException This class won&#39;t throw this exception,
+&nbsp;     *         but subclasses (if any) might.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        return super.clone();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this object for equality with another object.
+&nbsp;     *
+&nbsp;     * @param obj  the object to compare against.
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof AxisSpace)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        AxisSpace that = (AxisSpace) obj;</b>
+<b class="fc">&nbsp;        if (this.top != that.top) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.bottom != that.bottom) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.left != that.left) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.right != that.right) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this object.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        int result = 23;</b>
+<b class="fc">&nbsp;        long l = Double.doubleToLongBits(this.top);</b>
+<b class="fc">&nbsp;        result = 37 * result + (int) (l ^ (l &gt;&gt;&gt; 32));</b>
+<b class="fc">&nbsp;        l = Double.doubleToLongBits(this.bottom);</b>
+<b class="fc">&nbsp;        result = 37 * result + (int) (l ^ (l &gt;&gt;&gt; 32));</b>
+<b class="fc">&nbsp;        l = Double.doubleToLongBits(this.left);</b>
+<b class="fc">&nbsp;        result = 37 * result + (int) (l ^ (l &gt;&gt;&gt; 32));</b>
+<b class="fc">&nbsp;        l = Double.doubleToLongBits(this.right);</b>
+<b class="fc">&nbsp;        result = 37 * result + (int) (l ^ (l &gt;&gt;&gt; 32));</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a string representing the object (for debugging purposes).
+&nbsp;     *
+&nbsp;     * @return A string.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return super.toString() + &quot;[left=&quot; + this.left + &quot;,right=&quot; + this.right</b>
+&nbsp;                    + &quot;,top=&quot; + this.top + &quot;,bottom=&quot; + this.bottom + &quot;]&quot;;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.ift2905_h21_devoir3.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_loginFragment_to_createProfileFragment"
+            app:destination="@id/createProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createProfileFragment"
+        android:name="com.example.ift2905_h21_devoir3.CreateProfileFragment"
+        android:label="fragment_create_profile"
+        tools:layout="@layout/fragment_create_profile" >
+        <action
+            android:id="@+id/action_createProfileFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newsListFragment"
+        android:name="com.example.ift2905_h21_devoir3.NewsListFragment"
+        android:label="fragment_news_list"
+        tools:layout="@layout/fragment_news_list" />
+    <fragment
+        android:id="@+id/socialFragment"
+        android:name="com.example.ift2905_h21_devoir3.SocialFragment"
+        android:label="fragment_social"
+        tools:layout="@layout/fragment_social" >
+        <action
+            android:id="@+id/action_socialFragment_to_messageFragment"
+            app:destination="@id/messageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.ift2905_h21_devoir3.ProfileFragment"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" >
+        <action
+            android:id="@+id/action_profileFragment_to_cycleFragment"
+            app:destination="@id/cycleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.ift2905_h21_devoir3.ForgotPasswordFragment"
+        android:label="fragment_forgot_password"
+        tools:layout="@layout/fragment_forgot_password" />
+    <fragment
+        android:id="@+id/cycleFragment"
+        android:name="com.example.ift2905_h21_devoir3.CycleFragment"
+        android:label="fragment_cycle"
+        tools:layout="@layout/fragment_cycle" >
+        <action
+            android:id="@+id/action_cycleFragment_to_schoolFragment"
+            app:destination="@id/schoolFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/schoolFragment"
+        android:name="com.example.ift2905_h21_devoir3.SchoolFragment"
+        android:label="fragment_school"
+        tools:layout="@layout/fragment_school" >
+        <action
+            android:id="@+id/action_schoolFragment_to_classesFragment2"
+            app:destination="@id/classesFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/messageFragment"
+        android:name="com.example.ift2905_h21_devoir3.MessageFragment"
+        android:label="fragment_message"
+        tools:layout="@layout/fragment_message" />
+    <fragment
+        android:id="@+id/classesFragment2"
+        android:name="com.example.ift2905_h21_devoir3.ClassesFragment"
+        android:label="fragment_classes"
+        tools:layout="@layout/fragment_classes" >
+        <action
+            android:id="@+id/action_classesFragment2_to_interestsFragment2"
+            app:destination="@id/interestsFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/interestsFragment2"
+        android:name="com.example.ift2905_h21_devoir3.InterestsFragment"
+        android:label="fragment_interests"
+        tools:layout="@layout/fragment_interests" >
+        <action
+            android:id="@+id/action_interestsFragment2_to_profilePreviewFragment"
+            app:destination="@id/profilePreviewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profilePreviewFragment"
+        android:name="com.example.ift2905_h21_devoir3.ProfilePreviewFragment"
+        android:label="fragment_profile_preview"
+        tools:layout="@layout/fragment_profile_preview" />
+    <fragment
+        android:id="@+id/researchFragment"
+        android:name="com.example.ift2905_h21_devoir3.ResearchFragment"
+        android:label="fragment_research"
+        tools:layout="@layout/fragment_research" >
+        <action
+            android:id="@+id/action_researchFragment_to_searchResultFragment"
+            app:destination="@id/searchResultFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/searchResultFragment"
+        android:name="com.example.ift2905_h21_devoir3.SearchResultFragment"
+        android:label="fragment_search_result"
+        tools:layout="@layout/fragment_search_result" />
+</navigation>

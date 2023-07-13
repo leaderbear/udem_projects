@@ -1,0 +1,293 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ColorBlock</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.block</a>
+</div>
+
+<h1>Coverage Summary for Class: ColorBlock (org.jfree.chart.block)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ColorBlock</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    44,4%
+  </span>
+  <span class="absValue">
+    (4/9)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    51,6%
+  </span>
+  <span class="absValue">
+    (16/31)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------
+&nbsp; * ColorBlock.java
+&nbsp; * ---------------
+&nbsp; * (C) Copyright 2004-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.block;
+&nbsp;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.util.Objects;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;
+&nbsp;/**
+&nbsp; * A block that is filled with a single color.
+&nbsp; */
+&nbsp;public class ColorBlock extends AbstractBlock implements Block {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    static final long serialVersionUID = 3383866145634010865L;
+&nbsp;
+&nbsp;    /** The paint. */
+&nbsp;    private transient Paint paint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new block.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param width  the width.
+&nbsp;     * @param height  the height.
+&nbsp;     */
+<b class="fc">&nbsp;    public ColorBlock(Paint paint, double width, double height) {</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.paint = paint;</b>
+<b class="fc">&nbsp;        setWidth(width);</b>
+<b class="fc">&nbsp;        setHeight(height);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    public Paint getPaint() {
+<b class="nc">&nbsp;        return this.paint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Arranges the contents of the block, within the given constraints, and
+&nbsp;     * returns the block size.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param constraint  the constraint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The block size (in Java2D units, never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Size2D arrange(Graphics2D g2, RectangleConstraint constraint) {
+<b class="nc">&nbsp;        return new Size2D(calculateTotalWidth(getWidth()),</b>
+<b class="nc">&nbsp;                calculateTotalHeight(getHeight()));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the block.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void draw(Graphics2D g2, Rectangle2D area) {
+<b class="nc">&nbsp;        area = trimMargin(area);</b>
+<b class="nc">&nbsp;        drawBorder(g2, area);</b>
+<b class="nc">&nbsp;        area = trimBorder(area);</b>
+<b class="nc">&nbsp;        area = trimPadding(area);</b>
+<b class="nc">&nbsp;        g2.setPaint(this.paint);</b>
+<b class="nc">&nbsp;        g2.fill(area);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the block within the specified area.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area.
+&nbsp;     * @param params  ignored ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return Always {@code null}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object draw(Graphics2D g2, Rectangle2D area, Object params) {
+<b class="nc">&nbsp;        draw(g2, area);</b>
+<b class="nc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this block for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof ColorBlock)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        ColorBlock that = (ColorBlock) obj;</b>
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.paint, that.paint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this instance.
+&nbsp;     * 
+&nbsp;     * @return A hash code. 
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        int hash = super.hashCode();</b>
+<b class="nc">&nbsp;        hash = 79 * hash + Objects.hashCode(this.paint);</b>
+<b class="nc">&nbsp;        return hash;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.paint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.paint = SerialUtils.readPaint(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

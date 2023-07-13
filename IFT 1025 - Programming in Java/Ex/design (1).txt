@@ -1,0 +1,224 @@
+﻿Design du jeu The Legend of Zoe par Tabta Abderrahim 
+
+Explication du tour par tour : quand zoe/monstre se deplace ca appelle une fonction s'il ya un ennemi/coffre/mur autour, 
+une fois cette fonction appelée, le tour de zoe/monstre se termine. si apres deplacement y a rien autour, fin du tour.
+
+Explication des niveaux : etat de la sortie = 0 (fermée) tant que hexaforce n'est pas ramassé et dès qu'elle est ramassé 
+la sortie  = 1 donc elle est ouverte pour que joueur puisse passer au prochain niveau. 
+
+Explication items : Au début du niveau, l'hexaforce est mit au hasard dans un coffre ou dans un monstre. Après, quand 
+zoe tue un monstre ou repere un coffre, l'item qu'il va etre laisser tomber aura un effet grace a l'interface items. 
+Si l'item est un hexaforce, alors la porte s'ouvre. Si c'est de la vie, la vie s'ajoute a zoe.  
+
+
+
+//Classe abstract Personnages 
+=============================
+	Attributs : 
+	
+		private char apparence 
+		private int nombre de vies restantes 
+		private int[x,y] position qui va servir dans deplacement et autres fonctions
+	
+	Methodes : 
+		
+		setter/getter pour position 
+		un getter et un setter pour la vie
+		public void deplacer() 
+		public void perdrevie() (si vie == 0 , mourir) 
+		public void attaquer()
+		
+//Classe Zoe extends Personnages impliment nextMove, items
+==========================================================
+	Attributs : 
+		private char apparence &
+		private int nb de vies restantes de zoe
+		prinvate int nb de vie max de zoe 
+		private int nbTotalHexa   //Nombre total d'hexa ramassés
+	
+	Methodes :
+
+		un getter et un setter pour les hexa ramassé
+		
+		@override public void deplacer() (4 directions possibles si prochaine case n'est pas monstre ou une sortie fermée ;
+		SOIT case == mur alors creuser() OU appeller fonction repereAutour()) 
+		
+		public void creuser() (creuser mur autour de zoe avec le setter dans la classe mur)  //met fin au tour
+		
+		public void repereAutour(si monstre attaquer, 
+							     si coffre get ce qu'il y a dans le coffre et l'item aura son effet sur Zoe avec itemEffet
+									de l'interface item , ensuite set le coffre comme étant ouvert)  
+							     si sortie est ouverte (= 1) sortir et passer au prochain niveau) 
+		
+		@overide public void attaquer() (get et set la vie du monstre avec un -1) //met fin au tour
+		@override perdreVie() (si  vie == 0 : gamerover) //met fin a la partie
+
+
+//Classe Monstre extends Personnages impliment nextMove, item
+=============================================================
+	Attributs :
+	
+		private char apparence = x 
+		private int nb de vies restantes de monstre 
+
+		
+	Methodes :
+	
+		main nextMove() //fonction de l'interface nextMove appellé automatiquement pour que le monstre sache quoi faire 
+		Si Zoe juste a cote, l'attaque, sinon regarde où elle est et se déplace vers elle si possible. 
+		
+		public void attaquer()(enlever point de vie a zoe avec un getter et un  setter) //met fin au tour
+		@override deplacer() (va dans la prochaine direction diagnole incluse , selon nextMove())//met fin au tour
+		@overide perdreVie() (si vie == 0 : apparence = x , itemEffct() sur Zoe et monstre desactivé) 
+		
+		p.s : itemEffet() de l'interface item, gere quel item est laissé tombé par monstre et comment il affecte zoe 
+		
+
+//Classe Coffre impliment item
+==============================	
+	Attributs : 
+	
+		private char apparence $
+		private boolean etatCoffre 0 (si coffre = 0 , il est fermé donc peut etre ouvert, si coffre = 1 , alors il est déja ouvert)
+		private int[x,y] position
+	
+	Methodes : 	
+
+	si le coffre n'est pas ouvert alors ces fonctions vont servir a Zoe si elle est a cote du coffre avec son repereAutour()
+		   
+			un getter item : random()  //quand le coffre s'ouvre genere un item sauf l'hexaforce qui est set au début du niveau
+			itemEffet() //l'item trouvé va appliquer son effet sur zoe 
+			un setter char apparence = "_"   //le coffre change d'apparence
+			un setter set(etatCoffre) = 1 //le coffre est ouvert donc ne peut plus etre ouvert 
+			
+	si coffre deja ouvert, zoe fais rien  
+	et un setter/getter pour position 
+	
+	
+//Classe Mur :
+=============
+	Attributs : 
+		private char apparence # 
+		private int[x,y] position
+		
+	Methodes : 
+		un setter/getter pour position
+		un setter pour apparence = " " pour que Zoe puisse creuser() le mur 
+		
+//Classe Sortie : 
+================
+	Attributs : 
+		private char apparence E 
+		boolean etatSortie = 0 
+		private int[x,y] position
+	
+	Méthodes : 
+		un setter pour changer l'état de Porte à 1 pour qu'elle soit ouverte 
+		et un getter pour etat de Sortie , pour savoir si elle est ouverte ou fermée 
+		un setter/getter pour la position 
+		
+//Classe abstract Niveau impliment etatZoe      //Comment les niveaux sont construits 
+==========================================
+	Attributs : 
+	
+		private int numero du niveau 
+		private mur # 
+		private sortie E 
+		private monstre @ 
+		private coffre $
+		
+		private string etatZoe = getZoeEtat()   //barre de vie et hexagone ramassé 
+		
+		private boolean etatSortie = set(etatSortie = 0)((État de la sortie  0 = fermée  ET  1 = ouverte )) 
+		
+	Methodes :
+
+		randomHexa() (Un monstre ou un coffre random aura un Hexaforce comme item qu'il va laisser tomber) 
+		print(barre de vie et d'hexa de zoe en haut) obtenu avec l'interface etatZoe
+		print(niveau) 
+		
+		 
+//Classe Niveau1 extends Niveau impliment dessinerNiveau     //Ici on construit niveau 1 par exemple 
+========================================================	
+	Attributs : 
+		private int 1
+		private map2d[largeur][hauteur]
+		. . . 
+	
+	Méthodes : 
+		print(etatZoe) 
+		map2d.set(x,y,zoe) ; set(x,y,mur) ; set(x,y,coffres) ; set(x,y, monstres) . . . 
+		print(map2d)
+		. . .              //ainsi de suite pour imprimer chaque niveau : Class Niveau2,Niveau3,Niveau4,Niveau5,Niveau6
+			
+//Classe Jeu 
+============
+	attributs : 
+		boolean tour = 0;  ((si tour = 0, c'est le tour de zoe , si tour = 1 , c'est le tour de monstres) 
+	
+	fonction main() qui lance le jeu : 		
+	
+		un setter et un getter pour le boolean tour. 
+		
+		si tour = 0 attend la fin du tour de zoe qui va se deplacer + action si possible 
+		si tour = 1 monstres font leur actions et fin du tour 
+		
+		et chaque tour print(niveau) et vérifier avec une boucle for
+		
+			if etatSortie = 1 ouverte 
+				if Zoe repereAutour(sortie)         //quand la sortie est ouverte est qu'elle est juste a cote de zoe
+					alors construire et  print(prochaine niveau) 
+				
+		recommencer jusqu'a ce que tous hexaforce récolté ou Zoe meurt -> Vicoire ou Défaite 
+		
+
+Interfaces : 
+
+
+//public interface dessinerNiveau 
+=================================
+	Methodes : 
+		map2d.set(x, y, objet) //un setter qui modifie un tableau de tableau
+		l'objet fait référence ici à la sortie/zoe/monstre/coffres/murs qui vont être placé sur un plan en 2d (x,y). 
+		Ainsi on construit le niveau, ensuite le tout est converti en string pour l'imprimer dans la console à chaque tour 
+		
+
+//public interface items    ((interface utile pour la gestion et l'effet des objets du jeu comme hexaforce/potions) 
+=========================	
+	Attributs : 
+		
+		items[Hexaforce, potion de vie, coeur] 
+	
+	Methodes : 
+		
+		if item dans monstre/coffre est différent d’hexagone (setté par la class niveau) alors 
+		random(items sauf Hexaforce) et retourner l'item 
+
+		quand zoe tue monstre ou ouvre coffre alors 
+		itemEffet() [ * si potion de vie set(zoeVie = max) ,
+					  * si coeur set(zoeVie++ , sauf si ça dépasse le max alors là vie de zoe = max , 
+					  * si hexaforce set(sortie du niveau) = 1 , set(nombre total d'hexa ramassé ++)]  ] 
+					  
+			
+//public interface nextMove  ((interface utile pour repérer ce qu'il y a autour et pour l'intelligence artificielle des monstres) 
+===========================
+	Methodes : 
+
+		repereAutour() (regarder s'il y a un coffre/sortie/ennemi/mur dans les cases avoisantes si oui return c'est quoi)
+		
+		public void nextMove() (si repereAutour() repere Zoe, alors appeller attaquer(), sinon reperageComplet())
+		public void reperageComplet() (trouve position x,y de Zoe en regardant toutes les cases du niveau et goTo(x,y))   
+		public void goTo(x,y) (utiliser fonction du tp pour donner arguments a deplacer() si la prochaine case 
+		                       n'est pas un mur ,, sinon faitRien())
+							   
+							   
+//public interface etatZoe  ((interface utile pour avoir la barre de vie de zoe et son nombre d'hexaforces ramassées) 
+==========================
+	Methodes : 
+	
+		getZoeEtat() qui appelle toutes ces fonctions qui vont a la fin retourner un string avec toutes les infos sur zoe 
+
+			getZoe(nombre de vie restant) 
+			getZoe(nombre total d'hexa ramassé) 
+			dans un string ajouter des " " , "△" et "❤" qui va être retourné 							   
+							   

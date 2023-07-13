@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout8"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ProfilePreviewFragment">
+
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_preview_name"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.05" />
+
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:src="@drawable/account_circle"
+        app:layout_constraintBottom_toTopOf="@+id/classesTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/nameTextView"
+        app:layout_constraintVertical_bias="0.85" />
+
+    <TextView
+        android:id="@+id/classesTextView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_preview_classes"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/scrollViewClassesPreview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollViewClassesPreview"
+        android:layout_width="300dp"
+        android:layout_height="100dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/interestsTextView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTint="@color/grey_200"
+        android:backgroundTintMode="multiply">
+
+        <LinearLayout
+            android:id="@+id/relativeLayoutClassesPreview"
+            android:layout_width="300dp"
+            android:layout_height="250dp">
+
+            <RadioGroup
+                android:id="@+id/previewRadioGroupClasses"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checkedButton="@+id/radio_button_1">
+
+                <TextView
+                    android:id="@+id/text_view_class_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/classes_1"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_class_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/classes_1"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_class_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/classes_1"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_class_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/classes_1"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+            </RadioGroup>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <TextView
+        android:id="@+id/interestsTextView"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:text="@string/profile_preview_interests"
+        android:textSize="17sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/scrollViewInterestsPreview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ScrollView
+        android:id="@+id/scrollViewInterestsPreview"
+        android:layout_width="300dp"
+        android:layout_height="85dp"
+        android:padding="10dp"
+        app:layout_constraintBottom_toTopOf="@+id/finalizeButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95"
+        android:background="@drawable/profile_header_bg"
+        android:backgroundTint="@color/grey_200"
+        android:backgroundTintMode="multiply">
+
+        <LinearLayout
+            android:id="@+id/relativeLayoutInterestsPreview"
+            android:layout_width="300dp"
+            android:layout_height="250dp">
+
+            <RadioGroup
+                android:id="@+id/previewRadioGroup"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:checkedButton="@+id/radio_button_1">
+
+                <TextView
+                    android:id="@+id/text_view_interest_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/interests_1"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_interest_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/interests_2"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_interest_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/interests_3"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+
+                <TextView
+                    android:id="@+id/text_view_interest_4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingBottom="5dp"
+                    android:paddingHorizontal="10dp"
+                    android:text="@string/interests_4"
+                    android:textSize="20sp"
+                    app:buttonTint="@color/design_default_color_primary" />
+            </RadioGroup>
+        </LinearLayout>
+    </ScrollView>
+
+
+    <Button
+        android:id="@+id/finalizeButton"
+        android:layout_width="260dp"
+        android:layout_height="80dp"
+        android:text="@string/finalize"
+        android:textSize="25sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.95" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

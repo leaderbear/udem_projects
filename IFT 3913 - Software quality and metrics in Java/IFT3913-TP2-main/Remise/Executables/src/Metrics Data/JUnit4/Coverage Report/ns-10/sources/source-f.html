@@ -1,0 +1,179 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DialLayer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.plot.dial</a>
+</div>
+
+<h1>Coverage Summary for Class: DialLayer (org.jfree.chart.plot.dial)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">DialLayer</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------
+&nbsp; * DialLayer.java
+&nbsp; * --------------
+&nbsp; * (C) Copyright 2006-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.plot.dial;
+&nbsp;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.EventListener;
+&nbsp;
+&nbsp;/**
+&nbsp; * A dial layer draws itself within a reference frame.  The view frame is a
+&nbsp; * subset of the reference frame, and defines the area that is actually
+&nbsp; * visible.
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * Classes that implement this interface should be {@link Serializable},
+&nbsp; * otherwise chart serialization may fail.
+&nbsp; */
+&nbsp;public interface DialLayer {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that indicates whether or not the layer is visible.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isVisible();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers a listener with this layer, so that it receives notification
+&nbsp;     * of changes to this layer.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     */
+&nbsp;    void addChangeListener(DialLayerChangeListener listener);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Deregisters a listener, so that it no longer receives notification of
+&nbsp;     * changes to this layer.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     */
+&nbsp;    void removeChangeListener(DialLayerChangeListener listener);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the specified listener is currently
+&nbsp;     * registered with the this layer.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean hasListener(EventListener listener);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the drawing should be clipped to the
+&nbsp;     * dial window (which is defined by the {@link DialFrame}), and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isClippedToWindow();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the content of this layer.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics target ({@code null} not permitted).
+&nbsp;     * @param plot  the plot (typically this should not be {@code null},
+&nbsp;     *     but for a layer that doesn&#39;t need to reference the plot, it may
+&nbsp;     *     be permitted).
+&nbsp;     * @param frame  the reference frame for the dial&#39;s geometry
+&nbsp;     *     ({@code null} not permitted).  This is typically larger than
+&nbsp;     *     the visible area of the dial (see the next parameter).
+&nbsp;     * @param view  the visible area for the dial ({@code null} not
+&nbsp;     *     permitted).
+&nbsp;     */
+&nbsp;    void draw(Graphics2D g2, DialPlot plot, Rectangle2D frame,
+&nbsp;            Rectangle2D view);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

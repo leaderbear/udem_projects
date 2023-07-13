@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Gui:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Gui_jar</output-path>
+    <root id="archive" name="Gui.jar">
+      <element id="module-output" name="Gui" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/lib/postgresql-42.2.19.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>

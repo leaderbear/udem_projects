@@ -1,0 +1,29 @@
+
+
+1. ISP 
+
+Sur CompagniesController pour extraire des Controller distinctes puisque CompagnieController a une faible cohésion 
+vu qu'elle s'occupait de modules qui était seulement logiquement liés entre eux. 
+
+
+2. SRP
+
+Sur CompagnieController puisqu'elle avait plusieurs responsabilités, alors qu'elle devrait avoir une seule responsabilité 
+unique : gérer les compagnies (create/delete/edit/read). 
+
+Sur BatimentController puisqu'il gérait en partie les voyages. En effet, on pouvait consulter les listes de voyages qu'à 
+travers BatimentsController. Ceci pose problème, puisque la responsabilité de BatiimentControllers et de gérer les Batiments 
+et non pas les voyages. Nous avons donc créé une nouvelle classe : VoyageController. 
+
+
+3. Open/Closed Principle (OCP) 
+
+Plusieurs de nos classes (Batiment, Voyage, Vehicule, Section , Place, Réservation, Compagnie , Personne) sont ouvertes à 
+l'extension. On peut par exempler ajouter un utilisateur qui gèrent seulement les finances de la compagnie comptableEmploye 
+avec l'héritage, plutôt que de modifier "Personne" à chaque fois afin de l'enrichir.  
+
+
+4. DIP 
+
+Nous utilisions des classes Controllers concrètes pour instancier les objets. De plus, nos classes abstraites ne 
+dépendent de détails, mais nos classes avec plus de détailles (précision) dépendent des abstractions.

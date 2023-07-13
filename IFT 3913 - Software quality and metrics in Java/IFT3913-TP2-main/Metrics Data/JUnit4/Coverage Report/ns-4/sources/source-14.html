@@ -1,0 +1,353 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ExtendedCategoryAxis</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.axis</a>
+</div>
+
+<h1>Coverage Summary for Class: ExtendedCategoryAxis (org.jfree.chart.axis)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExtendedCategoryAxis</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72,7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    63,6%
+  </span>
+  <span class="absValue">
+    (28/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -------------------------
+&nbsp; * ExtendedCategoryAxis.java
+&nbsp; * -------------------------
+&nbsp; * (C) Copyright 2003-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.axis;
+&nbsp;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import org.jfree.chart.event.AxisChangeEvent;
+&nbsp;import org.jfree.chart.text.TextBlock;
+&nbsp;import org.jfree.chart.text.TextFragment;
+&nbsp;import org.jfree.chart.text.TextLine;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;
+&nbsp;/**
+&nbsp; * An extended version of the {@link CategoryAxis} class that supports
+&nbsp; * sublabels on the axis.
+&nbsp; */
+&nbsp;public class ExtendedCategoryAxis extends CategoryAxis {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    static final long serialVersionUID = -3004429093959826567L;
+&nbsp;
+&nbsp;    /** Storage for the sublabels. */
+&nbsp;    private Map sublabels;
+&nbsp;
+&nbsp;    /** The sublabel font. */
+&nbsp;    private Font sublabelFont;
+&nbsp;
+&nbsp;    /** The sublabel paint. */
+&nbsp;    private transient Paint sublabelPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new axis.
+&nbsp;     *
+&nbsp;     * @param label  the axis label.
+&nbsp;     */
+&nbsp;    public ExtendedCategoryAxis(String label) {
+<b class="fc">&nbsp;        super(label);</b>
+<b class="fc">&nbsp;        this.sublabels = new HashMap();</b>
+<b class="fc">&nbsp;        this.sublabelFont = new Font(&quot;SansSerif&quot;, Font.PLAIN, 10);</b>
+<b class="fc">&nbsp;        this.sublabelPaint = Color.BLACK;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for the sublabels.
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSubLabelFont(Font)
+&nbsp;     */
+&nbsp;    public Font getSubLabelFont() {
+<b class="nc">&nbsp;        return this.sublabelFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the font for the sublabels and sends an {@link AxisChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getSubLabelFont()
+&nbsp;     */
+&nbsp;    public void setSubLabelFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.sublabelFont = font;</b>
+<b class="fc">&nbsp;        notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the sublabels.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSubLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getSubLabelPaint() {
+<b class="nc">&nbsp;        return this.sublabelPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint for the sublabels and sends an {@link AxisChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getSubLabelPaint()
+&nbsp;     */
+&nbsp;    public void setSubLabelPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.sublabelPaint = paint;</b>
+<b class="fc">&nbsp;        notifyListeners(new AxisChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a sublabel for a category.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param label  the label.
+&nbsp;     */
+&nbsp;    public void addSubLabel(Comparable category, String label) {
+<b class="fc">&nbsp;        this.sublabels.put(category, label);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Overrides the default behaviour by adding the sublabel to the text
+&nbsp;     * block that is used for the category label.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param width  the width (not used yet).
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     *
+&nbsp;     * @return A label.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    protected TextBlock createLabel(Comparable category, float width,
+&nbsp;                                    RectangleEdge edge, Graphics2D g2) {
+<b class="nc">&nbsp;        TextBlock label = super.createLabel(category, width, edge, g2);</b>
+<b class="nc">&nbsp;        String s = (String) this.sublabels.get(category);</b>
+<b class="nc">&nbsp;        if (s != null) {</b>
+<b class="nc">&nbsp;            if (edge == RectangleEdge.TOP || edge == RectangleEdge.BOTTOM) {</b>
+<b class="nc">&nbsp;                TextLine line = new TextLine(s, this.sublabelFont,</b>
+&nbsp;                        this.sublabelPaint);
+<b class="nc">&nbsp;                label.addLine(line);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            else if (edge == RectangleEdge.LEFT</b>
+&nbsp;                    || edge == RectangleEdge.RIGHT) {
+<b class="nc">&nbsp;                TextLine line = label.getLastLine();</b>
+<b class="nc">&nbsp;                if (line != null) {</b>
+<b class="nc">&nbsp;                    line.addFragment(new TextFragment(&quot;  &quot; + s,</b>
+&nbsp;                            this.sublabelFont, this.sublabelPaint));
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return label;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this axis for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof ExtendedCategoryAxis)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        ExtendedCategoryAxis that = (ExtendedCategoryAxis) obj;</b>
+<b class="fc">&nbsp;        if (!this.sublabelFont.equals(that.sublabelFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.sublabelPaint, that.sublabelPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.sublabels.equals(that.sublabels)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of this axis.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if there is a problem cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        ExtendedCategoryAxis clone = (ExtendedCategoryAxis) super.clone();</b>
+<b class="fc">&nbsp;        clone.sublabels = new HashMap(this.sublabels);</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.sublabelPaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.sublabelPaint = SerialUtils.readPaint(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

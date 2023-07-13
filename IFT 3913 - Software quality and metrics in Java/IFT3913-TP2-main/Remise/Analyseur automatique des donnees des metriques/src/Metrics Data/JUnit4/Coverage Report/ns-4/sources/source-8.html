@@ -1,0 +1,1532 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > CategoryAxis</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.axis</a>
+</div>
+
+<h1>Coverage Summary for Class: CategoryAxis (org.jfree.chart.axis)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">CategoryAxis</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,1%
+  </span>
+  <span class="absValue">
+    (43/53)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,5%
+  </span>
+  <span class="absValue">
+    (343/421)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">CategoryAxis$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (2/2)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    81,5%
+  </span>
+  <span class="absValue">
+    (44/54)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    81,6%
+  </span>
+  <span class="absValue">
+    (345/423)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -----------------
+&nbsp; * CategoryAxis.java
+&nbsp; * -----------------
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Pady Srinivasan (patch 1217634);
+&nbsp; *                   Peter Kolb (patches 2497611 and 2603321);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.axis;
+&nbsp;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.RenderingHints;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.geom.Line2D;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.Set;
+&nbsp;
+&nbsp;import org.jfree.chart.entity.CategoryLabelEntity;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.event.AxisChangeEvent;
+&nbsp;import org.jfree.chart.plot.CategoryPlot;
+&nbsp;import org.jfree.chart.plot.Plot;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.text.G2TextMeasurer;
+&nbsp;import org.jfree.chart.text.TextBlock;
+&nbsp;import org.jfree.chart.text.TextUtils;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.block.Size2D;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.chart.internal.ShapeUtils;
+&nbsp;import org.jfree.data.category.CategoryDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * An axis that displays categories.
+&nbsp; */
+&nbsp;public class CategoryAxis extends Axis implements Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 5886554608114265863L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default margin for the axis (used for both lower and upper margins).
+&nbsp;     */
+&nbsp;    public static final double DEFAULT_AXIS_MARGIN = 0.05;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default margin between categories (a percentage of the overall axis
+&nbsp;     * length).
+&nbsp;     */
+&nbsp;    public static final double DEFAULT_CATEGORY_MARGIN = 0.20;
+&nbsp;
+&nbsp;    /** The amount of space reserved at the start of the axis. */
+&nbsp;    private double lowerMargin;
+&nbsp;
+&nbsp;    /** The amount of space reserved at the end of the axis. */
+&nbsp;    private double upperMargin;
+&nbsp;
+&nbsp;    /** The amount of space reserved between categories. */
+&nbsp;    private double categoryMargin;
+&nbsp;
+&nbsp;    /** The maximum number of lines for category labels. */
+&nbsp;    private int maximumCategoryLabelLines;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A ratio that is multiplied by the width of one category to determine the
+&nbsp;     * maximum label width.
+&nbsp;     */
+&nbsp;    private float maximumCategoryLabelWidthRatio;
+&nbsp;
+&nbsp;    /** The category label offset. */
+&nbsp;    private int categoryLabelPositionOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A structure defining the category label positions for each axis
+&nbsp;     * location.
+&nbsp;     */
+&nbsp;    private CategoryLabelPositions categoryLabelPositions;
+&nbsp;
+&nbsp;    /** Storage for tick label font overrides (if any). */
+&nbsp;    private Map&lt;Comparable, Font&gt; tickLabelFontMap; 
+&nbsp;
+&nbsp;    /** Storage for tick label paint overrides (if any). */
+&nbsp;    private transient Map&lt;Comparable, Paint&gt; tickLabelPaintMap;
+&nbsp;
+&nbsp;    /** Storage for the category label tooltips (if any). */
+&nbsp;    private Map&lt;Comparable, String&gt; categoryLabelToolTips;
+&nbsp;
+&nbsp;    /** Storage for the category label URLs (if any). */
+&nbsp;    private Map&lt;Comparable, String&gt; categoryLabelURLs;
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Creates a new category axis with no label.
+&nbsp;     */
+&nbsp;    public CategoryAxis() {
+<b class="fc">&nbsp;        this(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a category axis, using default values where necessary.
+&nbsp;     *
+&nbsp;     * @param label  the axis label ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public CategoryAxis(String label) {
+<b class="fc">&nbsp;        super(label);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.lowerMargin = DEFAULT_AXIS_MARGIN;</b>
+<b class="fc">&nbsp;        this.upperMargin = DEFAULT_AXIS_MARGIN;</b>
+<b class="fc">&nbsp;        this.categoryMargin = DEFAULT_CATEGORY_MARGIN;</b>
+<b class="fc">&nbsp;        this.maximumCategoryLabelLines = 1;</b>
+<b class="fc">&nbsp;        this.maximumCategoryLabelWidthRatio = 0.0f;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.categoryLabelPositionOffset = 4;</b>
+<b class="fc">&nbsp;        this.categoryLabelPositions = CategoryLabelPositions.STANDARD;</b>
+<b class="fc">&nbsp;        this.tickLabelFontMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.tickLabelPaintMap = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.categoryLabelToolTips = new HashMap&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.categoryLabelURLs = new HashMap&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower margin for the axis.
+&nbsp;     *
+&nbsp;     * @return The margin.
+&nbsp;     *
+&nbsp;     * @see #getUpperMargin()
+&nbsp;     * @see #setLowerMargin(double)
+&nbsp;     */
+&nbsp;    public double getLowerMargin() {
+<b class="fc">&nbsp;        return this.lowerMargin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the lower margin for the axis and sends an {@link AxisChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param margin  the margin as a percentage of the axis length (for
+&nbsp;     *                example, 0.05 is five percent).
+&nbsp;     *
+&nbsp;     * @see #getLowerMargin()
+&nbsp;     */
+&nbsp;    public void setLowerMargin(double margin) {
+<b class="fc">&nbsp;        this.lowerMargin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the upper margin for the axis.
+&nbsp;     *
+&nbsp;     * @return The margin.
+&nbsp;     *
+&nbsp;     * @see #getLowerMargin()
+&nbsp;     * @see #setUpperMargin(double)
+&nbsp;     */
+&nbsp;    public double getUpperMargin() {
+<b class="fc">&nbsp;        return this.upperMargin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the upper margin for the axis and sends an {@link AxisChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param margin  the margin as a percentage of the axis length (for
+&nbsp;     *                example, 0.05 is five percent).
+&nbsp;     *
+&nbsp;     * @see #getUpperMargin()
+&nbsp;     */
+&nbsp;    public void setUpperMargin(double margin) {
+<b class="fc">&nbsp;        this.upperMargin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the category margin.
+&nbsp;     *
+&nbsp;     * @return The margin.
+&nbsp;     *
+&nbsp;     * @see #setCategoryMargin(double)
+&nbsp;     */
+&nbsp;    public double getCategoryMargin() {
+<b class="fc">&nbsp;        return this.categoryMargin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the category margin and sends an {@link AxisChangeEvent} to all
+&nbsp;     * registered listeners.  The overall category margin is distributed over
+&nbsp;     * N-1 gaps, where N is the number of categories on the axis.
+&nbsp;     *
+&nbsp;     * @param margin  the margin as a percentage of the axis length (for
+&nbsp;     *                example, 0.05 is five percent).
+&nbsp;     *
+&nbsp;     * @see #getCategoryMargin()
+&nbsp;     */
+&nbsp;    public void setCategoryMargin(double margin) {
+<b class="fc">&nbsp;        this.categoryMargin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum number of lines to use for each category label.
+&nbsp;     *
+&nbsp;     * @return The maximum number of lines.
+&nbsp;     *
+&nbsp;     * @see #setMaximumCategoryLabelLines(int)
+&nbsp;     */
+&nbsp;    public int getMaximumCategoryLabelLines() {
+<b class="nc">&nbsp;        return this.maximumCategoryLabelLines;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum number of lines to use for each category label and
+&nbsp;     * sends an {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param lines  the maximum number of lines.
+&nbsp;     *
+&nbsp;     * @see #getMaximumCategoryLabelLines()
+&nbsp;     */
+&nbsp;    public void setMaximumCategoryLabelLines(int lines) {
+<b class="nc">&nbsp;        this.maximumCategoryLabelLines = lines;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the category label width ratio.
+&nbsp;     *
+&nbsp;     * @return The ratio.
+&nbsp;     *
+&nbsp;     * @see #setMaximumCategoryLabelWidthRatio(float)
+&nbsp;     */
+&nbsp;    public float getMaximumCategoryLabelWidthRatio() {
+<b class="nc">&nbsp;        return this.maximumCategoryLabelWidthRatio;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum category label width ratio and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param ratio  the ratio.
+&nbsp;     *
+&nbsp;     * @see #getMaximumCategoryLabelWidthRatio()
+&nbsp;     */
+&nbsp;    public void setMaximumCategoryLabelWidthRatio(float ratio) {
+<b class="fc">&nbsp;        this.maximumCategoryLabelWidthRatio = ratio;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the offset between the axis and the category labels (before
+&nbsp;     * label positioning is taken into account).
+&nbsp;     *
+&nbsp;     * @return The offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #setCategoryLabelPositionOffset(int)
+&nbsp;     */
+&nbsp;    public int getCategoryLabelPositionOffset() {
+<b class="nc">&nbsp;        return this.categoryLabelPositionOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the offset between the axis and the category labels (before label
+&nbsp;     * positioning is taken into account) and sends a change event to all 
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset (in Java2D units).
+&nbsp;     *
+&nbsp;     * @see #getCategoryLabelPositionOffset()
+&nbsp;     */
+&nbsp;    public void setCategoryLabelPositionOffset(int offset) {
+<b class="fc">&nbsp;        this.categoryLabelPositionOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the category label position specification (this contains label
+&nbsp;     * positioning info for all four possible axis locations).
+&nbsp;     *
+&nbsp;     * @return The positions (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setCategoryLabelPositions(CategoryLabelPositions)
+&nbsp;     */
+&nbsp;    public CategoryLabelPositions getCategoryLabelPositions() {
+<b class="nc">&nbsp;        return this.categoryLabelPositions;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the category label position specification for the axis and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param positions  the positions ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getCategoryLabelPositions()
+&nbsp;     */
+&nbsp;    public void setCategoryLabelPositions(CategoryLabelPositions positions) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(positions, &quot;positions&quot;);</b>
+<b class="fc">&nbsp;        this.categoryLabelPositions = positions;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for the tick label for the given category.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTickLabelFont(Comparable, Font)
+&nbsp;     */
+&nbsp;    public Font getTickLabelFont(Comparable category) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        Font result = this.tickLabelFontMap.get(category);</b>
+&nbsp;        // if there is no specific font, use the general one...
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = getTickLabelFont();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the font for the tick label for the specified category and sends
+&nbsp;     * an {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getTickLabelFont(Comparable)
+&nbsp;     */
+&nbsp;    public void setTickLabelFont(Comparable category, Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        if (font == null) {</b>
+<b class="fc">&nbsp;            this.tickLabelFontMap.remove(category);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            this.tickLabelFontMap.put(category, font);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint for the tick label for the given category.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setTickLabelPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getTickLabelPaint(Comparable category) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        Paint result = this.tickLabelPaintMap.get(category);</b>
+&nbsp;        // if there is no specific paint, use the general one...
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="fc">&nbsp;            result = getTickLabelPaint();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint for the tick label for the specified category and sends
+&nbsp;     * an {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getTickLabelPaint(Comparable)
+&nbsp;     */
+&nbsp;    public void setTickLabelPaint(Comparable category, Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        if (paint == null) {</b>
+<b class="nc">&nbsp;            this.tickLabelPaintMap.remove(category);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            this.tickLabelPaintMap.put(category, paint);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a tooltip to the specified category and sends an
+&nbsp;     * {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     * @param tooltip  the tooltip text ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #removeCategoryLabelToolTip(Comparable)
+&nbsp;     */
+&nbsp;    public void addCategoryLabelToolTip(Comparable category, String tooltip) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        this.categoryLabelToolTips.put(category, tooltip);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tool tip text for the label belonging to the specified
+&nbsp;     * category.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The tool tip text (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #addCategoryLabelToolTip(Comparable, String)
+&nbsp;     * @see #removeCategoryLabelToolTip(Comparable)
+&nbsp;     */
+&nbsp;    public String getCategoryLabelToolTip(Comparable category) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        return this.categoryLabelToolTips.get(category);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the tooltip for the specified category and, if there was a value
+&nbsp;     * associated with that category, sends an {@link AxisChangeEvent} to all 
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #addCategoryLabelToolTip(Comparable, String)
+&nbsp;     * @see #clearCategoryLabelToolTips()
+&nbsp;     */
+&nbsp;    public void removeCategoryLabelToolTip(Comparable category) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="nc">&nbsp;        if (this.categoryLabelToolTips.remove(category) != null) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the category label tooltips and sends an {@link AxisChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @see #addCategoryLabelToolTip(Comparable, String)
+&nbsp;     * @see #removeCategoryLabelToolTip(Comparable)
+&nbsp;     */
+&nbsp;    public void clearCategoryLabelToolTips() {
+<b class="nc">&nbsp;        this.categoryLabelToolTips.clear();</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a URL (to be used in image maps) to the specified category and 
+&nbsp;     * sends an {@link AxisChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     * @param url  the URL text ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #removeCategoryLabelURL(Comparable)
+&nbsp;     */
+&nbsp;    public void addCategoryLabelURL(Comparable category, String url) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        this.categoryLabelURLs.put(category, url);</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the URL for the label belonging to the specified category.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The URL text (possibly {@code null}).
+&nbsp;     * 
+&nbsp;     * @see #addCategoryLabelURL(Comparable, String)
+&nbsp;     * @see #removeCategoryLabelURL(Comparable)
+&nbsp;     */
+&nbsp;    public String getCategoryLabelURL(Comparable category) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="fc">&nbsp;        return this.categoryLabelURLs.get(category);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the URL for the specified category and, if there was a URL 
+&nbsp;     * associated with that category, sends an {@link AxisChangeEvent} to all 
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #addCategoryLabelURL(Comparable, String)
+&nbsp;     * @see #clearCategoryLabelURLs()
+&nbsp;     */
+&nbsp;    public void removeCategoryLabelURL(Comparable category) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(category, &quot;category&quot;);</b>
+<b class="nc">&nbsp;        if (this.categoryLabelURLs.remove(category) != null) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Clears the category label URLs and sends an {@link AxisChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @see #addCategoryLabelURL(Comparable, String)
+&nbsp;     * @see #removeCategoryLabelURL(Comparable)
+&nbsp;     */
+&nbsp;    public void clearCategoryLabelURLs() {
+<b class="nc">&nbsp;        this.categoryLabelURLs.clear();</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the Java 2D coordinate for a category.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor point ({@code null} not permitted).
+&nbsp;     * @param category  the category index.
+&nbsp;     * @param categoryCount  the category count.
+&nbsp;     * @param area  the data area.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return The coordinate.
+&nbsp;     */
+&nbsp;    public double getCategoryJava2DCoordinate(CategoryAnchor anchor, 
+&nbsp;            int category, int categoryCount, Rectangle2D area, 
+&nbsp;            RectangleEdge edge) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(anchor, &quot;anchor&quot;);</b>
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        switch (anchor) {</b>
+&nbsp;            case START:
+<b class="nc">&nbsp;                result = getCategoryStart(category, categoryCount, area, edge);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            case MIDDLE:
+<b class="fc">&nbsp;                result = getCategoryMiddle(category, categoryCount, area, edge);</b>
+<b class="fc">&nbsp;                break;</b>
+&nbsp;            case END:
+<b class="nc">&nbsp;                result = getCategoryEnd(category, categoryCount, area, edge);</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                throw new IllegalStateException(&quot;Unexpected anchor value.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the starting coordinate for the specified category.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param categoryCount  the number of categories.
+&nbsp;     * @param area  the data area.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The coordinate.
+&nbsp;     *
+&nbsp;     * @see #getCategoryMiddle(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     * @see #getCategoryEnd(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    public double getCategoryStart(int category, int categoryCount, 
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        if ((edge == RectangleEdge.TOP) || (edge == RectangleEdge.BOTTOM)) {</b>
+<b class="fc">&nbsp;            result = area.getX() + area.getWidth() * getLowerMargin();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if ((edge == RectangleEdge.LEFT)</b>
+&nbsp;                || (edge == RectangleEdge.RIGHT)) {
+<b class="fc">&nbsp;            result = area.getMinY() + area.getHeight() * getLowerMargin();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        double categorySize = calculateCategorySize(categoryCount, area, edge);</b>
+<b class="fc">&nbsp;        double categoryGapWidth = calculateCategoryGapSize(categoryCount, area,</b>
+&nbsp;                edge);
+&nbsp;
+<b class="fc">&nbsp;        result = result + category * (categorySize + categoryGapWidth);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the middle coordinate for the specified category.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param categoryCount  the number of categories.
+&nbsp;     * @param area  the data area.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The coordinate.
+&nbsp;     *
+&nbsp;     * @see #getCategoryStart(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     * @see #getCategoryEnd(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    public double getCategoryMiddle(int category, int categoryCount,
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        if (category &lt; 0 || category &gt;= categoryCount) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Invalid category index: &quot;</b>
+&nbsp;                    + category);
+&nbsp;        }
+<b class="fc">&nbsp;        return getCategoryStart(category, categoryCount, area, edge)</b>
+<b class="fc">&nbsp;               + calculateCategorySize(categoryCount, area, edge) / 2;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the end coordinate for the specified category.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param categoryCount  the number of categories.
+&nbsp;     * @param area  the data area.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The coordinate.
+&nbsp;     *
+&nbsp;     * @see #getCategoryStart(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     * @see #getCategoryMiddle(int, int, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    public double getCategoryEnd(int category, int categoryCount,
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+<b class="fc">&nbsp;        return getCategoryStart(category, categoryCount, area, edge)</b>
+<b class="fc">&nbsp;               + calculateCategorySize(categoryCount, area, edge);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A convenience method that returns the axis coordinate for the centre of
+&nbsp;     * a category.
+&nbsp;     *
+&nbsp;     * @param category  the category key ({@code null} not permitted).
+&nbsp;     * @param categories  the categories ({@code null} not permitted).
+&nbsp;     * @param area  the data area ({@code null} not permitted).
+&nbsp;     * @param edge  the edge along which the axis lies ({@code null} not
+&nbsp;     *     permitted).
+&nbsp;     *
+&nbsp;     * @return The centre coordinate.
+&nbsp;     *
+&nbsp;     * @see #getCategorySeriesMiddle(Comparable, Comparable, CategoryDataset,
+&nbsp;     *     double, Rectangle2D, RectangleEdge)
+&nbsp;     */
+&nbsp;    public double getCategoryMiddle(Comparable category,
+&nbsp;            List categories, Rectangle2D area, RectangleEdge edge) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(categories, &quot;categories&quot;);</b>
+<b class="fc">&nbsp;        int categoryIndex = categories.indexOf(category);</b>
+<b class="fc">&nbsp;        int categoryCount = categories.size();</b>
+<b class="fc">&nbsp;        return getCategoryMiddle(categoryIndex, categoryCount, area, edge);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the middle coordinate (in Java2D space) for a series within a
+&nbsp;     * category.
+&nbsp;     *
+&nbsp;     * @param category  the category ({@code null} not permitted).
+&nbsp;     * @param seriesKey  the series key ({@code null} not permitted).
+&nbsp;     * @param dataset  the dataset ({@code null} not permitted).
+&nbsp;     * @param itemMargin  the item margin (0.0 &amp;lt;= itemMargin &amp;lt; 1.0);
+&nbsp;     * @param area  the area ({@code null} not permitted).
+&nbsp;     * @param edge  the edge ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The coordinate in Java2D space.
+&nbsp;     */
+&nbsp;    public double getCategorySeriesMiddle(Comparable category,
+&nbsp;            Comparable seriesKey, CategoryDataset dataset, double itemMargin,
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        int categoryIndex = dataset.getColumnIndex(category);</b>
+<b class="fc">&nbsp;        int categoryCount = dataset.getColumnCount();</b>
+<b class="fc">&nbsp;        int seriesIndex = dataset.getRowIndex(seriesKey);</b>
+<b class="fc">&nbsp;        int seriesCount = dataset.getRowCount();</b>
+<b class="fc">&nbsp;        double start = getCategoryStart(categoryIndex, categoryCount, area,</b>
+&nbsp;                edge);
+<b class="fc">&nbsp;        double end = getCategoryEnd(categoryIndex, categoryCount, area, edge);</b>
+<b class="fc">&nbsp;        double width = end - start;</b>
+<b class="fc">&nbsp;        if (seriesCount == 1) {</b>
+<b class="nc">&nbsp;            return start + width / 2.0;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            double gap = (width * itemMargin) / (seriesCount - 1);</b>
+<b class="fc">&nbsp;            double ww = (width * (1 - itemMargin)) / seriesCount;</b>
+<b class="fc">&nbsp;            return start + (seriesIndex * (ww + gap)) + ww / 2.0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the middle coordinate (in Java2D space) for a series within a
+&nbsp;     * category.
+&nbsp;     *
+&nbsp;     * @param categoryIndex  the category index.
+&nbsp;     * @param categoryCount  the category count.
+&nbsp;     * @param seriesIndex the series index.
+&nbsp;     * @param seriesCount the series count.
+&nbsp;     * @param itemMargin  the item margin (0.0 &amp;lt;= itemMargin &amp;lt; 1.0);
+&nbsp;     * @param area  the area ({@code null} not permitted).
+&nbsp;     * @param edge  the edge ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The coordinate in Java2D space.
+&nbsp;     */
+&nbsp;    public double getCategorySeriesMiddle(int categoryIndex, int categoryCount,
+&nbsp;            int seriesIndex, int seriesCount, double itemMargin,
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+&nbsp;
+<b class="nc">&nbsp;        double start = getCategoryStart(categoryIndex, categoryCount, area,</b>
+&nbsp;                edge);
+<b class="nc">&nbsp;        double end = getCategoryEnd(categoryIndex, categoryCount, area, edge);</b>
+<b class="nc">&nbsp;        double width = end - start;</b>
+<b class="nc">&nbsp;        if (seriesCount == 1) {</b>
+<b class="nc">&nbsp;            return start + width / 2.0;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            double gap = (width * itemMargin) / (seriesCount - 1);</b>
+<b class="nc">&nbsp;            double ww = (width * (1 - itemMargin)) / seriesCount;</b>
+<b class="nc">&nbsp;            return start + (seriesIndex * (ww + gap)) + ww / 2.0;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the size (width or height, depending on the location of the
+&nbsp;     * axis) of a category.
+&nbsp;     *
+&nbsp;     * @param categoryCount  the number of categories.
+&nbsp;     * @param area  the area within which the categories will be drawn.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The category size.
+&nbsp;     */
+&nbsp;    protected double calculateCategorySize(int categoryCount, Rectangle2D area,
+&nbsp;            RectangleEdge edge) {
+&nbsp;        double result;
+<b class="fc">&nbsp;        double available = 0.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        if ((edge == RectangleEdge.TOP) || (edge == RectangleEdge.BOTTOM)) {</b>
+<b class="fc">&nbsp;            available = area.getWidth();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if ((edge == RectangleEdge.LEFT)</b>
+&nbsp;                || (edge == RectangleEdge.RIGHT)) {
+<b class="fc">&nbsp;            available = area.getHeight();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (categoryCount &gt; 1) {</b>
+<b class="fc">&nbsp;            result = available * (1 - getLowerMargin() - getUpperMargin()</b>
+<b class="fc">&nbsp;                     - getCategoryMargin());</b>
+<b class="fc">&nbsp;            result = result / categoryCount;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            result = available * (1 - getLowerMargin() - getUpperMargin());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the size (width or height, depending on the location of the
+&nbsp;     * axis) of a category gap.
+&nbsp;     *
+&nbsp;     * @param categoryCount  the number of categories.
+&nbsp;     * @param area  the area within which the categories will be drawn.
+&nbsp;     * @param edge  the axis location.
+&nbsp;     *
+&nbsp;     * @return The category gap width.
+&nbsp;     */
+&nbsp;    protected double calculateCategoryGapSize(int categoryCount, 
+&nbsp;            Rectangle2D area, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        double result = 0.0;</b>
+<b class="fc">&nbsp;        double available = 0.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        if ((edge == RectangleEdge.TOP) || (edge == RectangleEdge.BOTTOM)) {</b>
+<b class="fc">&nbsp;            available = area.getWidth();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if ((edge == RectangleEdge.LEFT)</b>
+&nbsp;                || (edge == RectangleEdge.RIGHT)) {
+<b class="fc">&nbsp;            available = area.getHeight();</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (categoryCount &gt; 1) {</b>
+<b class="fc">&nbsp;            result = available * getCategoryMargin() / (categoryCount - 1);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Estimates the space required for the axis, given a specific drawing area.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device (used to obtain font information).
+&nbsp;     * @param plot  the plot that the axis belongs to.
+&nbsp;     * @param plotArea  the area within which the axis should be drawn.
+&nbsp;     * @param edge  the axis location ({@code null} not permitted).
+&nbsp;     * @param space  the space already reserved.
+&nbsp;     *
+&nbsp;     * @return The space required to draw the axis.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public AxisSpace reserveSpace(Graphics2D g2, Plot plot, 
+&nbsp;            Rectangle2D plotArea, RectangleEdge edge, AxisSpace space) {
+&nbsp;
+&nbsp;        // create a new space object if one wasn&#39;t supplied...
+<b class="fc">&nbsp;        if (space == null) {</b>
+<b class="nc">&nbsp;            space = new AxisSpace();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // if the axis is not visible, no additional space is required...
+<b class="fc">&nbsp;        if (!isVisible()) {</b>
+<b class="nc">&nbsp;            return space;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // calculate the max size of the tick labels (if visible)...
+<b class="fc">&nbsp;        double tickLabelHeight = 0.0;</b>
+<b class="fc">&nbsp;        double tickLabelWidth = 0.0;</b>
+<b class="fc">&nbsp;        if (isTickLabelsVisible()) {</b>
+<b class="fc">&nbsp;            g2.setFont(getTickLabelFont());</b>
+<b class="fc">&nbsp;            AxisState state = new AxisState();</b>
+&nbsp;            // we call refresh ticks just to get the maximum width or height
+<b class="fc">&nbsp;            refreshTicks(g2, state, plotArea, edge);</b>
+<b class="fc">&nbsp;            switch (edge) {</b>
+&nbsp;                case TOP:
+<b class="nc">&nbsp;                    tickLabelHeight = state.getMax();</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                case BOTTOM:
+<b class="fc">&nbsp;                    tickLabelHeight = state.getMax();</b>
+<b class="fc">&nbsp;                    break;</b>
+&nbsp;                case LEFT:
+<b class="fc">&nbsp;                    tickLabelWidth = state.getMax();</b>
+<b class="fc">&nbsp;                    break;</b>
+&nbsp;                case RIGHT:
+<b class="nc">&nbsp;                    tickLabelWidth = state.getMax();</b>
+<b class="nc">&nbsp;                    break;</b>
+&nbsp;                default:
+<b class="nc">&nbsp;                    throw new IllegalStateException(&quot;Unexpected RectangleEdge value.&quot;);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // get the axis label size and update the space object...
+<b class="fc">&nbsp;        Rectangle2D labelEnclosure = getLabelEnclosure(g2, edge);</b>
+&nbsp;        double labelHeight, labelWidth;
+<b class="fc">&nbsp;        if (RectangleEdge.isTopOrBottom(edge)) {</b>
+<b class="fc">&nbsp;            labelHeight = labelEnclosure.getHeight();</b>
+<b class="fc">&nbsp;            space.add(labelHeight + tickLabelHeight</b>
+&nbsp;                    + this.categoryLabelPositionOffset, edge);
+&nbsp;        }
+<b class="fc">&nbsp;        else if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;            labelWidth = labelEnclosure.getWidth();</b>
+<b class="fc">&nbsp;            space.add(labelWidth + tickLabelWidth</b>
+&nbsp;                    + this.categoryLabelPositionOffset, edge);
+&nbsp;        }
+<b class="fc">&nbsp;        return space;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Configures the axis against the current plot.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void configure() {
+&nbsp;        // nothing required
+<b class="fc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the axis on a Java 2D graphics device (such as the screen or a
+&nbsp;     * printer).
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     * @param cursor  the cursor location.
+&nbsp;     * @param plotArea  the area within which the axis should be drawn
+&nbsp;     *                  ({@code null} not permitted).
+&nbsp;     * @param dataArea  the area within which the plot is being drawn
+&nbsp;     *                  ({@code null} not permitted).
+&nbsp;     * @param edge  the location of the axis ({@code null} not permitted).
+&nbsp;     * @param plotState  collects information about the plot
+&nbsp;     *                   ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The axis state (never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public AxisState draw(Graphics2D g2, double cursor, Rectangle2D plotArea,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge,
+&nbsp;            PlotRenderingInfo plotState) {
+&nbsp;
+&nbsp;        // if the axis is not visible, don&#39;t draw it...
+<b class="fc">&nbsp;        if (!isVisible()) {</b>
+<b class="nc">&nbsp;            return new AxisState(cursor);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (isAxisLineVisible()) {</b>
+<b class="fc">&nbsp;            drawAxisLine(g2, cursor, dataArea, edge);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        AxisState state = new AxisState(cursor);</b>
+<b class="fc">&nbsp;        if (isTickMarksVisible()) {</b>
+<b class="fc">&nbsp;            drawTickMarks(g2, cursor, dataArea, edge, state);</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        createAndAddEntity(cursor, state, dataArea, edge, plotState);</b>
+&nbsp;
+&nbsp;        // draw the category labels and axis label
+<b class="fc">&nbsp;        state = drawCategoryLabels(g2, plotArea, dataArea, edge, state,</b>
+&nbsp;                plotState);
+<b class="fc">&nbsp;        if (getAttributedLabel() != null) {</b>
+<b class="nc">&nbsp;            state = drawAttributedLabel(getAttributedLabel(), g2, plotArea, </b>
+&nbsp;                    dataArea, edge, state);
+&nbsp;            
+&nbsp;        } else {
+<b class="fc">&nbsp;            state = drawLabel(getLabel(), g2, plotArea, dataArea, edge, state);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the category labels and returns the updated axis state.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     * @param plotArea  the plot area ({@code null} not permitted).
+&nbsp;     * @param dataArea  the area inside the axes ({@code null} not
+&nbsp;     *                  permitted).
+&nbsp;     * @param edge  the axis location ({@code null} not permitted).
+&nbsp;     * @param state  the axis state ({@code null} not permitted).
+&nbsp;     * @param plotState  collects information about the plot ({@code null}
+&nbsp;     *                   permitted).
+&nbsp;     *
+&nbsp;     * @return The updated axis state (never {@code null}).
+&nbsp;     */
+&nbsp;    protected AxisState drawCategoryLabels(Graphics2D g2, Rectangle2D plotArea,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge, AxisState state,
+&nbsp;            PlotRenderingInfo plotState) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(state, &quot;state&quot;);</b>
+<b class="fc">&nbsp;        if (!isTickLabelsVisible()) {</b>
+<b class="nc">&nbsp;            return state;</b>
+&nbsp;        }
+&nbsp; 
+<b class="fc">&nbsp;        List ticks = refreshTicks(g2, state, plotArea, edge);</b>
+<b class="fc">&nbsp;        state.setTicks(ticks);</b>
+<b class="fc">&nbsp;        int categoryIndex = 0;</b>
+<b class="fc">&nbsp;        for (Object o : ticks) {</b>
+<b class="fc">&nbsp;            CategoryTick tick = (CategoryTick) o;</b>
+<b class="fc">&nbsp;            g2.setFont(getTickLabelFont(tick.getCategory()));</b>
+<b class="fc">&nbsp;            g2.setPaint(getTickLabelPaint(tick.getCategory()));</b>
+&nbsp;
+<b class="fc">&nbsp;            CategoryLabelPosition position</b>
+<b class="fc">&nbsp;                    = this.categoryLabelPositions.getLabelPosition(edge);</b>
+<b class="fc">&nbsp;            double x0 = 0.0;</b>
+<b class="fc">&nbsp;            double x1 = 0.0;</b>
+<b class="fc">&nbsp;            double y0 = 0.0;</b>
+<b class="fc">&nbsp;            double y1 = 0.0;</b>
+<b class="fc">&nbsp;            if (edge == RectangleEdge.TOP) {</b>
+<b class="nc">&nbsp;                x0 = getCategoryStart(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="nc">&nbsp;                x1 = getCategoryEnd(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="nc">&nbsp;                y1 = state.getCursor() - this.categoryLabelPositionOffset;</b>
+<b class="nc">&nbsp;                y0 = y1 - state.getMax();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (edge == RectangleEdge.BOTTOM) {</b>
+<b class="fc">&nbsp;                x0 = getCategoryStart(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="fc">&nbsp;                x1 = getCategoryEnd(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="fc">&nbsp;                y0 = state.getCursor() + this.categoryLabelPositionOffset;</b>
+<b class="fc">&nbsp;                y1 = y0 + state.getMax();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (edge == RectangleEdge.LEFT) {</b>
+<b class="fc">&nbsp;                y0 = getCategoryStart(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="fc">&nbsp;                y1 = getCategoryEnd(categoryIndex, ticks.size(), dataArea,</b>
+&nbsp;                        edge);
+<b class="fc">&nbsp;                x1 = state.getCursor() - this.categoryLabelPositionOffset;</b>
+<b class="fc">&nbsp;                x0 = x1 - state.getMax();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;                y0 = getCategoryStart(categoryIndex, ticks.size(), dataArea, </b>
+&nbsp;                        edge);
+<b class="nc">&nbsp;                y1 = getCategoryEnd(categoryIndex, ticks.size(), dataArea,</b>
+&nbsp;                        edge);
+<b class="nc">&nbsp;                x0 = state.getCursor() + this.categoryLabelPositionOffset;</b>
+<b class="nc">&nbsp;                x1 = x0 - state.getMax();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            Rectangle2D area = new Rectangle2D.Double(x0, y0, (x1 - x0),</b>
+&nbsp;                    (y1 - y0));
+<b class="fc">&nbsp;            Point2D anchorPoint = position.getCategoryAnchor().getAnchorPoint(area);</b>
+<b class="fc">&nbsp;            TextBlock block = tick.getLabel();</b>
+<b class="fc">&nbsp;            block.draw(g2, (float) anchorPoint.getX(),</b>
+<b class="fc">&nbsp;                    (float) anchorPoint.getY(), position.getLabelAnchor(),</b>
+<b class="fc">&nbsp;                    (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="fc">&nbsp;                    position.getAngle());</b>
+<b class="fc">&nbsp;            Shape bounds = block.calculateBounds(g2,</b>
+<b class="fc">&nbsp;                    (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="fc">&nbsp;                    position.getLabelAnchor(), (float) anchorPoint.getX(),</b>
+<b class="fc">&nbsp;                    (float) anchorPoint.getY(), position.getAngle());</b>
+<b class="fc">&nbsp;            if (plotState != null &amp;&amp; plotState.getOwner() != null) {</b>
+<b class="fc">&nbsp;                EntityCollection entities = plotState.getOwner()</b>
+<b class="fc">&nbsp;                        .getEntityCollection();</b>
+<b class="fc">&nbsp;                if (entities != null) {</b>
+<b class="fc">&nbsp;                    String tooltip = getCategoryLabelToolTip(</b>
+<b class="fc">&nbsp;                            tick.getCategory());</b>
+<b class="fc">&nbsp;                    String url = getCategoryLabelURL(tick.getCategory());</b>
+<b class="fc">&nbsp;                    entities.add(new CategoryLabelEntity(tick.getCategory(),</b>
+&nbsp;                            bounds, tooltip, url));
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            categoryIndex++;</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        if (edge.equals(RectangleEdge.TOP)) {</b>
+<b class="nc">&nbsp;            double h = state.getMax() + this.categoryLabelPositionOffset;</b>
+<b class="nc">&nbsp;            state.cursorUp(h);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="fc">&nbsp;        else if (edge.equals(RectangleEdge.BOTTOM)) {</b>
+<b class="fc">&nbsp;            double h = state.getMax() + this.categoryLabelPositionOffset;</b>
+<b class="fc">&nbsp;            state.cursorDown(h);</b>
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        else if (edge == RectangleEdge.LEFT) {</b>
+<b class="fc">&nbsp;            double w = state.getMax() + this.categoryLabelPositionOffset;</b>
+<b class="fc">&nbsp;            state.cursorLeft(w);</b>
+<b class="fc">&nbsp;        }</b>
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;            double w = state.getMax() + this.categoryLabelPositionOffset;</b>
+<b class="nc">&nbsp;            state.cursorRight(w);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a temporary list of ticks that can be used when drawing the axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device (used to get font measurements).
+&nbsp;     * @param state  the axis state.
+&nbsp;     * @param dataArea  the area inside the axes.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     *
+&nbsp;     * @return A list of ticks.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public List refreshTicks(Graphics2D g2, AxisState state, 
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge) {
+&nbsp;
+<b class="fc">&nbsp;        List ticks = new java.util.ArrayList(); // FIXME generics</b>
+&nbsp;
+&nbsp;        // sanity check for data area...
+<b class="fc">&nbsp;        if (dataArea.getHeight() &lt;= 0.0 || dataArea.getWidth() &lt; 0.0) {</b>
+<b class="nc">&nbsp;            return ticks;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CategoryPlot plot = (CategoryPlot) getPlot();</b>
+<b class="fc">&nbsp;        List categories = plot.getCategoriesForAxis(this);</b>
+<b class="fc">&nbsp;        double max = 0.0;</b>
+&nbsp;
+<b class="fc">&nbsp;        if (categories != null) {</b>
+<b class="fc">&nbsp;            CategoryLabelPosition position</b>
+<b class="fc">&nbsp;                    = this.categoryLabelPositions.getLabelPosition(edge);</b>
+<b class="fc">&nbsp;            float r = this.maximumCategoryLabelWidthRatio;</b>
+<b class="fc">&nbsp;            if (r &lt;= 0.0) {</b>
+<b class="fc">&nbsp;                r = position.getWidthRatio();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            float l;
+<b class="fc">&nbsp;            if (position.getWidthType() == CategoryLabelWidthType.CATEGORY) {</b>
+<b class="fc">&nbsp;                l = (float) calculateCategorySize(categories.size(), dataArea,</b>
+&nbsp;                        edge);
+&nbsp;            }
+&nbsp;            else {
+<b class="fc">&nbsp;                if (RectangleEdge.isLeftOrRight(edge)) {</b>
+<b class="fc">&nbsp;                    l = (float) dataArea.getWidth();</b>
+&nbsp;                }
+&nbsp;                else {
+<b class="nc">&nbsp;                    l = (float) dataArea.getHeight();</b>
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            int categoryIndex = 0;</b>
+<b class="fc">&nbsp;            for (Object o : categories) {</b>
+<b class="fc">&nbsp;                Comparable category = (Comparable) o;</b>
+<b class="fc">&nbsp;                g2.setFont(getTickLabelFont(category));</b>
+<b class="fc">&nbsp;                TextBlock label = createLabel(category, l * r, edge, g2);</b>
+<b class="fc">&nbsp;                if (edge == RectangleEdge.TOP || edge == RectangleEdge.BOTTOM) {</b>
+<b class="fc">&nbsp;                    max = Math.max(max, calculateCategoryLabelHeight(label,</b>
+<b class="fc">&nbsp;                            position, getTickLabelInsets(), g2));</b>
+<b class="fc">&nbsp;                } else if (edge == RectangleEdge.LEFT</b>
+&nbsp;                        || edge == RectangleEdge.RIGHT) {
+<b class="fc">&nbsp;                    max = Math.max(max, calculateCategoryLabelWidth(label,</b>
+<b class="fc">&nbsp;                            position, getTickLabelInsets(), g2));</b>
+&nbsp;                }
+<b class="fc">&nbsp;                Tick tick = new CategoryTick(category, label,</b>
+<b class="fc">&nbsp;                        position.getLabelAnchor(),</b>
+<b class="fc">&nbsp;                        position.getRotationAnchor(), position.getAngle());</b>
+<b class="fc">&nbsp;                ticks.add(tick);</b>
+<b class="fc">&nbsp;                categoryIndex = categoryIndex + 1;</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+<b class="fc">&nbsp;        state.setMax(max);</b>
+<b class="fc">&nbsp;        return ticks;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the tick marks.
+&nbsp;     * 
+&nbsp;     * @param g2  the graphics target.
+&nbsp;     * @param cursor  the cursor position (an offset when drawing multiple axes)
+&nbsp;     * @param dataArea  the area for plotting the data.
+&nbsp;     * @param edge  the location of the axis.
+&nbsp;     * @param state  the axis state.
+&nbsp;     */
+&nbsp;    public void drawTickMarks(Graphics2D g2, double cursor,
+&nbsp;            Rectangle2D dataArea, RectangleEdge edge, AxisState state) {
+&nbsp;
+<b class="fc">&nbsp;        Plot p = getPlot();</b>
+<b class="fc">&nbsp;        if (p == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        CategoryPlot plot = (CategoryPlot) p;</b>
+<b class="fc">&nbsp;        double il = getTickMarkInsideLength();</b>
+<b class="fc">&nbsp;        double ol = getTickMarkOutsideLength();</b>
+<b class="fc">&nbsp;        Line2D line = new Line2D.Double();</b>
+<b class="fc">&nbsp;        List&lt;Comparable&gt; categories = plot.getCategoriesForAxis(this);</b>
+<b class="fc">&nbsp;        g2.setPaint(getTickMarkPaint());</b>
+<b class="fc">&nbsp;        g2.setStroke(getTickMarkStroke());</b>
+<b class="fc">&nbsp;        Object saved = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);</b>
+<b class="fc">&nbsp;        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, </b>
+&nbsp;                RenderingHints.VALUE_STROKE_NORMALIZE);
+<b class="fc">&nbsp;        if (edge.equals(RectangleEdge.TOP)) {</b>
+<b class="nc">&nbsp;            for (Comparable category : categories) {</b>
+<b class="nc">&nbsp;                double x = getCategoryMiddle(category, categories, dataArea, edge);</b>
+<b class="nc">&nbsp;                line.setLine(x, cursor, x, cursor + il);</b>
+<b class="nc">&nbsp;                g2.draw(line);</b>
+<b class="nc">&nbsp;                line.setLine(x, cursor, x, cursor - ol);</b>
+<b class="nc">&nbsp;                g2.draw(line);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            state.cursorUp(ol);</b>
+<b class="fc">&nbsp;        } else if (edge.equals(RectangleEdge.BOTTOM)) {</b>
+<b class="fc">&nbsp;            for (Comparable category : categories) {</b>
+<b class="fc">&nbsp;                double x = getCategoryMiddle(category, categories, dataArea, edge);</b>
+<b class="fc">&nbsp;                line.setLine(x, cursor, x, cursor - il);</b>
+<b class="fc">&nbsp;                g2.draw(line);</b>
+<b class="fc">&nbsp;                line.setLine(x, cursor, x, cursor + ol);</b>
+<b class="fc">&nbsp;                g2.draw(line);</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            state.cursorDown(ol);</b>
+<b class="fc">&nbsp;        } else if (edge.equals(RectangleEdge.LEFT)) {</b>
+<b class="fc">&nbsp;            for (Comparable category : categories) {</b>
+<b class="fc">&nbsp;                double y = getCategoryMiddle(category, categories, dataArea, edge);</b>
+<b class="fc">&nbsp;                line.setLine(cursor, y, cursor + il, y);</b>
+<b class="fc">&nbsp;                g2.draw(line);</b>
+<b class="fc">&nbsp;                line.setLine(cursor, y, cursor - ol, y);</b>
+<b class="fc">&nbsp;                g2.draw(line);</b>
+<b class="fc">&nbsp;            }</b>
+<b class="fc">&nbsp;            state.cursorLeft(ol);</b>
+<b class="nc">&nbsp;        } else if (edge.equals(RectangleEdge.RIGHT)) {</b>
+<b class="nc">&nbsp;            for (Comparable category : categories) {</b>
+<b class="nc">&nbsp;                double y = getCategoryMiddle(category, categories, dataArea, edge);</b>
+<b class="nc">&nbsp;                line.setLine(cursor, y, cursor - il, y);</b>
+<b class="nc">&nbsp;                g2.draw(line);</b>
+<b class="nc">&nbsp;                line.setLine(cursor, y, cursor + ol, y);</b>
+<b class="nc">&nbsp;                g2.draw(line);</b>
+<b class="nc">&nbsp;            }</b>
+<b class="nc">&nbsp;            state.cursorRight(ol);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, saved);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a label.
+&nbsp;     *
+&nbsp;     * @param category  the category.
+&nbsp;     * @param width  the available width.
+&nbsp;     * @param edge  the edge on which the axis appears.
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     *
+&nbsp;     * @return A label.
+&nbsp;     */
+&nbsp;    protected TextBlock createLabel(Comparable category, float width,
+&nbsp;            RectangleEdge edge, Graphics2D g2) {
+<b class="fc">&nbsp;        TextBlock label = TextUtils.createTextBlock(category.toString(),</b>
+<b class="fc">&nbsp;                getTickLabelFont(category), getTickLabelPaint(category), width,</b>
+&nbsp;                this.maximumCategoryLabelLines, new G2TextMeasurer(g2));
+<b class="fc">&nbsp;        return label;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the width of a category label when rendered.
+&nbsp;     *
+&nbsp;     * @param label  the text block ({@code null} not permitted).
+&nbsp;     * @param position  the position.
+&nbsp;     * @param insets  the label insets.
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     *
+&nbsp;     * @return The width.
+&nbsp;     */
+&nbsp;    protected double calculateCategoryLabelWidth(TextBlock label, 
+&nbsp;            CategoryLabelPosition position, RectangleInsets insets, Graphics2D g2) {
+<b class="fc">&nbsp;        Size2D size = label.calculateDimensions(g2);</b>
+<b class="fc">&nbsp;        Rectangle2D box = new Rectangle2D.Double(0.0, 0.0, size.getWidth(),</b>
+<b class="fc">&nbsp;                size.getHeight());</b>
+<b class="fc">&nbsp;        Shape rotatedBox = ShapeUtils.rotateShape(box, position.getAngle(),</b>
+&nbsp;                0.0f, 0.0f);
+<b class="fc">&nbsp;        double w = rotatedBox.getBounds2D().getWidth() + insets.getLeft()</b>
+<b class="fc">&nbsp;                + insets.getRight();</b>
+<b class="fc">&nbsp;        return w;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the height of a category label when rendered.
+&nbsp;     *
+&nbsp;     * @param block  the text block ({@code null} not permitted).
+&nbsp;     * @param position  the label position ({@code null} not permitted).
+&nbsp;     * @param insets  the label insets ({@code null} not permitted).
+&nbsp;     * @param g2  the graphics device ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The height.
+&nbsp;     */
+&nbsp;    protected double calculateCategoryLabelHeight(TextBlock block,
+&nbsp;            CategoryLabelPosition position, RectangleInsets insets, Graphics2D g2) {
+<b class="fc">&nbsp;        Size2D size = block.calculateDimensions(g2);</b>
+<b class="fc">&nbsp;        Rectangle2D box = new Rectangle2D.Double(0.0, 0.0, size.getWidth(),</b>
+<b class="fc">&nbsp;                size.getHeight());</b>
+<b class="fc">&nbsp;        Shape rotatedBox = ShapeUtils.rotateShape(box, position.getAngle(),</b>
+&nbsp;                0.0f, 0.0f);
+<b class="fc">&nbsp;        double h = rotatedBox.getBounds2D().getHeight()</b>
+<b class="fc">&nbsp;                   + insets.getTop() + insets.getBottom();</b>
+<b class="fc">&nbsp;        return h;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a clone of the axis.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the axis does
+&nbsp;     *         not support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        CategoryAxis clone = (CategoryAxis) super.clone();</b>
+<b class="fc">&nbsp;        clone.tickLabelFontMap = new HashMap&lt;&gt;(this.tickLabelFontMap);</b>
+<b class="fc">&nbsp;        clone.tickLabelPaintMap = new HashMap&lt;&gt;(this.tickLabelPaintMap);</b>
+<b class="fc">&nbsp;        clone.categoryLabelToolTips = new HashMap&lt;&gt;(this.categoryLabelToolTips);</b>
+<b class="fc">&nbsp;        clone.categoryLabelURLs = new HashMap&lt;&gt;(this.categoryLabelToolTips);</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this axis for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof CategoryAxis)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!super.equals(obj)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        CategoryAxis that = (CategoryAxis) obj;</b>
+<b class="fc">&nbsp;        if (that.lowerMargin != this.lowerMargin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (that.upperMargin != this.upperMargin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (that.categoryMargin != this.categoryMargin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (that.maximumCategoryLabelWidthRatio</b>
+&nbsp;                != this.maximumCategoryLabelWidthRatio) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (that.categoryLabelPositionOffset</b>
+&nbsp;                != this.categoryLabelPositionOffset) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(that.categoryLabelPositions, this.categoryLabelPositions)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(that.categoryLabelToolTips, this.categoryLabelToolTips)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.categoryLabelURLs, that.categoryLabelURLs)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.tickLabelFontMap, that.tickLabelFontMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.tickLabelPaintMap, that.tickLabelPaintMap)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this object.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        return super.hashCode();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        writePaintMap(this.tickLabelPaintMap, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.tickLabelPaintMap = readPaintMap(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Reads a {@code Map} of ({@code Comparable}, {@code Paint})
+&nbsp;     * elements from a stream.
+&nbsp;     *
+&nbsp;     * @param in  the input stream.
+&nbsp;     *
+&nbsp;     * @return The map.
+&nbsp;     *
+&nbsp;     * @throws IOException
+&nbsp;     * @throws ClassNotFoundException
+&nbsp;     *
+&nbsp;     * @see #writePaintMap(Map, ObjectOutputStream)
+&nbsp;     */
+&nbsp;    private Map readPaintMap(ObjectInputStream in)
+&nbsp;            throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        boolean isNull = in.readBoolean();</b>
+<b class="fc">&nbsp;        if (isNull) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Map result = new HashMap();</b>
+<b class="fc">&nbsp;        int count = in.readInt();</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; count; i++) {</b>
+<b class="fc">&nbsp;            Comparable category = (Comparable) in.readObject();</b>
+<b class="fc">&nbsp;            Paint paint = SerialUtils.readPaint(in);</b>
+<b class="fc">&nbsp;            result.put(category, paint);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Writes a map of ({@code Comparable}, {@code Paint})
+&nbsp;     * elements to a stream.
+&nbsp;     *
+&nbsp;     * @param map  the map ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @param out
+&nbsp;     * @throws IOException
+&nbsp;     *
+&nbsp;     * @see #readPaintMap(ObjectInputStream)
+&nbsp;     */
+&nbsp;    private void writePaintMap(Map map, ObjectOutputStream out)
+&nbsp;            throws IOException {
+<b class="fc">&nbsp;        if (map == null) {</b>
+<b class="nc">&nbsp;            out.writeBoolean(true);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            out.writeBoolean(false);</b>
+<b class="fc">&nbsp;            Set keys = map.keySet();</b>
+<b class="fc">&nbsp;            int count = keys.size();</b>
+<b class="fc">&nbsp;            out.writeInt(count);</b>
+<b class="fc">&nbsp;            for (Object o : keys) {</b>
+<b class="fc">&nbsp;                Comparable key = (Comparable) o;</b>
+<b class="fc">&nbsp;                out.writeObject(key);</b>
+<b class="fc">&nbsp;                SerialUtils.writePaint((Paint) map.get(key), out);</b>
+<b class="fc">&nbsp;            }</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

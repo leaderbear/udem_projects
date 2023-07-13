@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>IFT3295 - TP1</title>
+	<style>
+		#inputs {
+			width: 80%;
+			display: flex;
+			flex-direction: column;
+		}
+		textarea {
+			min-height: 180px;
+			resize: vertical;
+		}
+		#sequenceValue {
+			min-height: 300px;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="inputs">
+		<label for="sequenceFASTQ">Choisir ou coller le contenu d'un fichier FASTQ :</label>
+
+		<input type="file" id="fichierSequenceFASTQ" name="sequenceFASTQ" accept=".fq, .fastq"/>
+
+		<textarea id="FASTQvalue"></textarea>
+
+		<input type="button" id="btnAlignerSequences" value="Calculer matrice des scores et liste des noeuds du graphe"/>
+
+		<textarea id="sequenceValue"></textarea>
+
+		<div>Activer filtre 80 ?<input type="checkbox" id="filterCheckBox"></div>
+
+		<textarea id="sequenceValue2" placeholder="La liste des noeuds du graph seront générés ici."></textarea>
+	</div>
+
+	<script src="alignerSequences.js"></script>
+	<script type="text/javascript">
+
+		// vvvvvv Récupérer le contenu du fichier fastq et l'afficher vvvvvv 
+		document.getElementById("fichierSequenceFASTQ").addEventListener("change", function() {
+			var f = this.files[0]
+			var fileReader = new FileReader();
+
+			fileReader.readAsText(f, "UTF-8");
+
+			fileReader.onload = function(e) {
+				document.getElementById("FASTQvalue").value = e.target.result;
+			};
+		})
+		// ^^^^^^ Récupérer le contenu du fichier fastq et l'afficher ^^^^^^ 
+
+
+		document.getElementById("btnAlignerSequences").addEventListener("click", function() {
+
+			// vvvvvv Partie de code pour isoler les séquences dans le fastq vvvvvv
+			var raw_fastq = document.getElementById("FASTQvalue").value;
+			var raw_fastq_lines = raw_fastq.split("\n");
+			var sequences = [];
+
+			raw_fastq_lines.forEach(function(line, index) {
+				if(line.charAt(0) == "@") {
+					sequences.push(raw_fastq_lines[index+1]);
+				}
+			})
+			// ^^^^^^ Partie de code pour isoler les séquences dans le fastq ^^^^^^
+
+
+			if(sequences.length < 2) return; // si moins de 2 séquences dans fastq, ne rien faire
+
+
+			var filter = document.getElementById("filterCheckBox").checked;    
+			var filterValue = 80; 
+
+			var matrix = []; 
+			var graph = [];
+			for(var m = 0; m < sequences.length; m++) {
+				var line = []; 
+				for(var n = 0; n < sequences.length; n++) {
+
+					// Ne pas comparer un élément à soit même
+					if (m != n) {
+						var mnScore = alignerSequences(sequences[m], sequences[n]).score_alignement_optimal;
+
+						if (filter == true && mnScore < filterValue) {
+							line.push(0)
+						}
+						else{
+							line.push(mnScore);
+							graph.push((m+1) + ">" + (n+1));
+						}
+
+					} else {
+						line.push(0)
+					}
+				}
+				matrix.push(line); 
+			}
+
+			document.getElementById("sequenceValue").value = `${matrix.join("\n")}`
+			document.getElementById("sequenceValue2").value = `${graph.join("\n")}`
+
+		})
+
+	</script>
+
+</body>
+
+</html>

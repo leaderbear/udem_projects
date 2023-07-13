@@ -1,0 +1,23 @@
+Librairie utilisée: postgresql-42.2.19
+Compilé avec:   	Java SE Development Kit 13.0.2 (JDK 13.0.2)
+Exécution:			Démarrer postgres et insérer rouler le script SQL Script.sql 
+					Dans la console : java -jar Gui.jar 
+
+Par défaut les valeurs pour la connexion à la base de données sont
+server:  	localhost
+database:	biblio
+user:  		postgres
+password: 	postgres
+
+Ces valeurs peuvent être changées en cliquant sur le titre de l'interface (projet du cours) [title.png]
+
+Une fenêtre s'ouvrira, 
+modifiez les valeurs et appuyez sur "Appliquer" pour appliquer les changements [settings.png]
+
+Appuyez sur un des boutons Question 1, Question 2, Question 3 ou Question 4. Si les valeurs de server, database, username et password sont valides, la boite de texte affichera les lignes du résultat de la requête SQL avec dans chaque ligne la valeur des colonnes séparées par une virgule.
+
+Si la valeur entrée pour serveur est invalide, la boite de texte affichera le message suivant lorsque vous appuierez sur une des questions [server_error.png]
+
+Si la valeur entrée pour database est invalide, la boite de texte affichera le message suivant lorsque vous appuierez sur une des questions [database_error.png]
+
+Si la valeur entrée pour username ou password est invalide, la boite de texte affichera le message suivant lorsque vous appuierez sur une des questions [login_error.png]

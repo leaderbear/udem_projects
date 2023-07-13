@@ -1,0 +1,1574 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Plot</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.plot</a>
+</div>
+
+<h1>Coverage Summary for Class: Plot (org.jfree.chart.plot)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Plot</td>
+<td class="coverageStat">
+  <span class="percent">
+    69,1%
+  </span>
+  <span class="absValue">
+    (47/68)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,6%
+  </span>
+  <span class="absValue">
+    (207/311)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">Plot$1</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    69,6%
+  </span>
+  <span class="absValue">
+    (48/69)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    66,7%
+  </span>
+  <span class="absValue">
+    (208/312)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates.
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------
+&nbsp; * Plot.java
+&nbsp; * ---------
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Sylvain Vieujot;
+&nbsp; *                   Jeremy Bowman;
+&nbsp; *                   Andreas Schneider;
+&nbsp; *                   Gideon Krause;
+&nbsp; *                   Nicolas Brodu;
+&nbsp; *                   Michal Krause;
+&nbsp; *                   Richard West, Advanced Micro Devices, Inc.;
+&nbsp; *                   Peter Kolb - patches 2603321, 2809117;
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.plot;
+&nbsp;
+&nbsp;import java.awt.AlphaComposite;
+&nbsp;import java.awt.BasicStroke;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Composite;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.GradientPaint;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Image;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.RenderingHints;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Ellipse2D;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import javax.swing.event.EventListenerList;
+&nbsp;import org.jfree.chart.ChartElement;
+&nbsp;import org.jfree.chart.ChartElementVisitor;
+&nbsp;
+&nbsp;import org.jfree.chart.JFreeChart;
+&nbsp;import org.jfree.chart.legend.LegendItemCollection;
+&nbsp;import org.jfree.chart.legend.LegendItemSource;
+&nbsp;import org.jfree.chart.annotations.Annotation;
+&nbsp;import org.jfree.chart.axis.AxisLocation;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.entity.PlotEntity;
+&nbsp;import org.jfree.chart.event.AnnotationChangeEvent;
+&nbsp;import org.jfree.chart.event.AnnotationChangeListener;
+&nbsp;import org.jfree.chart.event.AxisChangeEvent;
+&nbsp;import org.jfree.chart.event.AxisChangeListener;
+&nbsp;import org.jfree.chart.event.ChartChangeEventType;
+&nbsp;import org.jfree.chart.event.MarkerChangeEvent;
+&nbsp;import org.jfree.chart.event.MarkerChangeListener;
+&nbsp;import org.jfree.chart.event.PlotChangeEvent;
+&nbsp;import org.jfree.chart.event.PlotChangeListener;
+&nbsp;import org.jfree.chart.text.G2TextMeasurer;
+&nbsp;import org.jfree.chart.text.TextBlock;
+&nbsp;import org.jfree.chart.text.TextBlockAnchor;
+&nbsp;import org.jfree.chart.text.TextUtils;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.api.RectangleInsets;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.api.RectangleAlignment;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.data.general.DatasetChangeEvent;
+&nbsp;import org.jfree.data.general.DatasetChangeListener;
+&nbsp;
+&nbsp;/**
+&nbsp; * The base class for all plots in JFreeChart.  The {@link JFreeChart} class
+&nbsp; * delegates the drawing of axes and data to the plot.  This base class
+&nbsp; * provides facilities common to most plot types.
+&nbsp; */
+&nbsp;public abstract class Plot implements ChartElement, AxisChangeListener,
+&nbsp;        DatasetChangeListener, AnnotationChangeListener, MarkerChangeListener,
+&nbsp;        LegendItemSource, PublicCloneable, Cloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -8831571430103671324L;
+&nbsp;
+&nbsp;    /** Useful constant representing zero. */
+<b class="fc">&nbsp;    public static final Number ZERO = 0;</b>
+&nbsp;
+&nbsp;    /** The default insets. */
+<b class="fc">&nbsp;    public static final RectangleInsets DEFAULT_INSETS</b>
+&nbsp;            = new RectangleInsets(4.0, 8.0, 4.0, 8.0);
+&nbsp;
+&nbsp;    /** The default outline stroke. */
+<b class="fc">&nbsp;    public static final Stroke DEFAULT_OUTLINE_STROKE = new BasicStroke(0.5f,</b>
+&nbsp;            BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+&nbsp;
+&nbsp;    /** The default outline color. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_OUTLINE_PAINT = Color.GRAY;</b>
+&nbsp;
+&nbsp;    /** The default foreground alpha transparency. */
+&nbsp;    public static final float DEFAULT_FOREGROUND_ALPHA = 1.0f;
+&nbsp;
+&nbsp;    /** The default background alpha transparency. */
+&nbsp;    public static final float DEFAULT_BACKGROUND_ALPHA = 1.0f;
+&nbsp;
+&nbsp;    /** The default background color. */
+<b class="fc">&nbsp;    public static final Paint DEFAULT_BACKGROUND_PAINT = Color.WHITE;</b>
+&nbsp;
+&nbsp;    /** The minimum width at which the plot should be drawn. */
+&nbsp;    public static final int MINIMUM_WIDTH_TO_DRAW = 10;
+&nbsp;
+&nbsp;    /** The minimum height at which the plot should be drawn. */
+&nbsp;    public static final int MINIMUM_HEIGHT_TO_DRAW = 10;
+&nbsp;
+&nbsp;    /** A default box shape for legend items. */
+<b class="fc">&nbsp;    public static final Shape DEFAULT_LEGEND_ITEM_BOX</b>
+&nbsp;            = new Rectangle2D.Double(-4.0, -4.0, 8.0, 8.0);
+&nbsp;
+&nbsp;    /** A default circle shape for legend items. */
+<b class="fc">&nbsp;    public static final Shape DEFAULT_LEGEND_ITEM_CIRCLE</b>
+&nbsp;            = new Ellipse2D.Double(-4.0, -4.0, 8.0, 8.0);
+&nbsp;
+&nbsp;    /** 
+&nbsp;     * The chart that the plot is assigned to.  It can be {@code null} if the
+&nbsp;     * plot is not assigned to a chart yet, or if the plot is a subplot of a
+&nbsp;     * another plot.
+&nbsp;     */
+&nbsp;    private JFreeChart chart;
+&nbsp;    
+&nbsp;    /** The parent plot ({@code null} if this is the root plot). */
+&nbsp;    private Plot parent;
+&nbsp;
+&nbsp;    /** The message to display if no data is available. */
+&nbsp;    private String noDataMessage;
+&nbsp;
+&nbsp;    /** The font used to display the &#39;no data&#39; message. */
+&nbsp;    private Font noDataMessageFont;
+&nbsp;
+&nbsp;    /** The paint used to draw the &#39;no data&#39; message. */
+&nbsp;    private transient Paint noDataMessagePaint;
+&nbsp;
+&nbsp;    /** Amount of blank space around the plot area. */
+&nbsp;    private RectangleInsets insets;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the plot outline is drawn.
+&nbsp;     */
+&nbsp;    private boolean outlineVisible;
+&nbsp;
+&nbsp;    /** The Stroke used to draw an outline around the plot. */
+&nbsp;    private transient Stroke outlineStroke;
+&nbsp;
+&nbsp;    /** The Paint used to draw an outline around the plot. */
+&nbsp;    private transient Paint outlinePaint;
+&nbsp;
+&nbsp;    /** An optional color used to fill the plot background. */
+&nbsp;    private transient Paint backgroundPaint;
+&nbsp;
+&nbsp;    /** An optional image for the plot background. */
+&nbsp;    private transient Image backgroundImage;  // not currently serialized
+&nbsp;
+&nbsp;    /** The alignment for the background image. */
+<b class="fc">&nbsp;    private RectangleAlignment backgroundImageAlignment = RectangleAlignment.FILL;</b>
+&nbsp;
+&nbsp;    /** The alpha value used to draw the background image. */
+<b class="fc">&nbsp;    private float backgroundImageAlpha = 0.5f;</b>
+&nbsp;
+&nbsp;    /** The alpha-transparency for the plot. */
+&nbsp;    private float foregroundAlpha;
+&nbsp;
+&nbsp;    /** The alpha transparency for the background paint. */
+&nbsp;    private float backgroundAlpha;
+&nbsp;
+&nbsp;    /** The drawing supplier. */
+&nbsp;    private DrawingSupplier drawingSupplier;
+&nbsp;
+&nbsp;    /** Storage for registered change listeners. */
+&nbsp;    private transient EventListenerList listenerList;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether or not the plot will notify listeners
+&nbsp;     * of changes (defaults to true, but sometimes it is useful to disable
+&nbsp;     * this).
+&nbsp;     */
+&nbsp;    private boolean notify;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new plot.
+&nbsp;     */
+<b class="fc">&nbsp;    protected Plot() {</b>
+<b class="fc">&nbsp;        this.chart = null;</b>
+<b class="fc">&nbsp;        this.parent = null;</b>
+<b class="fc">&nbsp;        this.insets = DEFAULT_INSETS;</b>
+<b class="fc">&nbsp;        this.backgroundPaint = DEFAULT_BACKGROUND_PAINT;</b>
+<b class="fc">&nbsp;        this.backgroundAlpha = DEFAULT_BACKGROUND_ALPHA;</b>
+<b class="fc">&nbsp;        this.backgroundImage = null;</b>
+<b class="fc">&nbsp;        this.outlineVisible = true;</b>
+<b class="fc">&nbsp;        this.outlineStroke = DEFAULT_OUTLINE_STROKE;</b>
+<b class="fc">&nbsp;        this.outlinePaint = DEFAULT_OUTLINE_PAINT;</b>
+<b class="fc">&nbsp;        this.foregroundAlpha = DEFAULT_FOREGROUND_ALPHA;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.noDataMessage = null;</b>
+<b class="fc">&nbsp;        this.noDataMessageFont = new Font(&quot;SansSerif&quot;, Font.PLAIN, 12);</b>
+<b class="fc">&nbsp;        this.noDataMessagePaint = Color.BLACK;</b>
+&nbsp;
+<b class="fc">&nbsp;        this.drawingSupplier = new DefaultDrawingSupplier();</b>
+&nbsp;
+<b class="fc">&nbsp;        this.notify = true;</b>
+<b class="fc">&nbsp;        this.listenerList = new EventListenerList();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the chart that this plot is assigned to.  This method can
+&nbsp;     * return {@code null} if the plot is not yet assigned to a plot, or if the
+&nbsp;     * plot is a subplot of another plot.
+&nbsp;     * 
+&nbsp;     * @return The chart (possibly {@code null}).
+&nbsp;     */
+&nbsp;    public JFreeChart getChart() {
+<b class="nc">&nbsp;        return this.chart;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Sets the chart that the plot is assigned to.  This method is not 
+&nbsp;     * intended for external use.
+&nbsp;     * 
+&nbsp;     * @param chart  the chart ({@code null} permitted).
+&nbsp;     */
+&nbsp;    public void setChart(JFreeChart chart) {
+<b class="fc">&nbsp;        this.chart = chart;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Fetches the element hinting flag from the chart that this plot is 
+&nbsp;     * assigned to.  If the plot is not assigned (directly or indirectly) to
+&nbsp;     * a chart instance, this method will return {@code false}.
+&nbsp;     * 
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean fetchElementHintingFlag() {
+<b class="fc">&nbsp;        if (this.parent != null) {</b>
+<b class="fc">&nbsp;            return this.parent.fetchElementHintingFlag();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.chart != null) {</b>
+<b class="fc">&nbsp;            return this.chart.getElementHinting();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the string that is displayed when the dataset is empty or
+&nbsp;     * {@code null}.
+&nbsp;     *
+&nbsp;     * @return The &#39;no data&#39; message ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setNoDataMessage(String)
+&nbsp;     * @see #getNoDataMessageFont()
+&nbsp;     * @see #getNoDataMessagePaint()
+&nbsp;     */
+&nbsp;    public String getNoDataMessage() {
+<b class="nc">&nbsp;        return this.noDataMessage;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the message that is displayed when the dataset is empty or
+&nbsp;     * {@code null}, and sends a {@link PlotChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param message  the message ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getNoDataMessage()
+&nbsp;     */
+&nbsp;    public void setNoDataMessage(String message) {
+<b class="fc">&nbsp;        this.noDataMessage = message;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font used to display the &#39;no data&#39; message.
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setNoDataMessageFont(Font)
+&nbsp;     * @see #getNoDataMessage()
+&nbsp;     */
+&nbsp;    public Font getNoDataMessageFont() {
+<b class="nc">&nbsp;        return this.noDataMessageFont;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the font used to display the &#39;no data&#39; message and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getNoDataMessageFont()
+&nbsp;     */
+&nbsp;    public void setNoDataMessageFont(Font font) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(font, &quot;font&quot;);</b>
+<b class="fc">&nbsp;        this.noDataMessageFont = font;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to display the &#39;no data&#39; message.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setNoDataMessagePaint(Paint)
+&nbsp;     * @see #getNoDataMessage()
+&nbsp;     */
+&nbsp;    public Paint getNoDataMessagePaint() {
+<b class="nc">&nbsp;        return this.noDataMessagePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used to display the &#39;no data&#39; message and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getNoDataMessagePaint()
+&nbsp;     */
+&nbsp;    public void setNoDataMessagePaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.noDataMessagePaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a short string describing the plot type.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Note: this gets used in the chart property editing user interface,
+&nbsp;     * but there needs to be a better mechanism for identifying the plot type.
+&nbsp;     *
+&nbsp;     * @return A short string describing the plot type (never
+&nbsp;     *     {@code null}).
+&nbsp;     */
+&nbsp;    public abstract String getPlotType();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the parent plot (or {@code null} if this plot is not part
+&nbsp;     * of a combined plot).
+&nbsp;     *
+&nbsp;     * @return The parent plot.
+&nbsp;     *
+&nbsp;     * @see #setParent(Plot)
+&nbsp;     * @see #getRootPlot()
+&nbsp;     */
+&nbsp;    public Plot getParent() {
+<b class="fc">&nbsp;        return this.parent;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the parent plot.  This method is intended for internal use, you
+&nbsp;     * shouldn&#39;t need to call it directly.
+&nbsp;     *
+&nbsp;     * @param parent  the parent plot ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getParent()
+&nbsp;     */
+&nbsp;    public void setParent(Plot parent) {
+<b class="fc">&nbsp;        this.parent = parent;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the root plot.
+&nbsp;     *
+&nbsp;     * @return The root plot.
+&nbsp;     *
+&nbsp;     * @see #getParent()
+&nbsp;     */
+&nbsp;    public Plot getRootPlot() {
+&nbsp;
+<b class="nc">&nbsp;        Plot p = getParent();</b>
+<b class="nc">&nbsp;        if (p == null) {</b>
+<b class="nc">&nbsp;            return this;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return p.getRootPlot();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if this plot is part of a combined plot
+&nbsp;     * structure (that is, {@link #getParent()} returns a non-{@code null}
+&nbsp;     * value), and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @return {@code true} if this plot is part of a combined plot
+&nbsp;     *         structure.
+&nbsp;     *
+&nbsp;     * @see #getParent()
+&nbsp;     */
+&nbsp;    public boolean isSubplot() {
+<b class="nc">&nbsp;        return (getParent() != null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the insets for the plot area.
+&nbsp;     *
+&nbsp;     * @return The insets (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setInsets(RectangleInsets)
+&nbsp;     */
+&nbsp;    public RectangleInsets getInsets() {
+<b class="fc">&nbsp;        return this.insets;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the insets for the plot and sends a {@link PlotChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param insets  the new insets ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getInsets()
+&nbsp;     * @see #setInsets(RectangleInsets, boolean)
+&nbsp;     */
+&nbsp;    public void setInsets(RectangleInsets insets) {
+<b class="fc">&nbsp;        setInsets(insets, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the insets for the plot and, if requested,  and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param insets  the new insets ({@code null} not permitted).
+&nbsp;     * @param notify  a flag that controls whether the registered listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getInsets()
+&nbsp;     * @see #setInsets(RectangleInsets)
+&nbsp;     */
+&nbsp;    public void setInsets(RectangleInsets insets, boolean notify) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(insets, &quot;insets&quot;);</b>
+<b class="fc">&nbsp;        if (!this.insets.equals(insets)) {</b>
+<b class="fc">&nbsp;            this.insets = insets;</b>
+<b class="fc">&nbsp;            if (notify) {</b>
+<b class="fc">&nbsp;                fireChangeEvent();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the background color of the plot area.
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setBackgroundPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getBackgroundPaint() {
+<b class="fc">&nbsp;        return this.backgroundPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the background color of the plot area and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getBackgroundPaint()
+&nbsp;     */
+&nbsp;    public void setBackgroundPaint(Paint paint) {
+&nbsp;
+<b class="fc">&nbsp;        if (paint == null) {</b>
+<b class="nc">&nbsp;            if (this.backgroundPaint != null) {</b>
+<b class="nc">&nbsp;                this.backgroundPaint = null;</b>
+<b class="nc">&nbsp;                fireChangeEvent();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            if (this.backgroundPaint != null) {</b>
+<b class="fc">&nbsp;                if (this.backgroundPaint.equals(paint)) {</b>
+&nbsp;                    return;  // nothing to do
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            this.backgroundPaint = paint;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the alpha transparency of the plot area background.
+&nbsp;     *
+&nbsp;     * @return The alpha transparency.
+&nbsp;     *
+&nbsp;     * @see #setBackgroundAlpha(float)
+&nbsp;     */
+&nbsp;    public float getBackgroundAlpha() {
+<b class="nc">&nbsp;        return this.backgroundAlpha;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the alpha transparency of the plot area background, and notifies
+&nbsp;     * registered listeners that the plot has been modified.
+&nbsp;     *
+&nbsp;     * @param alpha the new alpha value (in the range 0.0f to 1.0f).
+&nbsp;     *
+&nbsp;     * @see #getBackgroundAlpha()
+&nbsp;     */
+&nbsp;    public void setBackgroundAlpha(float alpha) {
+<b class="fc">&nbsp;        if (this.backgroundAlpha != alpha) {</b>
+<b class="fc">&nbsp;            this.backgroundAlpha = alpha;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the drawing supplier for the plot.
+&nbsp;     *
+&nbsp;     * @return The drawing supplier (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDrawingSupplier(DrawingSupplier)
+&nbsp;     */
+&nbsp;    public DrawingSupplier getDrawingSupplier() {
+&nbsp;        DrawingSupplier result;
+<b class="fc">&nbsp;        Plot p = getParent();</b>
+<b class="fc">&nbsp;        if (p != null) {</b>
+<b class="fc">&nbsp;            result = p.getDrawingSupplier();</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            result = this.drawingSupplier;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the drawing supplier for the plot and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.  The drawing
+&nbsp;     * supplier is responsible for supplying a limitless (possibly repeating)
+&nbsp;     * sequence of {@code Paint}, {@code Stroke} and
+&nbsp;     * {@code Shape} objects that the plot&#39;s renderer(s) can use to
+&nbsp;     * populate its (their) tables.
+&nbsp;     *
+&nbsp;     * @param supplier  the new supplier.
+&nbsp;     *
+&nbsp;     * @see #getDrawingSupplier()
+&nbsp;     */
+&nbsp;    public void setDrawingSupplier(DrawingSupplier supplier) {
+<b class="fc">&nbsp;        this.drawingSupplier = supplier;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the drawing supplier for the plot and, if requested, sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.  The drawing
+&nbsp;     * supplier is responsible for supplying a limitless (possibly repeating)
+&nbsp;     * sequence of {@code Paint}, {@code Stroke} and
+&nbsp;     * {@code Shape} objects that the plot&#39;s renderer(s) can use to
+&nbsp;     * populate its (their) tables.
+&nbsp;     *
+&nbsp;     * @param supplier  the new supplier.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDrawingSupplier()
+&nbsp;     */
+&nbsp;    public void setDrawingSupplier(DrawingSupplier supplier, boolean notify) {
+<b class="nc">&nbsp;        this.drawingSupplier = supplier;</b>
+<b class="nc">&nbsp;        if (notify) {</b>
+<b class="nc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the background image that is used to fill the plot&#39;s background
+&nbsp;     * area.
+&nbsp;     *
+&nbsp;     * @return The image (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setBackgroundImage(Image)
+&nbsp;     */
+&nbsp;    public Image getBackgroundImage() {
+<b class="nc">&nbsp;        return this.backgroundImage;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the background image for the plot and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param image  the image ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getBackgroundImage()
+&nbsp;     */
+&nbsp;    public void setBackgroundImage(Image image) {
+<b class="nc">&nbsp;        this.backgroundImage = image;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the background image alignment. The default value is 
+&nbsp;     * {@code RectangleAlignment.FILL}.
+&nbsp;     *
+&nbsp;     * @return The alignment (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setBackgroundImageAlignment(RectangleAlignment)
+&nbsp;     */
+&nbsp;    public RectangleAlignment getBackgroundImageAlignment() {
+<b class="nc">&nbsp;        return this.backgroundImageAlignment;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the alignment for the background image and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.  
+&nbsp;     *
+&nbsp;     * @param alignment  the alignment ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getBackgroundImageAlignment()
+&nbsp;     */
+&nbsp;    public void setBackgroundImageAlignment(RectangleAlignment alignment) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(alignment, &quot;alignment&quot;);</b>
+<b class="fc">&nbsp;        if (this.backgroundImageAlignment != alignment) {</b>
+<b class="fc">&nbsp;            this.backgroundImageAlignment = alignment;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the alpha transparency used to draw the background image.  This
+&nbsp;     * is a value in the range 0.0f to 1.0f, where 0.0f is fully transparent
+&nbsp;     * and 1.0f is fully opaque.
+&nbsp;     *
+&nbsp;     * @return The alpha transparency.
+&nbsp;     *
+&nbsp;     * @see #setBackgroundImageAlpha(float)
+&nbsp;     */
+&nbsp;    public float getBackgroundImageAlpha() {
+<b class="nc">&nbsp;        return this.backgroundImageAlpha;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the alpha transparency used when drawing the background image.
+&nbsp;     *
+&nbsp;     * @param alpha  the alpha transparency (in the range 0.0f to 1.0f, where
+&nbsp;     *     0.0f is fully transparent, and 1.0f is fully opaque).
+&nbsp;     *
+&nbsp;     * @throws IllegalArgumentException if {@code alpha} is not within
+&nbsp;     *     the specified range.
+&nbsp;     *
+&nbsp;     * @see #getBackgroundImageAlpha()
+&nbsp;     */
+&nbsp;    public void setBackgroundImageAlpha(float alpha) {
+<b class="fc">&nbsp;        if (alpha &lt; 0.0f || alpha &gt; 1.0f) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                    &quot;The &#39;alpha&#39; value must be in the range 0.0f to 1.0f.&quot;);
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.backgroundImageAlpha != alpha) {</b>
+<b class="fc">&nbsp;            this.backgroundImageAlpha = alpha;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the plot outline is
+&nbsp;     * drawn.  The default value is {@code true}.  Note that for
+&nbsp;     * historical reasons, the plot&#39;s outline paint and stroke can take on
+&nbsp;     * {@code null} values, in which case the outline will not be drawn
+&nbsp;     * even if this flag is set to {@code true}.
+&nbsp;     *
+&nbsp;     * @return The outline visibility flag.
+&nbsp;     *
+&nbsp;     * @see #setOutlineVisible(boolean)
+&nbsp;     */
+&nbsp;    public boolean isOutlineVisible() {
+<b class="fc">&nbsp;        return this.outlineVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the plot&#39;s outline is
+&nbsp;     * drawn, and sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the new flag value.
+&nbsp;     *
+&nbsp;     * @see #isOutlineVisible()
+&nbsp;     */
+&nbsp;    public void setOutlineVisible(boolean visible) {
+<b class="fc">&nbsp;        this.outlineVisible = visible;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline the plot area.
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setOutlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    public Stroke getOutlineStroke() {
+<b class="nc">&nbsp;        return this.outlineStroke;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke used to outline the plot area and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners. If you set this
+&nbsp;     * attribute to {@code null}, no outline will be drawn.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getOutlineStroke()
+&nbsp;     */
+&nbsp;    public void setOutlineStroke(Stroke stroke) {
+<b class="fc">&nbsp;        if (stroke == null) {</b>
+<b class="nc">&nbsp;            if (this.outlineStroke != null) {</b>
+<b class="nc">&nbsp;                this.outlineStroke = null;</b>
+<b class="nc">&nbsp;                fireChangeEvent();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            if (this.outlineStroke != null) {</b>
+<b class="fc">&nbsp;                if (this.outlineStroke.equals(stroke)) {</b>
+&nbsp;                    return;  // nothing to do
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            this.outlineStroke = stroke;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the color used to draw the outline of the plot area.
+&nbsp;     *
+&nbsp;     * @return The color (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getOutlinePaint() {
+<b class="nc">&nbsp;        return this.outlinePaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used to draw the outline of the plot area and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.  If you set this
+&nbsp;     * attribute to {@code null}, no outline will be drawn.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getOutlinePaint()
+&nbsp;     */
+&nbsp;    public void setOutlinePaint(Paint paint) {
+<b class="fc">&nbsp;        if (paint == null) {</b>
+<b class="nc">&nbsp;            if (this.outlinePaint != null) {</b>
+<b class="nc">&nbsp;                this.outlinePaint = null;</b>
+<b class="nc">&nbsp;                fireChangeEvent();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            if (this.outlinePaint != null) {</b>
+<b class="fc">&nbsp;                if (this.outlinePaint.equals(paint)) {</b>
+&nbsp;                    return;  // nothing to do
+&nbsp;                }
+&nbsp;            }
+<b class="fc">&nbsp;            this.outlinePaint = paint;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the alpha-transparency for the plot foreground.
+&nbsp;     *
+&nbsp;     * @return The alpha-transparency.
+&nbsp;     *
+&nbsp;     * @see #setForegroundAlpha(float)
+&nbsp;     */
+&nbsp;    public float getForegroundAlpha() {
+<b class="fc">&nbsp;        return this.foregroundAlpha;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the alpha-transparency for the plot and sends a
+&nbsp;     * {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param alpha  the new alpha transparency.
+&nbsp;     *
+&nbsp;     * @see #getForegroundAlpha()
+&nbsp;     */
+&nbsp;    public void setForegroundAlpha(float alpha) {
+<b class="fc">&nbsp;        if (this.foregroundAlpha != alpha) {</b>
+<b class="fc">&nbsp;            this.foregroundAlpha = alpha;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend items for the plot.  By default, this method returns
+&nbsp;     * {@code null}.  Subclasses should override to return a
+&nbsp;     * {@link LegendItemCollection}.
+&nbsp;     *
+&nbsp;     * @return The legend items for the plot (possibly {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItemCollection getLegendItems() {
+<b class="fc">&nbsp;        return null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not change events are sent to
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setNotify(boolean)
+&nbsp;     */
+&nbsp;    public boolean isNotify() {
+<b class="fc">&nbsp;        return this.notify;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls whether or not listeners receive
+&nbsp;     * {@link PlotChangeEvent} notifications.
+&nbsp;     *
+&nbsp;     * @param notify  a boolean.
+&nbsp;     *
+&nbsp;     * @see #isNotify()
+&nbsp;     */
+&nbsp;    public void setNotify(boolean notify) {
+<b class="fc">&nbsp;        this.notify = notify;</b>
+&nbsp;        // if the flag is being set to true, there may be queued up changes...
+<b class="fc">&nbsp;        if (notify) {</b>
+<b class="fc">&nbsp;            notifyListeners(new PlotChangeEvent(this));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Registers an object for notification of changes to the plot.
+&nbsp;     *
+&nbsp;     * @param listener  the object to be registered.
+&nbsp;     *
+&nbsp;     * @see #removeChangeListener(PlotChangeListener)
+&nbsp;     */
+&nbsp;    public void addChangeListener(PlotChangeListener listener) {
+<b class="fc">&nbsp;        this.listenerList.add(PlotChangeListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Unregisters an object for notification of changes to the plot.
+&nbsp;     *
+&nbsp;     * @param listener  the object to be unregistered.
+&nbsp;     *
+&nbsp;     * @see #addChangeListener(PlotChangeListener)
+&nbsp;     */
+&nbsp;    public void removeChangeListener(PlotChangeListener listener) {
+<b class="fc">&nbsp;        this.listenerList.remove(PlotChangeListener.class, listener);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Notifies all registered listeners that the plot has been modified.
+&nbsp;     *
+&nbsp;     * @param event  information about the change event.
+&nbsp;     */
+&nbsp;    public void notifyListeners(PlotChangeEvent event) {
+&nbsp;        // if the &#39;notify&#39; flag has been switched to false, we don&#39;t notify
+&nbsp;        // the listeners
+<b class="fc">&nbsp;        if (!this.notify) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        Object[] listeners = this.listenerList.getListenerList();</b>
+<b class="fc">&nbsp;        for (int i = listeners.length - 2; i &gt;= 0; i -= 2) {</b>
+<b class="fc">&nbsp;            if (listeners[i] == PlotChangeListener.class) {</b>
+<b class="fc">&nbsp;                ((PlotChangeListener) listeners[i + 1]).plotChanged(event);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a {@link PlotChangeEvent} to all registered listeners.
+&nbsp;     */
+&nbsp;    protected void fireChangeEvent() {
+<b class="fc">&nbsp;        notifyListeners(new PlotChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives a chart element visitor.  Many plot subclasses will override
+&nbsp;     * this method to handle their subcomponents.
+&nbsp;     * 
+&nbsp;     * @param visitor  the visitor ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void receive(ChartElementVisitor visitor) {
+<b class="nc">&nbsp;        visitor.visit(this);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the plot within the specified area.  The anchor is a point on the
+&nbsp;     * chart that is specified externally (for instance, it may be the last
+&nbsp;     * point of the last mouse click performed by the user) - plots can use or
+&nbsp;     * ignore this value as they see fit.
+&nbsp;     * &lt;br&gt;&lt;br&gt;
+&nbsp;     * Subclasses need to provide an implementation of this method, obviously.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the plot area.
+&nbsp;     * @param anchor  the anchor point ({@code null} permitted).
+&nbsp;     * @param parentState  the parent state (if any, {@code null} permitted).
+&nbsp;     * @param info  carries back plot rendering info.
+&nbsp;     */
+&nbsp;    public abstract void draw(Graphics2D g2, Rectangle2D area, Point2D anchor,
+&nbsp;            PlotState parentState, PlotRenderingInfo info);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the plot background (the background color and/or image).
+&nbsp;     * &lt;P&gt;
+&nbsp;     * This method will be called during the chart drawing process and is
+&nbsp;     * declared public so that it can be accessed by the renderers used by
+&nbsp;     * certain subclasses.  You shouldn&#39;t need to call this method directly.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area within which the plot should be drawn.
+&nbsp;     */
+&nbsp;    public void drawBackground(Graphics2D g2, Rectangle2D area) {
+&nbsp;        // some subclasses override this method completely, so don&#39;t put
+&nbsp;        // anything here that *must* be done
+<b class="fc">&nbsp;        fillBackground(g2, area);</b>
+<b class="fc">&nbsp;        drawBackgroundImage(g2, area);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fills the specified area with the background paint.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area.
+&nbsp;     *
+&nbsp;     * @see #getBackgroundPaint()
+&nbsp;     * @see #getBackgroundAlpha()
+&nbsp;     * @see #fillBackground(Graphics2D, Rectangle2D, PlotOrientation)
+&nbsp;     */
+&nbsp;    protected void fillBackground(Graphics2D g2, Rectangle2D area) {
+<b class="fc">&nbsp;        fillBackground(g2, area, PlotOrientation.VERTICAL);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fills the specified area with the background paint.  If the background
+&nbsp;     * paint is an instance of {@code GradientPaint}, the gradient will
+&nbsp;     * run in the direction suggested by the plot&#39;s orientation.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics target.
+&nbsp;     * @param area  the plot area.
+&nbsp;     * @param orientation  the plot orientation ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    protected void fillBackground(Graphics2D g2, Rectangle2D area,
+&nbsp;            PlotOrientation orientation) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(orientation, &quot;orientation&quot;);</b>
+<b class="fc">&nbsp;        if (this.backgroundPaint == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        Paint p = this.backgroundPaint;</b>
+<b class="fc">&nbsp;        if (p instanceof GradientPaint) {</b>
+<b class="nc">&nbsp;            GradientPaint gp = (GradientPaint) p;</b>
+<b class="nc">&nbsp;            if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                p = new GradientPaint((float) area.getCenterX(),</b>
+<b class="nc">&nbsp;                        (float) area.getMaxY(), gp.getColor1(),</b>
+<b class="nc">&nbsp;                        (float) area.getCenterX(), (float) area.getMinY(),</b>
+<b class="nc">&nbsp;                        gp.getColor2());</b>
+&nbsp;            }
+<b class="nc">&nbsp;            else if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                p = new GradientPaint((float) area.getMinX(),</b>
+<b class="nc">&nbsp;                        (float) area.getCenterY(), gp.getColor1(),</b>
+<b class="nc">&nbsp;                        (float) area.getMaxX(), (float) area.getCenterY(),</b>
+<b class="nc">&nbsp;                        gp.getColor2());</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        Composite originalComposite = g2.getComposite();</b>
+<b class="fc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+&nbsp;                this.backgroundAlpha));
+<b class="fc">&nbsp;        g2.setPaint(p);</b>
+<b class="fc">&nbsp;        g2.fill(area);</b>
+<b class="fc">&nbsp;        g2.setComposite(originalComposite);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the background image (if there is one) aligned within the
+&nbsp;     * specified area.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area.
+&nbsp;     *
+&nbsp;     * @see #getBackgroundImage()
+&nbsp;     * @see #getBackgroundImageAlignment()
+&nbsp;     * @see #getBackgroundImageAlpha()
+&nbsp;     */
+&nbsp;    public void drawBackgroundImage(Graphics2D g2, Rectangle2D area) {
+<b class="fc">&nbsp;        if (this.backgroundImage == null) {</b>
+&nbsp;            return;  // nothing to do
+&nbsp;        }
+<b class="nc">&nbsp;        Composite savedComposite = g2.getComposite();</b>
+<b class="nc">&nbsp;        g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER,</b>
+&nbsp;                this.backgroundImageAlpha));
+<b class="nc">&nbsp;        Rectangle2D dest = new Rectangle2D.Double(0.0, 0.0,</b>
+<b class="nc">&nbsp;                this.backgroundImage.getWidth(null),</b>
+<b class="nc">&nbsp;                this.backgroundImage.getHeight(null));</b>
+<b class="nc">&nbsp;        this.backgroundImageAlignment.align(dest, area);</b>
+<b class="nc">&nbsp;        Shape savedClip = g2.getClip();</b>
+<b class="nc">&nbsp;        g2.clip(area);</b>
+<b class="nc">&nbsp;        g2.drawImage(this.backgroundImage, (int) dest.getX(),</b>
+<b class="nc">&nbsp;                (int) dest.getY(), (int) dest.getWidth() + 1,</b>
+<b class="nc">&nbsp;                (int) dest.getHeight() + 1, null);</b>
+<b class="nc">&nbsp;        g2.setClip(savedClip);</b>
+<b class="nc">&nbsp;        g2.setComposite(savedComposite);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the plot outline.  This method will be called during the chart
+&nbsp;     * drawing process and is declared public so that it can be accessed by the
+&nbsp;     * renderers used by certain subclasses. You shouldn&#39;t need to call this
+&nbsp;     * method directly.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area within which the plot should be drawn.
+&nbsp;     */
+&nbsp;    public void drawOutline(Graphics2D g2, Rectangle2D area) {
+<b class="fc">&nbsp;        if (!this.outlineVisible) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="fc">&nbsp;        if ((this.outlineStroke != null) &amp;&amp; (this.outlinePaint != null)) {</b>
+<b class="fc">&nbsp;            g2.setStroke(this.outlineStroke);</b>
+<b class="fc">&nbsp;            g2.setPaint(this.outlinePaint);</b>
+<b class="fc">&nbsp;            Object saved = g2.getRenderingHint(RenderingHints.KEY_STROKE_CONTROL);</b>
+<b class="fc">&nbsp;            g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_NORMALIZE);</b>
+<b class="fc">&nbsp;            g2.draw(area);</b>
+<b class="fc">&nbsp;            g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, saved);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a message to state that there is no data to plot.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param area  the area within which the plot should be drawn.
+&nbsp;     */
+&nbsp;    protected void drawNoDataMessage(Graphics2D g2, Rectangle2D area) {
+<b class="fc">&nbsp;        Shape savedClip = g2.getClip();</b>
+<b class="fc">&nbsp;        g2.clip(area);</b>
+<b class="fc">&nbsp;        String message = this.noDataMessage;</b>
+<b class="fc">&nbsp;        if (message != null) {</b>
+<b class="nc">&nbsp;            g2.setFont(this.noDataMessageFont);</b>
+<b class="nc">&nbsp;            g2.setPaint(this.noDataMessagePaint);</b>
+<b class="nc">&nbsp;            TextBlock block = TextUtils.createTextBlock(</b>
+&nbsp;                    this.noDataMessage, this.noDataMessageFont,
+<b class="nc">&nbsp;                    this.noDataMessagePaint, 0.9f * (float) area.getWidth(),</b>
+&nbsp;                    new G2TextMeasurer(g2));
+<b class="nc">&nbsp;            block.draw(g2, (float) area.getCenterX(),</b>
+<b class="nc">&nbsp;                    (float) area.getCenterY(), TextBlockAnchor.CENTER);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        g2.setClip(savedClip);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a plot entity that contains a reference to the plot and the
+&nbsp;     * data area as shape.
+&nbsp;     *
+&nbsp;     * @param dataArea  the data area used as hot spot for the entity.
+&nbsp;     * @param plotState  the plot rendering info containing a reference to the
+&nbsp;     *     EntityCollection.
+&nbsp;     * @param toolTip  the tool tip (defined in the respective Plot
+&nbsp;     *     subclass) ({@code null} permitted).
+&nbsp;     * @param urlText  the url (defined in the respective Plot subclass)
+&nbsp;     *     ({@code null} permitted).
+&nbsp;     */
+&nbsp;    protected void createAndAddEntity(Rectangle2D dataArea,
+&nbsp;            PlotRenderingInfo plotState, String toolTip, String urlText) {
+<b class="fc">&nbsp;        if (plotState != null &amp;&amp; plotState.getOwner() != null) {</b>
+<b class="fc">&nbsp;            EntityCollection e = plotState.getOwner().getEntityCollection();</b>
+<b class="fc">&nbsp;            if (e != null) {</b>
+<b class="fc">&nbsp;                e.add(new PlotEntity(dataArea, this, toolTip, urlText));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Handles a &#39;click&#39; on the plot.  Since the plot does not maintain any
+&nbsp;     * information about where it has been drawn, the plot rendering info is
+&nbsp;     * supplied as an argument so that the plot dimensions can be determined.
+&nbsp;     *
+&nbsp;     * @param x  the x coordinate (in Java2D space).
+&nbsp;     * @param y  the y coordinate (in Java2D space).
+&nbsp;     * @param info  an object containing information about the dimensions of
+&nbsp;     *              the plot.
+&nbsp;     */
+&nbsp;    public void handleClick(int x, int y, PlotRenderingInfo info) {
+&nbsp;        // provides a &#39;no action&#39; default
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Performs a zoom on the plot.  Subclasses should override if zooming is
+&nbsp;     * appropriate for the type of plot.
+&nbsp;     *
+&nbsp;     * @param percent  the zoom percentage.
+&nbsp;     */
+&nbsp;    public void zoom(double percent) {
+&nbsp;        // do nothing by default.
+<b class="nc">&nbsp;    }</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a change to an {@link Annotation} added to
+&nbsp;     * this plot.
+&nbsp;     *
+&nbsp;     * @param event  information about the event (not used here).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void annotationChanged(AnnotationChangeEvent event) {
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a change to one of the plot&#39;s axes.
+&nbsp;     *
+&nbsp;     * @param event  information about the event (not used here).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void axisChanged(AxisChangeEvent event) {
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a change to the plot&#39;s dataset.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * The plot reacts by passing on a plot change event to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param event  information about the event (not used here).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void datasetChanged(DatasetChangeEvent event) {
+<b class="fc">&nbsp;        PlotChangeEvent newEvent = new PlotChangeEvent(this);</b>
+<b class="fc">&nbsp;        newEvent.setType(ChartChangeEventType.DATASET_UPDATED);</b>
+<b class="fc">&nbsp;        notifyListeners(newEvent);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Receives notification of a change to a marker that is assigned to the
+&nbsp;     * plot.
+&nbsp;     *
+&nbsp;     * @param event  the event.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void markerChanged(MarkerChangeEvent event) {
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adjusts the supplied x-value.
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     * @param w1  width 1.
+&nbsp;     * @param w2  width 2.
+&nbsp;     * @param edge  the edge (left or right).
+&nbsp;     *
+&nbsp;     * @return The adjusted x-value.
+&nbsp;     */
+&nbsp;    protected double getRectX(double x, double w1, double w2,
+&nbsp;                              RectangleEdge edge) {
+&nbsp;
+<b class="nc">&nbsp;        double result = x;</b>
+<b class="nc">&nbsp;        if (edge == RectangleEdge.LEFT) {</b>
+<b class="nc">&nbsp;            result = result + w1;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.RIGHT) {</b>
+<b class="nc">&nbsp;            result = result + w2;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adjusts the supplied y-value.
+&nbsp;     *
+&nbsp;     * @param y  the x-value.
+&nbsp;     * @param h1  height 1.
+&nbsp;     * @param h2  height 2.
+&nbsp;     * @param edge  the edge (top or bottom).
+&nbsp;     *
+&nbsp;     * @return The adjusted y-value.
+&nbsp;     */
+&nbsp;    protected double getRectY(double y, double h1, double h2,
+&nbsp;                              RectangleEdge edge) {
+&nbsp;
+<b class="nc">&nbsp;        double result = y;</b>
+<b class="nc">&nbsp;        if (edge == RectangleEdge.TOP) {</b>
+<b class="nc">&nbsp;            result = result + h1;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (edge == RectangleEdge.BOTTOM) {</b>
+<b class="nc">&nbsp;            result = result + h2;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this plot for equality with another object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return {@code true} or {@code false}.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof Plot)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Plot that = (Plot) obj;</b>
+<b class="fc">&nbsp;        if (!Objects.equals(this.noDataMessage, that.noDataMessage)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.noDataMessageFont, that.noDataMessageFont)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.noDataMessagePaint,</b>
+&nbsp;                that.noDataMessagePaint)) {
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.insets, that.insets)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.outlineVisible != that.outlineVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.outlineStroke, that.outlineStroke)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.outlinePaint, that.outlinePaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.backgroundPaint, that.backgroundPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.backgroundImage, that.backgroundImage)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.backgroundImageAlignment != that.backgroundImageAlignment) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.backgroundImageAlpha != that.backgroundImageAlpha) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.foregroundAlpha != that.foregroundAlpha) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.backgroundAlpha != that.backgroundAlpha) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.drawingSupplier.equals(that.drawingSupplier)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.notify != that.notify) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a clone of the plot.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if some component of the plot does not
+&nbsp;     *         support cloning.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        Plot clone = (Plot) super.clone();</b>
+&nbsp;        // private Plot parent &lt;-- don&#39;t clone the parent plot, but take care
+&nbsp;        // childs in combined plots instead
+<b class="fc">&nbsp;        clone.drawingSupplier = CloneUtils.clone(this.drawingSupplier);</b>
+<b class="fc">&nbsp;        clone.listenerList = new EventListenerList();</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.noDataMessagePaint, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writeStroke(this.outlineStroke, stream);</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.outlinePaint, stream);</b>
+&nbsp;        // backgroundImage
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.backgroundPaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;        throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.noDataMessagePaint = SerialUtils.readPaint(stream);</b>
+<b class="fc">&nbsp;        this.outlineStroke = SerialUtils.readStroke(stream);</b>
+<b class="fc">&nbsp;        this.outlinePaint = SerialUtils.readPaint(stream);</b>
+&nbsp;        // backgroundImage
+<b class="fc">&nbsp;        this.backgroundPaint = SerialUtils.readPaint(stream);</b>
+&nbsp;
+<b class="fc">&nbsp;        this.listenerList = new EventListenerList();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resolves a domain axis location for a given plot orientation.
+&nbsp;     *
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     * @param orientation  the orientation ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The edge (never {@code null}).
+&nbsp;     */
+&nbsp;    public static RectangleEdge resolveDomainAxisLocation(
+&nbsp;            AxisLocation location, PlotOrientation orientation) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(location, &quot;location&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(orientation, &quot;orientation&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        RectangleEdge result = null;</b>
+<b class="fc">&nbsp;        switch (location) {</b>
+&nbsp;            case TOP_OR_RIGHT:
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.RIGHT;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.TOP;</b>
+&nbsp;                }   break;
+&nbsp;            case TOP_OR_LEFT:
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.LEFT;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.TOP;</b>
+&nbsp;                }   break;
+&nbsp;            case BOTTOM_OR_RIGHT:
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.RIGHT;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.BOTTOM;</b>
+&nbsp;                }   break;
+&nbsp;            case BOTTOM_OR_LEFT:
+<b class="fc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="fc">&nbsp;                    result = RectangleEdge.LEFT;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="fc">&nbsp;                    result = RectangleEdge.BOTTOM;</b>
+&nbsp;                }   break;
+&nbsp;            default:
+&nbsp;                break;
+&nbsp;        }
+&nbsp;        // the above should cover all the options...
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;resolveDomainAxisLocation()&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Resolves a range axis location for a given plot orientation.
+&nbsp;     *
+&nbsp;     * @param location  the location ({@code null} not permitted).
+&nbsp;     * @param orientation  the orientation ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @return The edge (never {@code null}).
+&nbsp;     */
+&nbsp;    public static RectangleEdge resolveRangeAxisLocation(
+&nbsp;            AxisLocation location, PlotOrientation orientation) {
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(location, &quot;location&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(orientation, &quot;orientation&quot;);</b>
+&nbsp;
+<b class="fc">&nbsp;        RectangleEdge result = null;</b>
+<b class="fc">&nbsp;        switch (location) {</b>
+&nbsp;            case TOP_OR_RIGHT:
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.TOP;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.RIGHT;</b>
+&nbsp;                }   break;
+&nbsp;            case TOP_OR_LEFT:
+<b class="fc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="fc">&nbsp;                    result = RectangleEdge.TOP;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="fc">&nbsp;                    result = RectangleEdge.LEFT;</b>
+&nbsp;                }   break;
+&nbsp;            case BOTTOM_OR_RIGHT:
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.BOTTOM;</b>
+&nbsp;                }
+<b class="nc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.RIGHT;</b>
+&nbsp;                }   break;
+&nbsp;            case BOTTOM_OR_LEFT:
+<b class="fc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    result = RectangleEdge.BOTTOM;</b>
+&nbsp;                }
+<b class="fc">&nbsp;                else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="fc">&nbsp;                    result = RectangleEdge.LEFT;</b>
+&nbsp;                }   break;
+&nbsp;            default:
+&nbsp;                break;
+&nbsp;        }
+&nbsp;
+&nbsp;        // the above should cover all the options...
+<b class="fc">&nbsp;        if (result == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalStateException(&quot;resolveRangeAxisLocation()&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

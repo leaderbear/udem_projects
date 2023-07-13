@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.ift2905_d4">
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Ift2905_d4">
+        <activity android:name=".SelectNewProgram"></activity>
+        <activity android:name=".TrainingView" />
+        <activity android:name=".ActivityProgramView" />
+        <activity android:name=".MainActivityView" />
+        <activity android:name=".MainPrograms" />
+        <activity android:name=".MainProgDetail" />
+        <activity android:name=".config" />
+        <activity android:name=".FriendsFind" />
+        <activity android:name=".Friendsadd" />
+        <activity android:name=".progress" />
+        <activity android:name=".social2" />
+        <activity android:name=".Social" />
+        <activity android:name=".Profile" />
+        <activity android:name=".stats" />
+        <activity android:name=".TrainEnd" />
+        <activity android:name=".ProgramDetail" />
+        <activity android:name=".ProgramPick" />
+        <activity android:name=".register5" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".register_equip" />
+        <activity android:name=".register3" />
+        <activity android:name=".register2" />
+        <activity android:name=".MainLogin">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,416 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > MatrixSeriesCollection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: MatrixSeriesCollection (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">MatrixSeriesCollection</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    37,5%
+  </span>
+  <span class="absValue">
+    (6/16)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    42,9%
+  </span>
+  <span class="absValue">
+    (21/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------------
+&nbsp; * MatrixSeriesCollection.java
+&nbsp; * ---------------------------
+&nbsp; * (C) Copyright 2003-2021, by Barak Naveh and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Barak Naveh;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents a collection of {@link MatrixSeries} that can be used as a
+&nbsp; * dataset.
+&nbsp; *
+&nbsp; * @see org.jfree.data.xy.MatrixSeries
+&nbsp; */
+&nbsp;public class MatrixSeriesCollection&lt;S extends Comparable&lt;S&gt;&gt; 
+&nbsp;        extends AbstractXYZDataset
+&nbsp;        implements XYZDataset, PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = -3197705779242543945L;
+&nbsp;
+&nbsp;    /** The series that are included in the collection. */
+&nbsp;    private List&lt;MatrixSeries&lt;S&gt;&gt; seriesList;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs an empty dataset.
+&nbsp;     */
+&nbsp;    public MatrixSeriesCollection() {
+<b class="fc">&nbsp;        this(null);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a dataset and populates it with a single matrix series.
+&nbsp;     *
+&nbsp;     * @param series the time series.
+&nbsp;     */
+<b class="fc">&nbsp;    public MatrixSeriesCollection(MatrixSeries&lt;S&gt; series) {</b>
+<b class="fc">&nbsp;        this.seriesList = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (series != null) {</b>
+<b class="nc">&nbsp;            this.seriesList.add(series);</b>
+<b class="nc">&nbsp;            series.addChangeListener(this);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of items in the specified series.
+&nbsp;     *
+&nbsp;     * @param seriesIndex zero-based series index.
+&nbsp;     *
+&nbsp;     * @return The number of items in the specified series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount(int seriesIndex) {
+<b class="nc">&nbsp;        return getSeries(seriesIndex).getItemCount();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the series having the specified index.
+&nbsp;     *
+&nbsp;     * @param seriesIndex zero-based series index.
+&nbsp;     *
+&nbsp;     * @return The series.
+&nbsp;     */
+&nbsp;    public MatrixSeries&lt;S&gt; getSeries(int seriesIndex) {
+<b class="nc">&nbsp;        Args.requireInRange(seriesIndex, &quot;seriesIndex&quot;, 0, this.seriesList.size() - 1);</b>
+<b class="nc">&nbsp;        MatrixSeries&lt;S&gt; series = this.seriesList.get(seriesIndex);</b>
+<b class="nc">&nbsp;        return series;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of series in the collection.
+&nbsp;     *
+&nbsp;     * @return The number of series in the collection.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getSeriesCount() {
+<b class="nc">&nbsp;        return this.seriesList.size();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the key for a series.
+&nbsp;     *
+&nbsp;     * @param seriesIndex zero-based series index.
+&nbsp;     *
+&nbsp;     * @return The key for a series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public S getSeriesKey(int seriesIndex) {
+<b class="nc">&nbsp;        return getSeries(seriesIndex).getKey();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the j index value of the specified Mij matrix item in the
+&nbsp;     * specified matrix series.
+&nbsp;     *
+&nbsp;     * @param seriesIndex zero-based series index.
+&nbsp;     * @param itemIndex zero-based item index.
+&nbsp;     *
+&nbsp;     * @return The j index value for the specified matrix item.
+&nbsp;     *
+&nbsp;     * @see org.jfree.data.xy.XYDataset#getXValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getX(int seriesIndex, int itemIndex) {
+<b class="nc">&nbsp;        MatrixSeries series = this.seriesList.get(seriesIndex);</b>
+<b class="nc">&nbsp;        return series.getItemColumn(itemIndex);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the i index value of the specified Mij matrix item in the
+&nbsp;     * specified matrix series.
+&nbsp;     *
+&nbsp;     * @param seriesIndex zero-based series index.
+&nbsp;     * @param itemIndex zero-based item index.
+&nbsp;     *
+&nbsp;     * @return The i index value for the specified matrix item.
+&nbsp;     *
+&nbsp;     * @see org.jfree.data.xy.XYDataset#getYValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getY(int seriesIndex, int itemIndex) {
+<b class="nc">&nbsp;        MatrixSeries series = this.seriesList.get(seriesIndex);</b>
+<b class="nc">&nbsp;        return series.getItemRow(itemIndex);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the Mij item value of the specified Mij matrix item in the
+&nbsp;     * specified matrix series.
+&nbsp;     *
+&nbsp;     * @param seriesIndex the series (zero-based index).
+&nbsp;     * @param itemIndex zero-based item index.
+&nbsp;     *
+&nbsp;     * @return The Mij item value for the specified matrix item.
+&nbsp;     *
+&nbsp;     * @see org.jfree.data.xy.XYZDataset#getZValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getZ(int seriesIndex, int itemIndex) {
+<b class="nc">&nbsp;        MatrixSeries series = this.seriesList.get(seriesIndex);</b>
+<b class="nc">&nbsp;        return series.getItem(itemIndex);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a series to the collection.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Notifies all registered listeners that the dataset has changed.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param series the series ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void addSeries(MatrixSeries&lt;S&gt; series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+&nbsp;        // FIXME: Check that there isn&#39;t already a series with the same key
+&nbsp;
+&nbsp;        // add the series...
+<b class="fc">&nbsp;        this.seriesList.add(series);</b>
+<b class="fc">&nbsp;        series.addChangeListener(this);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this collection for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj the object.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == null) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        if (obj instanceof MatrixSeriesCollection) {</b>
+<b class="fc">&nbsp;            MatrixSeriesCollection&lt;S&gt; c = (MatrixSeriesCollection) obj;</b>
+&nbsp;
+<b class="fc">&nbsp;            return Objects.equals(this.seriesList, c.seriesList);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="nc">&nbsp;        return (this.seriesList != null ? this.seriesList.hashCode() : 0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of this instance.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if there is a problem.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        MatrixSeriesCollection&lt;S&gt; clone = (MatrixSeriesCollection) super.clone();</b>
+<b class="fc">&nbsp;        clone.seriesList = CloneUtils.cloneList(this.seriesList);</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all the series from the collection.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Notifies all registered listeners that the dataset has changed.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     */
+&nbsp;    public void removeAllSeries() {
+&nbsp;        // Unregister the collection as a change listener to each series in
+&nbsp;        // the collection.
+<b class="fc">&nbsp;        for (MatrixSeries series : this.seriesList) {</b>
+<b class="fc">&nbsp;            series.removeChangeListener(this);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Remove all the series from the collection and notify listeners.
+<b class="fc">&nbsp;        this.seriesList.clear();</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a series from the collection.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Notifies all registered listeners that the dataset has changed.
+&nbsp;     * &lt;/p&gt;
+&nbsp;     *
+&nbsp;     * @param series the series ({@code null}).
+&nbsp;     */
+&nbsp;    public void removeSeries(MatrixSeries&lt;S&gt; series) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="nc">&nbsp;        if (this.seriesList.contains(series)) {</b>
+<b class="nc">&nbsp;            series.removeChangeListener(this);</b>
+<b class="nc">&nbsp;            this.seriesList.remove(series);</b>
+<b class="nc">&nbsp;            fireDatasetChanged();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a series from the collection.
+&nbsp;     * &lt;P&gt;
+&nbsp;     * Notifies all registered listeners that the dataset has changed.
+&nbsp;     *
+&nbsp;     * @param seriesIndex the series (zero based index).
+&nbsp;     */
+&nbsp;    public void removeSeries(int seriesIndex) {
+<b class="nc">&nbsp;        Args.requireInRange(seriesIndex, &quot;seriesIndex&quot;, 0, this.seriesList.size() -1);</b>
+&nbsp;
+&nbsp;        // fetch the series, remove the change listener, then remove the series.
+<b class="nc">&nbsp;        MatrixSeries series = this.seriesList.get(seriesIndex);</b>
+<b class="nc">&nbsp;        series.removeChangeListener(this);</b>
+<b class="nc">&nbsp;        this.seriesList.remove(seriesIndex);</b>
+<b class="nc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

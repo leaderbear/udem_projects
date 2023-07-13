@@ -1,0 +1,316 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Outlier</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer</a>
+</div>
+
+<h1>Coverage Summary for Class: Outlier (org.jfree.chart.renderer)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Outlier</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    72,7%
+  </span>
+  <span class="absValue">
+    (8/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    53,1%
+  </span>
+  <span class="absValue">
+    (17/32)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ------------
+&nbsp; * Outlier.java
+&nbsp; * ------------
+&nbsp; * (C) Copyright 2003-2008, by David Browning and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Browning (for Australian Institute of Marine
+&nbsp; *                   Science);
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; * Changes
+&nbsp; * -------
+&nbsp; * 05-Aug-2003 : Version 1, contributed by David Browning (DG);
+&nbsp; * 28-Aug-2003 : Minor tidy-up (DG);
+&nbsp; * ------------- JFREECHART 1.0.x ---------------------------------------------
+&nbsp; * 02-Feb-2007 : Removed author tags from all over JFreeChart sources (DG);
+&nbsp; * 21-Nov-2007 : Implemented equals() to shut up FindBugs (DG);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer;
+&nbsp;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;
+&nbsp;/**
+&nbsp; * Represents one outlier in the box and whisker plot.
+&nbsp; * &lt;P&gt;
+&nbsp; * All the coordinates in this class are in Java2D space.
+&nbsp; */
+&nbsp;public class Outlier implements Comparable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The xy coordinates of the bounding box containing the outlier ellipse.
+&nbsp;     */
+&nbsp;    private Point2D point;
+&nbsp;
+&nbsp;    /** The radius of the ellipse */
+&nbsp;    private double radius;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs an outlier item consisting of a point and the radius of the
+&nbsp;     * outlier ellipse
+&nbsp;     *
+&nbsp;     * @param xCoord  the x coordinate of the point.
+&nbsp;     * @param yCoord  the y coordinate of the point.
+&nbsp;     * @param radius  the radius of the ellipse.
+&nbsp;     */
+<b class="fc">&nbsp;    public Outlier(double xCoord, double yCoord, double radius) {</b>
+<b class="fc">&nbsp;        this.point = new Point2D.Double(xCoord - radius, yCoord - radius);</b>
+<b class="fc">&nbsp;        this.radius = radius;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the xy coordinates of the bounding box containing the outlier
+&nbsp;     * ellipse.
+&nbsp;     *
+&nbsp;     * @return The location of the outlier ellipse.
+&nbsp;     */
+&nbsp;    public Point2D getPoint() {
+<b class="fc">&nbsp;        return this.point;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the xy coordinates of the bounding box containing the outlier
+&nbsp;     * ellipse.
+&nbsp;     *
+&nbsp;     * @param point  the location.
+&nbsp;     */
+&nbsp;    public void setPoint(Point2D point) {
+<b class="fc">&nbsp;        this.point = point;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x coordinate of the bounding box containing the outlier
+&nbsp;     * ellipse.
+&nbsp;     *
+&nbsp;     * @return The x coordinate.
+&nbsp;     */
+&nbsp;    public double getX() {
+<b class="fc">&nbsp;        return getPoint().getX();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y coordinate of the bounding box containing the outlier
+&nbsp;     * ellipse.
+&nbsp;     *
+&nbsp;     * @return The y coordinate.
+&nbsp;     */
+&nbsp;    public double getY() {
+<b class="fc">&nbsp;        return getPoint().getY();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the radius of the outlier ellipse.
+&nbsp;     *
+&nbsp;     * @return The radius.
+&nbsp;     */
+&nbsp;    public double getRadius() {
+<b class="fc">&nbsp;        return this.radius;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the radius of the outlier ellipse.
+&nbsp;     *
+&nbsp;     * @param radius  the new radius.
+&nbsp;     */
+&nbsp;    public void setRadius(double radius) {
+<b class="fc">&nbsp;        this.radius = radius;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Compares this object with the specified object for order, based on
+&nbsp;     * the outlier&#39;s point.
+&nbsp;     *
+&nbsp;     * @param   o the Object to be compared.
+&nbsp;     * @return A negative integer, zero, or a positive integer as this object
+&nbsp;     *      is less than, equal to, or greater than the specified object.
+&nbsp;     *
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int compareTo(Object o) {
+<b class="nc">&nbsp;        Outlier outlier = (Outlier) o;</b>
+<b class="nc">&nbsp;        Point2D p1 = getPoint();</b>
+<b class="nc">&nbsp;        Point2D p2 = outlier.getPoint();</b>
+<b class="nc">&nbsp;        if (p1.equals(p2)) {</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if ((p1.getX() &lt; p2.getX()) || (p1.getY() &lt; p2.getY())) {</b>
+<b class="nc">&nbsp;            return -1;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            return 1;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a true if outlier is overlapped and false if it is not.
+&nbsp;     * Overlapping is determined by the respective bounding boxes plus
+&nbsp;     * a small margin.
+&nbsp;     *
+&nbsp;     * @param other  the other outlier.
+&nbsp;     *
+&nbsp;     * @return A {@code boolean} indicating whether or not an overlap has
+&nbsp;     *         occurred.
+&nbsp;     */
+&nbsp;    public boolean overlaps(Outlier other) {
+<b class="nc">&nbsp;        return ((other.getX() &gt;= getX() - (this.radius * 1.1))</b>
+<b class="nc">&nbsp;                &amp;&amp; (other.getX() &lt;= getX() + (this.radius * 1.1))</b>
+<b class="nc">&nbsp;                &amp;&amp; (other.getY() &gt;= getY() - (this.radius * 1.1))</b>
+<b class="nc">&nbsp;                &amp;&amp; (other.getY() &lt;= getY() + (this.radius * 1.1)));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this outlier for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof Outlier)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Outlier that = (Outlier) obj;</b>
+<b class="fc">&nbsp;        if (!this.point.equals(that.point)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.radius != that.radius) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a textual representation of the outlier.
+&nbsp;     *
+&nbsp;     * @return A {@code String} representing the outlier.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return &quot;{&quot; + getX() + &quot;,&quot; + getY() + &quot;}&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

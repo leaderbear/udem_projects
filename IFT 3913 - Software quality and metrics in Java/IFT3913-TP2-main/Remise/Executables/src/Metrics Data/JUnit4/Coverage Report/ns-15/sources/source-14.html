@@ -1,0 +1,1313 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > XYBarRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: XYBarRenderer (org.jfree.chart.renderer.xy)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">XYBarRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    60%
+  </span>
+  <span class="absValue">
+    (27/45)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35,6%
+  </span>
+  <span class="absValue">
+    (114/320)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">XYBarRenderer$XYBarRendererState</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/3)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    56,2%
+  </span>
+  <span class="absValue">
+    (27/48)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    35,2%
+  </span>
+  <span class="absValue">
+    (114/324)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ------------------
+&nbsp; * XYBarRenderer.java
+&nbsp; * ------------------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Richard Atkinson;
+&nbsp; *                   Christian W. Zuckschwerdt;
+&nbsp; *                   Bill Kelemen;
+&nbsp; *                   Marc van Glabbeek (bug 1775452);
+&nbsp; *                   Richard West, Advanced Micro Devices, Inc.;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.xy;
+&nbsp;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.labels.ItemLabelAnchor;
+&nbsp;import org.jfree.chart.labels.ItemLabelPosition;
+&nbsp;import org.jfree.chart.labels.XYItemLabelGenerator;
+&nbsp;import org.jfree.chart.labels.XYSeriesLabelGenerator;
+&nbsp;import org.jfree.chart.plot.CrosshairState;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.text.TextUtils;
+&nbsp;import org.jfree.chart.util.GradientPaintTransformer;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.util.StandardGradientPaintTransformer;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.chart.internal.ShapeUtils;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.xy.IntervalXYDataset;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A renderer that draws bars on an {@link XYPlot} (requires an
+&nbsp; * {@link IntervalXYDataset}).  The example shown here is generated by the
+&nbsp; * {@code XYBarChartDemo1.java} program included in the JFreeChart
+&nbsp; * demo collection:
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * &lt;img src=&quot;doc-files/XYBarRendererSample.png&quot; alt=&quot;XYBarRendererSample.png&quot;&gt;
+&nbsp; */
+&nbsp;public class XYBarRenderer extends AbstractXYItemRenderer
+&nbsp;        implements XYItemRenderer, Cloneable, PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 770559577251370036L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default bar painter assigned to each new instance of this renderer.
+&nbsp;     */
+<b class="fc">&nbsp;    private static XYBarPainter defaultBarPainter = new GradientXYBarPainter();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default bar painter.
+&nbsp;     *
+&nbsp;     * @return The default bar painter.
+&nbsp;     */
+&nbsp;    public static XYBarPainter getDefaultBarPainter() {
+<b class="fc">&nbsp;        return XYBarRenderer.defaultBarPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default bar painter.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public static void setDefaultBarPainter(XYBarPainter painter) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="nc">&nbsp;        XYBarRenderer.defaultBarPainter = painter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default value for the initialisation of the shadowsVisible flag.
+&nbsp;     */
+<b class="fc">&nbsp;    private static boolean defaultShadowsVisible = true;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default value for the {@code shadowsVisible} flag.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setDefaultShadowsVisible(boolean)
+&nbsp;     */
+&nbsp;    public static boolean getDefaultShadowsVisible() {
+<b class="fc">&nbsp;        return XYBarRenderer.defaultShadowsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default value for the shadows visible flag.
+&nbsp;     *
+&nbsp;     * @param visible  the new value for the default.
+&nbsp;     *
+&nbsp;     * @see #getDefaultShadowsVisible()
+&nbsp;     */
+&nbsp;    public static void setDefaultShadowsVisible(boolean visible) {
+<b class="nc">&nbsp;        XYBarRenderer.defaultShadowsVisible = visible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The state class used by this renderer.
+&nbsp;     */
+&nbsp;    protected class XYBarRendererState extends XYItemRendererState {
+&nbsp;
+&nbsp;        /** Base for bars against the range axis, in Java 2D space. */
+&nbsp;        private double g2Base;
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Creates a new state object.
+&nbsp;         *
+&nbsp;         * @param info  the plot rendering info.
+&nbsp;         */
+<b class="nc">&nbsp;        public XYBarRendererState(PlotRenderingInfo info) {</b>
+<b class="nc">&nbsp;            super(info);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns the base (range) value in Java 2D space.
+&nbsp;         *
+&nbsp;         * @return The base value.
+&nbsp;         */
+&nbsp;        public double getG2Base() {
+<b class="nc">&nbsp;            return this.g2Base;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Sets the range axis base in Java2D space.
+&nbsp;         *
+&nbsp;         * @param value  the value.
+&nbsp;         */
+&nbsp;        public void setG2Base(double value) {
+<b class="nc">&nbsp;            this.g2Base = value;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /** The default base value for the bars. */
+&nbsp;    private double base;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether the bars use the y-interval supplied by the
+&nbsp;     * dataset.
+&nbsp;     */
+&nbsp;    private boolean useYInterval;
+&nbsp;
+&nbsp;    /** Percentage margin (to reduce the width of bars). */
+&nbsp;    private double margin;
+&nbsp;
+&nbsp;    /** A flag that controls whether or not bar outlines are drawn. */
+&nbsp;    private boolean drawBarOutline;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An optional class used to transform gradient paint objects to fit each
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private GradientPaintTransformer gradientPaintTransformer;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The shape used to represent a bar in each legend item (this should never
+&nbsp;     * be {@code null}).
+&nbsp;     */
+&nbsp;    private transient Shape legendBar;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The fallback position if a positive item label doesn&#39;t fit inside the
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private ItemLabelPosition positiveItemLabelPositionFallback;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The fallback position if a negative item label doesn&#39;t fit inside the
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private ItemLabelPosition negativeItemLabelPositionFallback;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The bar painter (never {@code null}).
+&nbsp;     */
+&nbsp;    private XYBarPainter barPainter;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The flag that controls whether or not shadows are drawn for the bars.
+&nbsp;     */
+&nbsp;    private boolean shadowsVisible;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The x-offset for the shadow effect.
+&nbsp;     */
+&nbsp;    private double shadowXOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The y-offset for the shadow effect.
+&nbsp;     */
+&nbsp;    private double shadowYOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A factor used to align the bars about the x-value.
+&nbsp;     */
+&nbsp;    private double barAlignmentFactor;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default constructor.
+&nbsp;     */
+&nbsp;    public XYBarRenderer() {
+<b class="fc">&nbsp;        this(0.0);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new renderer.
+&nbsp;     *
+&nbsp;     * @param margin  the percentage amount to trim from the width of each bar.
+&nbsp;     */
+&nbsp;    public XYBarRenderer(double margin) {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        this.margin = margin;</b>
+<b class="fc">&nbsp;        this.base = 0.0;</b>
+<b class="fc">&nbsp;        this.useYInterval = false;</b>
+<b class="fc">&nbsp;        this.gradientPaintTransformer = new StandardGradientPaintTransformer();</b>
+<b class="fc">&nbsp;        this.drawBarOutline = false;</b>
+<b class="fc">&nbsp;        this.legendBar = new Rectangle2D.Double(-3.0, -5.0, 6.0, 10.0);</b>
+<b class="fc">&nbsp;        this.barPainter = getDefaultBarPainter();</b>
+<b class="fc">&nbsp;        this.shadowsVisible = getDefaultShadowsVisible();</b>
+<b class="fc">&nbsp;        this.shadowXOffset = 4.0;</b>
+<b class="fc">&nbsp;        this.shadowYOffset = 4.0;</b>
+<b class="fc">&nbsp;        this.barAlignmentFactor = -1.0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the base value for the bars.
+&nbsp;     *
+&nbsp;     * @return The base value for the bars.
+&nbsp;     *
+&nbsp;     * @see #setBase(double)
+&nbsp;     */
+&nbsp;    public double getBase() {
+<b class="nc">&nbsp;        return this.base;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base value for the bars and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.  The base value is not used if the dataset&#39;s
+&nbsp;     * y-interval is being used to determine the bar length.
+&nbsp;     *
+&nbsp;     * @param base  the new base value.
+&nbsp;     *
+&nbsp;     * @see #getBase()
+&nbsp;     * @see #getUseYInterval()
+&nbsp;     */
+&nbsp;    public void setBase(double base) {
+<b class="fc">&nbsp;        this.base = base;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that determines whether the y-interval from the dataset is
+&nbsp;     * used to calculate the length of each bar.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setUseYInterval(boolean)
+&nbsp;     */
+&nbsp;    public boolean getUseYInterval() {
+<b class="fc">&nbsp;        return this.useYInterval;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that determines whether the y-interval from the dataset is
+&nbsp;     * used to calculate the length of each bar, and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param use  the flag.
+&nbsp;     *
+&nbsp;     * @see #getUseYInterval()
+&nbsp;     */
+&nbsp;    public void setUseYInterval(boolean use) {
+<b class="fc">&nbsp;        if (this.useYInterval != use) {</b>
+<b class="fc">&nbsp;            this.useYInterval = use;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the margin which is a percentage amount by which the bars are
+&nbsp;     * trimmed.
+&nbsp;     *
+&nbsp;     * @return The margin.
+&nbsp;     *
+&nbsp;     * @see #setMargin(double)
+&nbsp;     */
+&nbsp;    public double getMargin() {
+<b class="nc">&nbsp;        return this.margin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the percentage amount by which the bars are trimmed and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param margin  the new margin.
+&nbsp;     *
+&nbsp;     * @see #getMargin()
+&nbsp;     */
+&nbsp;    public void setMargin(double margin) {
+<b class="fc">&nbsp;        this.margin = margin;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not bar outlines are drawn.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setDrawBarOutline(boolean)
+&nbsp;     */
+&nbsp;    public boolean isDrawBarOutline() {
+<b class="fc">&nbsp;        return this.drawBarOutline;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not bar outlines are drawn and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param draw  the flag.
+&nbsp;     *
+&nbsp;     * @see #isDrawBarOutline()
+&nbsp;     */
+&nbsp;    public void setDrawBarOutline(boolean draw) {
+<b class="fc">&nbsp;        this.drawBarOutline = draw;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gradient paint transformer (an object used to transform
+&nbsp;     * gradient paint objects to fit each bar).
+&nbsp;     *
+&nbsp;     * @return A transformer ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setGradientPaintTransformer(GradientPaintTransformer)
+&nbsp;     */
+&nbsp;    public GradientPaintTransformer getGradientPaintTransformer() {
+<b class="fc">&nbsp;        return this.gradientPaintTransformer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gradient paint transformer and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param transformer  the transformer ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getGradientPaintTransformer()
+&nbsp;     */
+&nbsp;    public void setGradientPaintTransformer(
+&nbsp;            GradientPaintTransformer transformer) {
+<b class="fc">&nbsp;        this.gradientPaintTransformer = transformer;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shape used to represent bars in each legend item.
+&nbsp;     *
+&nbsp;     * @return The shape used to represent bars in each legend item (never
+&nbsp;     *         {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendBar(Shape)
+&nbsp;     */
+&nbsp;    public Shape getLegendBar() {
+<b class="nc">&nbsp;        return this.legendBar;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used to represent bars in each legend item and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param bar  the bar shape ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getLegendBar()
+&nbsp;     */
+&nbsp;    public void setLegendBar(Shape bar) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(bar, &quot;bar&quot;);</b>
+<b class="fc">&nbsp;        this.legendBar = bar;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the fallback position for positive item labels that don&#39;t fit
+&nbsp;     * within a bar.
+&nbsp;     *
+&nbsp;     * @return The fallback position ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setPositiveItemLabelPositionFallback(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getPositiveItemLabelPositionFallback() {
+<b class="nc">&nbsp;        return this.positiveItemLabelPositionFallback;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the fallback position for positive item labels that don&#39;t fit
+&nbsp;     * within a bar, and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getPositiveItemLabelPositionFallback()
+&nbsp;     */
+&nbsp;    public void setPositiveItemLabelPositionFallback(
+&nbsp;            ItemLabelPosition position) {
+<b class="fc">&nbsp;        this.positiveItemLabelPositionFallback = position;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the fallback position for negative item labels that don&#39;t fit
+&nbsp;     * within a bar.
+&nbsp;     *
+&nbsp;     * @return The fallback position ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setNegativeItemLabelPositionFallback(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getNegativeItemLabelPositionFallback() {
+<b class="nc">&nbsp;        return this.negativeItemLabelPositionFallback;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the fallback position for negative item labels that don&#39;t fit
+&nbsp;     * within a bar, and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getNegativeItemLabelPositionFallback()
+&nbsp;     */
+&nbsp;    public void setNegativeItemLabelPositionFallback(
+&nbsp;            ItemLabelPosition position) {
+<b class="fc">&nbsp;        this.negativeItemLabelPositionFallback = position;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the bar painter.
+&nbsp;     *
+&nbsp;     * @return The bar painter (never {@code null}).
+&nbsp;     */
+&nbsp;    public XYBarPainter getBarPainter() {
+<b class="nc">&nbsp;        return this.barPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the bar painter and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void setBarPainter(XYBarPainter painter) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="fc">&nbsp;        this.barPainter = painter;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not shadows are drawn for
+&nbsp;     * the bars.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getShadowsVisible() {
+<b class="nc">&nbsp;        return this.shadowsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the renderer
+&nbsp;     * draws shadows for the bars, and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the new flag value.
+&nbsp;     */
+&nbsp;    public void setShadowVisible(boolean visible) {
+<b class="fc">&nbsp;        this.shadowsVisible = visible;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow x-offset.
+&nbsp;     *
+&nbsp;     * @return The shadow x-offset.
+&nbsp;     */
+&nbsp;    public double getShadowXOffset() {
+<b class="nc">&nbsp;        return this.shadowXOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the x-offset for the bar shadow and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset.
+&nbsp;     */
+&nbsp;    public void setShadowXOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowXOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow y-offset.
+&nbsp;     *
+&nbsp;     * @return The shadow y-offset.
+&nbsp;     */
+&nbsp;    public double getShadowYOffset() {
+<b class="nc">&nbsp;        return this.shadowYOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the y-offset for the bar shadow and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset.
+&nbsp;     */
+&nbsp;    public void setShadowYOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowYOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the bar alignment factor. 
+&nbsp;     * 
+&nbsp;     * @return The bar alignment factor.
+&nbsp;     */
+&nbsp;    public double getBarAlignmentFactor() {
+<b class="nc">&nbsp;        return this.barAlignmentFactor;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the bar alignment factor and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.  If the alignment factor is outside the
+&nbsp;     * range 0.0 to 1.0, no alignment will be performed by the renderer.
+&nbsp;     *
+&nbsp;     * @param factor  the factor.
+&nbsp;     */
+&nbsp;    public void setBarAlignmentFactor(double factor) {
+<b class="nc">&nbsp;        this.barAlignmentFactor = factor;</b>
+<b class="nc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the renderer and returns a state object that should be
+&nbsp;     * passed to all subsequent calls to the drawItem() method.  Here we
+&nbsp;     * calculate the Java2D y-coordinate for zero, since all the bars have
+&nbsp;     * their bases fixed at zero.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area inside the axes.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param dataset  the data.
+&nbsp;     * @param info  an optional info collection object to return data back to
+&nbsp;     *              the caller.
+&nbsp;     *
+&nbsp;     * @return A state object.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea,
+&nbsp;            XYPlot plot, XYDataset dataset, PlotRenderingInfo info) {
+&nbsp;
+<b class="nc">&nbsp;        XYBarRendererState state = new XYBarRendererState(info);</b>
+<b class="nc">&nbsp;        ValueAxis rangeAxis = plot.getRangeAxisForDataset(plot.indexOf(</b>
+&nbsp;                dataset));
+<b class="nc">&nbsp;        state.setG2Base(rangeAxis.valueToJava2D(this.base, dataArea,</b>
+<b class="nc">&nbsp;                plot.getRangeAxisEdge()));</b>
+<b class="nc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a default legend item for the specified series.  Subclasses
+&nbsp;     * should override this method to generate customised items.
+&nbsp;     *
+&nbsp;     * @param datasetIndex  the dataset index (zero-based).
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A legend item for the series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItem getLegendItem(int datasetIndex, int series) {
+<b class="fc">&nbsp;        XYPlot xyplot = getPlot();</b>
+<b class="fc">&nbsp;        if (xyplot == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        XYDataset dataset = xyplot.getDataset(datasetIndex);</b>
+<b class="fc">&nbsp;        if (dataset == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;        LegendItem result;
+<b class="fc">&nbsp;        XYSeriesLabelGenerator lg = getLegendItemLabelGenerator();</b>
+<b class="fc">&nbsp;        String label = lg.generateLabel(dataset, series);</b>
+<b class="fc">&nbsp;        String description = label;</b>
+<b class="fc">&nbsp;        String toolTipText = null;</b>
+<b class="fc">&nbsp;        if (getLegendItemToolTipGenerator() != null) {</b>
+<b class="nc">&nbsp;            toolTipText = getLegendItemToolTipGenerator().generateLabel(</b>
+&nbsp;                    dataset, series);
+&nbsp;        }
+<b class="fc">&nbsp;        String urlText = null;</b>
+<b class="fc">&nbsp;        if (getLegendItemURLGenerator() != null) {</b>
+<b class="nc">&nbsp;            urlText = getLegendItemURLGenerator().generateLabel(dataset, </b>
+&nbsp;                    series);
+&nbsp;        }
+<b class="fc">&nbsp;        Shape shape = this.legendBar;</b>
+<b class="fc">&nbsp;        Paint paint = lookupSeriesPaint(series);</b>
+<b class="fc">&nbsp;        Paint outlinePaint = lookupSeriesOutlinePaint(series);</b>
+<b class="fc">&nbsp;        Stroke outlineStroke = lookupSeriesOutlineStroke(series);</b>
+<b class="fc">&nbsp;        if (this.drawBarOutline) {</b>
+<b class="nc">&nbsp;            result = new LegendItem(label, description, toolTipText,</b>
+&nbsp;                    urlText, shape, paint, outlineStroke, outlinePaint);
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            result = new LegendItem(label, description, toolTipText, urlText, </b>
+&nbsp;                    shape, paint);
+&nbsp;        }
+<b class="fc">&nbsp;        result.setLabelFont(lookupLegendTextFont(series));</b>
+<b class="fc">&nbsp;        Paint labelPaint = lookupLegendTextPaint(series);</b>
+<b class="fc">&nbsp;        if (labelPaint != null) {</b>
+<b class="nc">&nbsp;            result.setLabelPaint(labelPaint);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result.setDataset(dataset);</b>
+<b class="fc">&nbsp;        result.setDatasetIndex(datasetIndex);</b>
+<b class="fc">&nbsp;        result.setSeriesKey(dataset.getSeriesKey(series));</b>
+<b class="fc">&nbsp;        result.setSeriesIndex(series);</b>
+<b class="fc">&nbsp;        if (getGradientPaintTransformer() != null) {</b>
+<b class="fc">&nbsp;            result.setFillPaintTransformer(getGradientPaintTransformer());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the visual representation of a single data item.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param dataArea  the area within which the plot is being drawn.
+&nbsp;     * @param info  collects information about the drawing.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color
+&nbsp;     *              information etc).
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param crosshairState  crosshair information for the plot
+&nbsp;     *                        ({@code null} permitted).
+&nbsp;     * @param pass  the pass index.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void drawItem(Graphics2D g2, XYItemRendererState state,
+&nbsp;            Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,
+&nbsp;            ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,
+&nbsp;            int series, int item, CrosshairState crosshairState, int pass) {
+&nbsp;
+<b class="nc">&nbsp;        if (!getItemVisible(series, item)) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        IntervalXYDataset intervalDataset = (IntervalXYDataset) dataset;</b>
+&nbsp;
+&nbsp;        double value0;
+&nbsp;        double value1;
+<b class="nc">&nbsp;        if (this.useYInterval) {</b>
+<b class="nc">&nbsp;            value0 = intervalDataset.getStartYValue(series, item);</b>
+<b class="nc">&nbsp;            value1 = intervalDataset.getEndYValue(series, item);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            value0 = this.base;</b>
+<b class="nc">&nbsp;            value1 = intervalDataset.getYValue(series, item);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (Double.isNaN(value0) || Double.isNaN(value1)) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        if (value0 &lt;= value1) {</b>
+<b class="nc">&nbsp;            if (!rangeAxis.getRange().intersects(value0, value1)) {</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            if (!rangeAxis.getRange().intersects(value1, value0)) {</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        double translatedValue0 = rangeAxis.valueToJava2D(value0, dataArea,</b>
+<b class="nc">&nbsp;                plot.getRangeAxisEdge());</b>
+<b class="nc">&nbsp;        double translatedValue1 = rangeAxis.valueToJava2D(value1, dataArea,</b>
+<b class="nc">&nbsp;                plot.getRangeAxisEdge());</b>
+<b class="nc">&nbsp;        double bottom = Math.min(translatedValue0, translatedValue1);</b>
+<b class="nc">&nbsp;        double top = Math.max(translatedValue0, translatedValue1);</b>
+&nbsp;
+<b class="nc">&nbsp;        double startX = intervalDataset.getStartXValue(series, item);</b>
+<b class="nc">&nbsp;        if (Double.isNaN(startX)) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        double endX = intervalDataset.getEndXValue(series, item);</b>
+<b class="nc">&nbsp;        if (Double.isNaN(endX)) {</b>
+&nbsp;            return;
+&nbsp;        }
+<b class="nc">&nbsp;        if (startX &lt;= endX) {</b>
+<b class="nc">&nbsp;            if (!domainAxis.getRange().intersects(startX, endX)) {</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            if (!domainAxis.getRange().intersects(endX, startX)) {</b>
+&nbsp;                return;
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // is there an alignment adjustment to be made?
+<b class="nc">&nbsp;        if (this.barAlignmentFactor &gt;= 0.0 &amp;&amp; this.barAlignmentFactor &lt;= 1.0) {</b>
+<b class="nc">&nbsp;            double x = intervalDataset.getXValue(series, item);</b>
+<b class="nc">&nbsp;            double interval = endX - startX;</b>
+<b class="nc">&nbsp;            startX = x - interval * this.barAlignmentFactor;</b>
+<b class="nc">&nbsp;            endX = startX + interval;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        RectangleEdge location = plot.getDomainAxisEdge();</b>
+<b class="nc">&nbsp;        double translatedStartX = domainAxis.valueToJava2D(startX, dataArea,</b>
+&nbsp;                location);
+<b class="nc">&nbsp;        double translatedEndX = domainAxis.valueToJava2D(endX, dataArea,</b>
+&nbsp;                location);
+&nbsp;
+<b class="nc">&nbsp;        double translatedWidth = Math.max(1, Math.abs(translatedEndX</b>
+&nbsp;                - translatedStartX));
+&nbsp;
+<b class="nc">&nbsp;        double left = Math.min(translatedStartX, translatedEndX);</b>
+<b class="nc">&nbsp;        if (getMargin() &gt; 0.0) {</b>
+<b class="nc">&nbsp;            double cut = translatedWidth * getMargin();</b>
+<b class="nc">&nbsp;            translatedWidth = translatedWidth - cut;</b>
+<b class="nc">&nbsp;            left = left + cut / 2;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Rectangle2D bar = null;</b>
+<b class="nc">&nbsp;        PlotOrientation orientation = plot.getOrientation();</b>
+<b class="nc">&nbsp;        if (orientation.isHorizontal()) {</b>
+&nbsp;            // clip left and right bounds to data area
+<b class="nc">&nbsp;            bottom = Math.max(bottom, dataArea.getMinX());</b>
+<b class="nc">&nbsp;            top = Math.min(top, dataArea.getMaxX());</b>
+<b class="nc">&nbsp;            bar = new Rectangle2D.Double(</b>
+&nbsp;                bottom, left, top - bottom, translatedWidth);
+<b class="nc">&nbsp;        } else if (orientation.isVertical()) {</b>
+&nbsp;            // clip top and bottom bounds to data area
+<b class="nc">&nbsp;            bottom = Math.max(bottom, dataArea.getMinY());</b>
+<b class="nc">&nbsp;            top = Math.min(top, dataArea.getMaxY());</b>
+<b class="nc">&nbsp;            bar = new Rectangle2D.Double(left, bottom, translatedWidth,</b>
+&nbsp;                    top - bottom);
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        boolean positive = (value1 &gt; 0.0);</b>
+<b class="nc">&nbsp;        boolean inverted = rangeAxis.isInverted();</b>
+&nbsp;        RectangleEdge barBase;
+<b class="nc">&nbsp;        if (orientation.isHorizontal()) {</b>
+<b class="nc">&nbsp;            if (positive &amp;&amp; inverted || !positive &amp;&amp; !inverted) {</b>
+<b class="nc">&nbsp;                barBase = RectangleEdge.RIGHT;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                barBase = RectangleEdge.LEFT;</b>
+&nbsp;            }
+&nbsp;        } else {
+<b class="nc">&nbsp;            if (positive &amp;&amp; !inverted || !positive &amp;&amp; inverted) {</b>
+<b class="nc">&nbsp;                barBase = RectangleEdge.BOTTOM;</b>
+&nbsp;            } else {
+<b class="nc">&nbsp;                barBase = RectangleEdge.TOP;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        if (state.getElementHinting()) {</b>
+<b class="nc">&nbsp;            beginElementGroup(g2, dataset.getSeriesKey(series), item);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (getShadowsVisible()) {</b>
+<b class="nc">&nbsp;            this.barPainter.paintBarShadow(g2, this, series, item, bar, barBase,</b>
+&nbsp;                !this.useYInterval);
+&nbsp;        }
+<b class="nc">&nbsp;        this.barPainter.paintBar(g2, this, series, item, bar, barBase);</b>
+<b class="nc">&nbsp;        if (state.getElementHinting()) {</b>
+<b class="nc">&nbsp;            endElementGroup(g2);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (isItemLabelVisible(series, item)) {</b>
+<b class="nc">&nbsp;            XYItemLabelGenerator generator = getItemLabelGenerator(series,</b>
+&nbsp;                    item);
+<b class="nc">&nbsp;            drawItemLabel(g2, dataset, series, item, plot, generator, bar,</b>
+&nbsp;                    value1 &lt; 0.0);
+&nbsp;        }
+&nbsp;
+&nbsp;        // update the crosshair point
+<b class="nc">&nbsp;        double x1 = (startX + endX) / 2.0;</b>
+<b class="nc">&nbsp;        double y1 = dataset.getYValue(series, item);</b>
+<b class="nc">&nbsp;        double transX1 = domainAxis.valueToJava2D(x1, dataArea, location);</b>
+<b class="nc">&nbsp;        double transY1 = rangeAxis.valueToJava2D(y1, dataArea,</b>
+<b class="nc">&nbsp;                plot.getRangeAxisEdge());</b>
+<b class="nc">&nbsp;        int datasetIndex = plot.indexOf(dataset);</b>
+<b class="nc">&nbsp;        updateCrosshairValues(crosshairState, x1, y1, datasetIndex,</b>
+<b class="nc">&nbsp;                transX1, transY1, plot.getOrientation());</b>
+&nbsp;
+<b class="nc">&nbsp;        EntityCollection entities = state.getEntityCollection();</b>
+<b class="nc">&nbsp;        if (entities != null) {</b>
+<b class="nc">&nbsp;            addEntity(entities, bar, dataset, series, item, 0.0, 0.0);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws an item label.  This method is provided as an alternative to
+&nbsp;     * {@link #drawItemLabel(Graphics2D, PlotOrientation, XYDataset, int, int,
+&nbsp;     * double, double, boolean)} so that the bar can be used to calculate the
+&nbsp;     * label anchor point.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param item  the item index.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param generator  the label generator ({@code null} permitted, in
+&nbsp;     *         which case the method does nothing, just returns).
+&nbsp;     * @param bar  the bar.
+&nbsp;     * @param negative  a flag indicating a negative value.
+&nbsp;     */
+&nbsp;    protected void drawItemLabel(Graphics2D g2, XYDataset dataset,
+&nbsp;            int series, int item, XYPlot plot, XYItemLabelGenerator generator,
+&nbsp;            Rectangle2D bar, boolean negative) {
+&nbsp;
+<b class="nc">&nbsp;        if (generator == null) {</b>
+&nbsp;            return;  // nothing to do
+&nbsp;        }
+<b class="nc">&nbsp;        String label = generator.generateLabel(dataset, series, item);</b>
+<b class="nc">&nbsp;        if (label == null) {</b>
+&nbsp;            return;  // nothing to do
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Font labelFont = getItemLabelFont(series, item);</b>
+<b class="nc">&nbsp;        g2.setFont(labelFont);</b>
+<b class="nc">&nbsp;        Paint paint = getItemLabelPaint(series, item);</b>
+<b class="nc">&nbsp;        g2.setPaint(paint);</b>
+&nbsp;
+&nbsp;        // find out where to place the label...
+&nbsp;        ItemLabelPosition position;
+<b class="nc">&nbsp;        if (!negative) {</b>
+<b class="nc">&nbsp;            position = getPositiveItemLabelPosition(series, item);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            position = getNegativeItemLabelPosition(series, item);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // work out the label anchor point...
+<b class="nc">&nbsp;        Point2D anchorPoint = calculateLabelAnchorPoint(</b>
+<b class="nc">&nbsp;                position.getItemLabelAnchor(), bar, plot.getOrientation());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (isInternalAnchor(position.getItemLabelAnchor())) {</b>
+<b class="nc">&nbsp;            Shape bounds = TextUtils.calculateRotatedStringBounds(label,</b>
+<b class="nc">&nbsp;                    g2, (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="nc">&nbsp;                    position.getTextAnchor(), position.getAngle(),</b>
+<b class="nc">&nbsp;                    position.getRotationAnchor());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (bounds != null) {</b>
+<b class="nc">&nbsp;                if (!bar.contains(bounds.getBounds2D())) {</b>
+<b class="nc">&nbsp;                    if (!negative) {</b>
+<b class="nc">&nbsp;                        position = getPositiveItemLabelPositionFallback();</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        position = getNegativeItemLabelPositionFallback();</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    if (position != null) {</b>
+<b class="nc">&nbsp;                        anchorPoint = calculateLabelAnchorPoint(</b>
+<b class="nc">&nbsp;                                position.getItemLabelAnchor(), bar,</b>
+<b class="nc">&nbsp;                                plot.getOrientation());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (position != null) {</b>
+<b class="nc">&nbsp;            TextUtils.drawRotatedString(label, g2,</b>
+<b class="nc">&nbsp;                    (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="nc">&nbsp;                    position.getTextAnchor(), position.getAngle(),</b>
+<b class="nc">&nbsp;                    position.getRotationAnchor());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the item label anchor point.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor.
+&nbsp;     * @param bar  the bar.
+&nbsp;     * @param orientation  the plot orientation.
+&nbsp;     *
+&nbsp;     * @return The anchor point.
+&nbsp;     */
+&nbsp;    private Point2D calculateLabelAnchorPoint(ItemLabelAnchor anchor,
+&nbsp;            Rectangle2D bar, PlotOrientation orientation) {
+&nbsp;
+<b class="nc">&nbsp;        Point2D result = null;</b>
+<b class="nc">&nbsp;        double offset = getItemLabelAnchorOffset();</b>
+<b class="nc">&nbsp;        double x0 = bar.getX() - offset;</b>
+<b class="nc">&nbsp;        double x1 = bar.getX();</b>
+<b class="nc">&nbsp;        double x2 = bar.getX() + offset;</b>
+<b class="nc">&nbsp;        double x3 = bar.getCenterX();</b>
+<b class="nc">&nbsp;        double x4 = bar.getMaxX() - offset;</b>
+<b class="nc">&nbsp;        double x5 = bar.getMaxX();</b>
+<b class="nc">&nbsp;        double x6 = bar.getMaxX() + offset;</b>
+&nbsp;
+<b class="nc">&nbsp;        double y0 = bar.getMaxY() + offset;</b>
+<b class="nc">&nbsp;        double y1 = bar.getMaxY();</b>
+<b class="nc">&nbsp;        double y2 = bar.getMaxY() - offset;</b>
+<b class="nc">&nbsp;        double y3 = bar.getCenterY();</b>
+<b class="nc">&nbsp;        double y4 = bar.getMinY() + offset;</b>
+<b class="nc">&nbsp;        double y5 = bar.getMinY();</b>
+<b class="nc">&nbsp;        double y6 = bar.getMinY() - offset;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (anchor == ItemLabelAnchor.CENTER) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE1) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE2) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE3) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE4) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE5) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE6) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE7) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE8) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE9) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE10) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE11) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE12) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE1) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x5, y6);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE2) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y5);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE3) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE4) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y1);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE5) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x5, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE6) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE7) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x1, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE8) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y1);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE9) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE10) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y5);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE11) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x1, y6);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE12) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y6);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the specified anchor point is inside a bar.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor point.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    private boolean isInternalAnchor(ItemLabelAnchor anchor) {
+<b class="nc">&nbsp;        return anchor == ItemLabelAnchor.CENTER</b>
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE1
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE2
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE3
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE4
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE5
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE6
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE7
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE8
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE9
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE10
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE11
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE12;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower and upper bounds (range) of the x-values in the
+&nbsp;     * specified dataset.  Since this renderer uses the x-interval in the
+&nbsp;     * dataset, this is taken into account for the range.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The range ({@code null} if the dataset is
+&nbsp;     *         {@code null} or empty).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range findDomainBounds(XYDataset dataset) {
+<b class="fc">&nbsp;        return findDomainBounds(dataset, true);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower and upper bounds (range) of the y-values in the
+&nbsp;     * specified dataset.  If the renderer is plotting the y-interval from the
+&nbsp;     * dataset, this is taken into account for the range.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The range ({@code null} if the dataset is
+&nbsp;     *         {@code null} or empty).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range findRangeBounds(XYDataset dataset) {
+<b class="fc">&nbsp;        return findRangeBounds(dataset, this.useYInterval);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a clone of the renderer.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException  if the renderer cannot be cloned.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        XYBarRenderer result = (XYBarRenderer) super.clone();</b>
+<b class="fc">&nbsp;        if (this.gradientPaintTransformer != null) {</b>
+<b class="fc">&nbsp;            result.gradientPaintTransformer = CloneUtils.clone(this.gradientPaintTransformer);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result.legendBar = CloneUtils.clone(this.legendBar);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this renderer for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object to test against ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof XYBarRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        XYBarRenderer that = (XYBarRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.base != that.base) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.drawBarOutline != that.drawBarOutline) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.margin != that.margin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.useYInterval != that.useYInterval) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.gradientPaintTransformer, that.gradientPaintTransformer)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!ShapeUtils.equal(this.legendBar, that.legendBar)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.positiveItemLabelPositionFallback, that.positiveItemLabelPositionFallback)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.negativeItemLabelPositionFallback, that.negativeItemLabelPositionFallback)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.barPainter.equals(that.barPainter)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowsVisible != that.shadowsVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowXOffset != that.shadowXOffset) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowYOffset != that.shadowYOffset) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.barAlignmentFactor != that.barAlignmentFactor) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;            throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.legendBar = SerialUtils.readShape(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writeShape(this.legendBar, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

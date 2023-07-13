@@ -1,0 +1,415 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DeviationStepRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: DeviationStepRenderer (org.jfree.chart.renderer.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DeviationStepRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    40%
+  </span>
+  <span class="absValue">
+    (2/5)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    6,7%
+  </span>
+  <span class="absValue">
+    (7/105)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------------------
+&nbsp; * DeviationStepRenderer.java
+&nbsp; * ----------------------
+&nbsp; * (C) Copyright 2007-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.xy;
+&nbsp;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.plot.CrosshairState;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.data.xy.IntervalXYDataset;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;import java.awt.*;
+&nbsp;import java.awt.geom.GeneralPath;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;
+&nbsp;/**
+&nbsp; * A specialised subclass of the {@link DeviationRenderer} that requires
+&nbsp; * an {@link IntervalXYDataset} and represents the y-interval by shading an
+&nbsp; * area behind the y-values on the chart, drawing only horizontal or
+&nbsp; * vertical lines (steps);
+&nbsp; *
+&nbsp; * @since 1.5.1
+&nbsp; */
+&nbsp;public class DeviationStepRenderer extends DeviationRenderer {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new renderer that displays lines and shapes for the data
+&nbsp;     * items, as well as the shaded area for the y-interval.
+&nbsp;     */
+&nbsp;    public DeviationStepRenderer() {
+<b class="fc">&nbsp;        super();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new renderer.
+&nbsp;     *
+&nbsp;     * @param lines  show lines between data items?
+&nbsp;     * @param shapes  show a shape for each data item?
+&nbsp;     */
+&nbsp;    public DeviationStepRenderer(boolean lines, boolean shapes) {
+<b class="nc">&nbsp;        super(lines, shapes);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the visual representation of a single data item.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param dataArea  the area within which the data is being drawn.
+&nbsp;     * @param info  collects information about the drawing.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color
+&nbsp;     *              information etc).
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param crosshairState  crosshair information for the plot
+&nbsp;     *                        ({@code null} permitted).
+&nbsp;     * @param pass  the pass index.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void drawItem(Graphics2D g2, XYItemRendererState state,
+&nbsp;                         Rectangle2D dataArea, PlotRenderingInfo info, XYPlot plot,
+&nbsp;                         ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset,
+&nbsp;                         int series, int item, CrosshairState crosshairState, int pass) {
+&nbsp;
+&nbsp;        // do nothing if item is not visible
+<b class="nc">&nbsp;        if (!getItemVisible(series, item)) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+&nbsp;        // first pass draws the shading
+<b class="nc">&nbsp;        if (pass == 0) {</b>
+<b class="nc">&nbsp;            IntervalXYDataset intervalDataset = (IntervalXYDataset) dataset;</b>
+<b class="nc">&nbsp;            State drState = (State) state;</b>
+&nbsp;
+<b class="nc">&nbsp;            double x = intervalDataset.getXValue(series, item);</b>
+<b class="nc">&nbsp;            double yLow = intervalDataset.getStartYValue(series, item);</b>
+<b class="nc">&nbsp;            double yHigh  = intervalDataset.getEndYValue(series, item);</b>
+&nbsp;
+<b class="nc">&nbsp;            RectangleEdge xAxisLocation = plot.getDomainAxisEdge();</b>
+<b class="nc">&nbsp;            RectangleEdge yAxisLocation = plot.getRangeAxisEdge();</b>
+&nbsp;
+<b class="nc">&nbsp;            double xx = domainAxis.valueToJava2D(x, dataArea, xAxisLocation);</b>
+<b class="nc">&nbsp;            double yyLow = rangeAxis.valueToJava2D(yLow, dataArea,</b>
+&nbsp;                    yAxisLocation);
+<b class="nc">&nbsp;            double yyHigh = rangeAxis.valueToJava2D(yHigh, dataArea,</b>
+&nbsp;                    yAxisLocation);
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            PlotOrientation orientation = plot.getOrientation();</b>
+<b class="nc">&nbsp;            if (item &gt; 0 &amp;&amp; !Double.isNaN(xx)) {</b>
+<b class="nc">&nbsp;                double yLowPrev = intervalDataset.getStartYValue(series, item-1);</b>
+<b class="nc">&nbsp;                double yHighPrev  = intervalDataset.getEndYValue(series, item-1);</b>
+<b class="nc">&nbsp;                double yyLowPrev = rangeAxis.valueToJava2D(yLowPrev, dataArea,</b>
+&nbsp;                        yAxisLocation);
+<b class="nc">&nbsp;                double yyHighPrev = rangeAxis.valueToJava2D(yHighPrev, dataArea,</b>
+&nbsp;                        yAxisLocation);
+&nbsp;
+<b class="nc">&nbsp;                if(!Double.isNaN(yyLow) &amp;&amp; !Double.isNaN(yyHigh)) {</b>
+<b class="nc">&nbsp;                    if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                        drState.lowerCoordinates.add(new double[]{yyLowPrev, xx});</b>
+<b class="nc">&nbsp;                        drState.upperCoordinates.add(new double[]{yyHighPrev, xx});</b>
+<b class="nc">&nbsp;                    } else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                        drState.lowerCoordinates.add(new double[]{xx, yyLowPrev});</b>
+<b class="nc">&nbsp;                        drState.upperCoordinates.add(new double[]{xx, yyHighPrev});</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            boolean intervalGood = !Double.isNaN(xx) &amp;&amp; !Double.isNaN(yLow) &amp;&amp; !Double.isNaN(yHigh);</b>
+<b class="nc">&nbsp;            if (intervalGood) {</b>
+<b class="nc">&nbsp;                if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                    drState.lowerCoordinates.add(new double[]{yyLow, xx});</b>
+<b class="nc">&nbsp;                    drState.upperCoordinates.add(new double[]{yyHigh, xx});</b>
+<b class="nc">&nbsp;                } else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="nc">&nbsp;                    drState.lowerCoordinates.add(new double[]{xx, yyLow});</b>
+<b class="nc">&nbsp;                    drState.upperCoordinates.add(new double[]{xx, yyHigh});</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (item == (dataset.getItemCount(series) - 1) ||</b>
+<b class="nc">&nbsp;                (!intervalGood &amp;&amp; drState.lowerCoordinates.size() &gt; 1)) {</b>
+&nbsp;                // draw items so far, either we reached the end of the series or the next interval is invalid
+&nbsp;                // last item in series, draw the lot...
+&nbsp;                // set up the alpha-transparency...
+<b class="nc">&nbsp;                Composite originalComposite = g2.getComposite();</b>
+<b class="nc">&nbsp;                g2.setComposite(AlphaComposite.getInstance(</b>
+&nbsp;                        AlphaComposite.SRC_OVER, this.alpha));
+<b class="nc">&nbsp;                g2.setPaint(getItemFillPaint(series, item));</b>
+<b class="nc">&nbsp;                GeneralPath area = new GeneralPath(GeneralPath.WIND_NON_ZERO,</b>
+<b class="nc">&nbsp;                        drState.lowerCoordinates.size()</b>
+<b class="nc">&nbsp;                                + drState.upperCoordinates.size());</b>
+<b class="nc">&nbsp;                double[] coords = (double[]) drState.lowerCoordinates.get(0);</b>
+<b class="nc">&nbsp;                area.moveTo((float) coords[0], (float) coords[1]);</b>
+<b class="nc">&nbsp;                for (int i = 1; i &lt; drState.lowerCoordinates.size(); i++) {</b>
+<b class="nc">&nbsp;                    coords = (double[]) drState.lowerCoordinates.get(i);</b>
+<b class="nc">&nbsp;                    area.lineTo((float) coords[0], (float) coords[1]);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                int count = drState.upperCoordinates.size();</b>
+<b class="nc">&nbsp;                coords = (double[]) drState.upperCoordinates.get(count - 1);</b>
+<b class="nc">&nbsp;                area.lineTo((float) coords[0], (float) coords[1]);</b>
+<b class="nc">&nbsp;                for (int i = count - 2; i &gt;= 0; i--) {</b>
+<b class="nc">&nbsp;                    coords = (double[]) drState.upperCoordinates.get(i);</b>
+<b class="nc">&nbsp;                    area.lineTo((float) coords[0], (float) coords[1]);</b>
+&nbsp;                }
+<b class="nc">&nbsp;                area.closePath();</b>
+<b class="nc">&nbsp;                g2.fill(area);</b>
+<b class="nc">&nbsp;                g2.setComposite(originalComposite);</b>
+&nbsp;
+<b class="nc">&nbsp;                drState.lowerCoordinates.clear();</b>
+<b class="nc">&nbsp;                drState.upperCoordinates.clear();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        if (isLinePass(pass)) {</b>
+&nbsp;
+&nbsp;            // the following code handles the line for the y-values...it&#39;s
+&nbsp;            // all done by code in the super class
+<b class="nc">&nbsp;            if (item == 0) {</b>
+<b class="nc">&nbsp;                State s = (State) state;</b>
+<b class="nc">&nbsp;                s.seriesPath.reset();</b>
+<b class="nc">&nbsp;                s.setLastPointGood(false);</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            if (getItemLineVisible(series, item)) {</b>
+<b class="nc">&nbsp;                drawPrimaryLineAsPath(state, g2, plot, dataset, pass,</b>
+&nbsp;                        series, item, domainAxis, rangeAxis, dataArea);
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // second pass adds shapes where the items are ..
+<b class="nc">&nbsp;        else if (isItemPass(pass)) {</b>
+&nbsp;
+&nbsp;            // setup for collecting optional entity info...
+<b class="nc">&nbsp;            EntityCollection entities = null;</b>
+<b class="nc">&nbsp;            if (info != null) {</b>
+<b class="nc">&nbsp;                entities = info.getOwner().getEntityCollection();</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            drawSecondaryPass(g2, plot, dataset, pass, series, item,</b>
+&nbsp;                    domainAxis, dataArea, rangeAxis, crosshairState, entities);
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the item (first pass). This method draws the lines
+&nbsp;     * connecting the items. Instead of drawing separate lines,
+&nbsp;     * a {@code GeneralPath} is constructed and drawn at the end of
+&nbsp;     * the series painting.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color information
+&nbsp;     *              etc).
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param pass  the pass.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataArea  the area within which the data is being drawn.
+&nbsp;     */
+&nbsp;    protected void drawPrimaryLineAsPath(XYItemRendererState state,
+&nbsp;                                         Graphics2D g2, XYPlot plot, XYDataset dataset, int pass,
+&nbsp;                                         int series, int item, ValueAxis domainAxis, ValueAxis rangeAxis,
+&nbsp;                                         Rectangle2D dataArea) {
+&nbsp;
+<b class="nc">&nbsp;        RectangleEdge xAxisLocation = plot.getDomainAxisEdge();</b>
+<b class="nc">&nbsp;        RectangleEdge yAxisLocation = plot.getRangeAxisEdge();</b>
+&nbsp;
+&nbsp;        // get the data point...
+<b class="nc">&nbsp;        double x1 = dataset.getXValue(series, item);</b>
+<b class="nc">&nbsp;        double y1 = dataset.getYValue(series, item);</b>
+<b class="nc">&nbsp;        double transX1 = domainAxis.valueToJava2D(x1, dataArea, xAxisLocation);</b>
+<b class="nc">&nbsp;        double transY1 = rangeAxis.valueToJava2D(y1, dataArea, yAxisLocation);</b>
+&nbsp;
+<b class="nc">&nbsp;        XYLineAndShapeRenderer.State s = (XYLineAndShapeRenderer.State) state;</b>
+&nbsp;        // update path to reflect latest point
+<b class="nc">&nbsp;        if (!Double.isNaN(transX1) &amp;&amp; !Double.isNaN(transY1)) {</b>
+<b class="nc">&nbsp;            float x = (float) transX1;</b>
+<b class="nc">&nbsp;            float y = (float) transY1;</b>
+<b class="nc">&nbsp;            PlotOrientation orientation = plot.getOrientation();</b>
+<b class="nc">&nbsp;            if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                x = (float) transY1;</b>
+<b class="nc">&nbsp;                y = (float) transX1;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (s.isLastPointGood()) {</b>
+<b class="nc">&nbsp;                if (item &gt; 0) {</b>
+<b class="nc">&nbsp;                    if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;                        s.seriesPath.lineTo(s.seriesPath.getCurrentPoint().getX(), y);</b>
+&nbsp;                    } else {
+<b class="nc">&nbsp;                        s.seriesPath.lineTo(x, s.seriesPath.getCurrentPoint().getY());</b>
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                s.seriesPath.lineTo(x, y);</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                s.seriesPath.moveTo(x, y);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            s.setLastPointGood(true);</b>
+<b class="nc">&nbsp;        } else {</b>
+<b class="nc">&nbsp;            s.setLastPointGood(false);</b>
+&nbsp;        }
+&nbsp;        // if this is the last item, draw the path ...
+<b class="nc">&nbsp;        if (item == s.getLastItemIndex()) {</b>
+&nbsp;            // draw path
+<b class="nc">&nbsp;            drawFirstPassShape(g2, pass, series, item, s.seriesPath);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this renderer for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof DeviationStepRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DeviationStepRenderer that = (DeviationStepRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.alpha != that.alpha) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

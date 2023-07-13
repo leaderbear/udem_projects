@@ -1,0 +1,78 @@
+single:
+  weight: 1
+  in:
+    - "bloop\n"
+    - "cp Makefile fakemakefileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\n"
+    - "echo a\necho b\n"
+    - "bloop\nbleep\n"
+    - "whereis LeagueOfToxic\n"
+    - "which python3\n"
+    - "EstQueQuelqunPeutMexpliquerCestQuoiUnCardinalEnVraiLegitJeComprendsPas\n"
+  out:
+    - "bloop: command not found\n"
+    - ""
+    - "a\nb\n"
+    - "bloop: command not found\nbleep: command not found\n"
+    - "LeagueOfToxic:\n"
+    - "/usr/bin/python3\n"
+    - "EstQueQuelqunPeutMexpliquerCestQuoiUnCardinalEnVraiLegitJeComprendsPas: command not found\n"
+andandor:
+  weight: 1
+  in:
+    - "echo Salut && whereis LeGroupeDeHeisenberg\n"
+    - "whereis ChallengerBtw || echo OMEGALUL\n"
+    - "nooope || echo 2\n"
+    - "echo 1 && echo 2 && echo 3\n"
+    - "echo 1 || echo 2 || echo 3\n"
+    - "echo 1 && echo 2 && echo 3 || echo 4 && echo 5\n"
+    - "echo 1 && echo 2 && echo 3 || echo 4\n"
+    - "echo Salut && echo Allo\necho Salut && echo Allo\n"
+    - "uname && echo EstCeQuonPeutIdentifierUnTambourUniquementParSonSon\n"
+  out:
+    - "Salut\nLeGroupeDeHeisenberg:\n"
+    - "ChallengerBtw:\n"
+    - "nooope: command not found\n2\n"
+    - "1\n2\n3\n"
+    - "1\n"
+    - "1\n2\n3\n5\n"
+    - "1\n2\n3\n"
+    - "Salut\nAllo\nSalut\nAllo\n"
+    - "Linux\nEstCeQuonPeutIdentifierUnTambourUniquementParSonSon\n"
+background:
+  weight: 1
+  in:
+    - "echo a &\n"
+    - "sleep 2 && echo a &\necho c\n"
+    - "sleep 4 && echo a &\nsleep 2 && echo b &\necho c\n"
+    - "sleep 4 && nopee || echo a &\necho b\n"
+    - "cp Makefile fakemakefileeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee &\n"
+    - "whereis Dinguerie && echo ClairementPartout\n"
+  out:
+    - "a\n"
+    - "c\na\n"
+    - "c\nb\na\n"
+    - "b\nnopee: command not found\na\n"
+    - ""
+    - "Dinguerie:\nClairementPartout\n"
+rn:
+  weight: 1
+  in:
+    - "r2(echo JaiHateDetreEnArgentineMettons)\n"
+    - "r2(echo YasTuQuelqunQuiEstDownDyAllerAvecMoi)\n"
+    - "r2(echo a) &\n"
+    - "r2(echoa) && r2(echo a)\n"
+    - "r2(echoa) || r2(echo a)\n"
+    - "r3(echo a) && whereis BtwTuPeuxPasIdentifierUnTambourParSonSon && echo TasTuUnBonLivreAMeRecommanderParToutHasard\n"
+    - "r1000(echo a)\n"
+    - "echo a && r4(agkeag) || echo c\n"
+    - "r2(echo a) &\nr2(echo a) &\n"
+  out:
+    - "JaiHateDetreEnArgentineMettons\nJaiHateDetreEnArgentineMettons\n"
+    - "YasTuQuelqunQuiEstDownDyAllerAvecMoi\nYasTuQuelqunQuiEstDownDyAllerAvecMoi\n"
+    - "a\na\n"
+    - "echoa: command not found\nechoa: command not found\n"
+    - "echoa: command not found\nechoa: command not found\na\na\n"
+    - "a\na\na\nBtwTuPeuxPasIdentifierUnTambourParSonSon:\nTasTuUnBonLivreAMeRecommanderParToutHasard\n"
+    - "a\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\na\n"
+    - "a\nagkeag: command not found\nagkeag: command not found\nagkeag: command not found\nagkeag: command not found\nc\n"
+    - "a\na\na\na\n"

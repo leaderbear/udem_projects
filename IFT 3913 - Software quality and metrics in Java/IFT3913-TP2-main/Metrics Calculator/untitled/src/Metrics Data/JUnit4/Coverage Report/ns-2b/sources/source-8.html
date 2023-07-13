@@ -1,0 +1,737 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DefaultTableXYDataset</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: DefaultTableXYDataset (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DefaultTableXYDataset</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    75%
+  </span>
+  <span class="absValue">
+    (27/36)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83%
+  </span>
+  <span class="absValue">
+    (127/153)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------------------
+&nbsp; * DefaultTableXYDataset.java
+&nbsp; * --------------------------
+&nbsp; * (C) Copyright 2003-2021, by Richard Atkinson and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Richard Atkinson;
+&nbsp; * Contributor(s):   Jody Brownell;
+&nbsp; *                   David Gilbert;
+&nbsp; *                   Andreas Schroeder;
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.internal.CloneUtils;
+&nbsp;import org.jfree.data.DomainInfo;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.general.DatasetChangeEvent;
+&nbsp;import org.jfree.data.general.DatasetUtils;
+&nbsp;import org.jfree.data.general.SeriesChangeEvent;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.HashSet;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;/**
+&nbsp; * An {@link XYDataset} where every series shares the same x-values (required
+&nbsp; * for generating stacked area charts).
+&nbsp; * 
+&nbsp; * @param &lt;S&gt; The type for the series keys.
+&nbsp; */
+&nbsp;public class DefaultTableXYDataset&lt;S extends Comparable&lt;S&gt;&gt; 
+&nbsp;        extends AbstractIntervalXYDataset&lt;S&gt;
+&nbsp;        implements TableXYDataset&lt;S&gt;, IntervalXYDataset&lt;S&gt;, DomainInfo,
+&nbsp;                   PublicCloneable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Storage for the data - this list will contain zero, one or many
+&nbsp;     * XYSeries objects.
+&nbsp;     */
+<b class="fc">&nbsp;    private List&lt;XYSeries&lt;S&gt;&gt; data = null;</b>
+&nbsp;
+&nbsp;    /** Storage for the x values. */
+<b class="fc">&nbsp;    private HashSet xPoints = null;</b>
+&nbsp;
+&nbsp;    /** A flag that controls whether or not events are propogated. */
+<b class="fc">&nbsp;    private boolean propagateEvents = true;</b>
+&nbsp;
+&nbsp;    /** A flag that controls auto pruning. */
+<b class="fc">&nbsp;    private boolean autoPrune = false;</b>
+&nbsp;
+&nbsp;    /** The delegate used to control the interval width. */
+&nbsp;    private IntervalXYDelegate intervalDelegate;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new empty dataset.
+&nbsp;     */
+&nbsp;    public DefaultTableXYDataset() {
+<b class="fc">&nbsp;        this(false);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new empty dataset.
+&nbsp;     *
+&nbsp;     * @param autoPrune  a flag that controls whether or not x-values are
+&nbsp;     *                   removed whenever the corresponding y-values are all
+&nbsp;     *                   {@code null}.
+&nbsp;     */
+<b class="fc">&nbsp;    public DefaultTableXYDataset(boolean autoPrune) {</b>
+<b class="fc">&nbsp;        this.autoPrune = autoPrune;</b>
+<b class="fc">&nbsp;        this.data = new ArrayList&lt;&gt;();</b>
+<b class="fc">&nbsp;        this.xPoints = new HashSet();</b>
+<b class="fc">&nbsp;        this.intervalDelegate = new IntervalXYDelegate(this, false);</b>
+<b class="fc">&nbsp;        addChangeListener(this.intervalDelegate);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not x-values are removed from
+&nbsp;     * the dataset when the corresponding y-values are all {@code null}.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean isAutoPrune() {
+<b class="nc">&nbsp;        return this.autoPrune;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a series to the collection and sends a {@link DatasetChangeEvent}
+&nbsp;     * to all registered listeners.  The series should be configured to NOT
+&nbsp;     * allow duplicate x-values.
+&nbsp;     *
+&nbsp;     * @param series  the series ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void addSeries(XYSeries&lt;S&gt; series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="fc">&nbsp;        if (series.getAllowDuplicateXValues()) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;Cannot accept XYSeries that allow duplicate values. &quot;
+&nbsp;                + &quot;Use XYSeries(seriesName, &lt;sort&gt;, false) constructor.&quot;
+&nbsp;            );
+&nbsp;        }
+<b class="fc">&nbsp;        updateXPoints(series);</b>
+<b class="fc">&nbsp;        this.data.add(series);</b>
+<b class="fc">&nbsp;        series.addChangeListener(this);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds any unique x-values from &#39;series&#39; to the dataset, and also adds any
+&nbsp;     * x-values that are in the dataset but not in &#39;series&#39; to the series.
+&nbsp;     *
+&nbsp;     * @param series  the series ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    private void updateXPoints(XYSeries&lt;S&gt; series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="fc">&nbsp;        HashSet seriesXPoints = new HashSet();</b>
+<b class="fc">&nbsp;        boolean savedState = this.propagateEvents;</b>
+<b class="fc">&nbsp;        this.propagateEvents = false;</b>
+<b class="fc">&nbsp;        for (int itemNo = 0; itemNo &lt; series.getItemCount(); itemNo++) {</b>
+<b class="fc">&nbsp;            Number xValue = series.getX(itemNo);</b>
+<b class="fc">&nbsp;            seriesXPoints.add(xValue);</b>
+<b class="fc">&nbsp;            if (!this.xPoints.contains(xValue)) {</b>
+<b class="fc">&nbsp;                this.xPoints.add(xValue);</b>
+<b class="fc">&nbsp;                int seriesCount = this.data.size();</b>
+<b class="fc">&nbsp;                for (int seriesNo = 0; seriesNo &lt; seriesCount; seriesNo++) {</b>
+<b class="fc">&nbsp;                    XYSeries&lt;S&gt; dataSeries = this.data.get(seriesNo);</b>
+<b class="fc">&nbsp;                    if (!dataSeries.equals(series)) {</b>
+<b class="fc">&nbsp;                        dataSeries.add(xValue, null);</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        for (Object point : this.xPoints) {</b>
+<b class="fc">&nbsp;            Number xPoint = (Number) point;</b>
+<b class="fc">&nbsp;            if (!seriesXPoints.contains(xPoint)) {</b>
+<b class="fc">&nbsp;                series.add(xPoint, null);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+<b class="fc">&nbsp;        this.propagateEvents = savedState;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates the x-values for all the series in the dataset.
+&nbsp;     */
+&nbsp;    public void updateXPoints() {
+<b class="fc">&nbsp;        this.propagateEvents = false;</b>
+<b class="fc">&nbsp;        for (int s = 0; s &lt; this.data.size(); s++) {</b>
+<b class="fc">&nbsp;            updateXPoints(this.data.get(s));</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.autoPrune) {</b>
+<b class="nc">&nbsp;            prune();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.propagateEvents = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of series in the collection.
+&nbsp;     *
+&nbsp;     * @return The series count.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getSeriesCount() {
+<b class="fc">&nbsp;        return this.data.size();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of x values in the dataset.
+&nbsp;     *
+&nbsp;     * @return The number of x values in the dataset.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount() {
+<b class="fc">&nbsp;        if (this.xPoints == null) {</b>
+<b class="nc">&nbsp;            return 0;</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            return this.xPoints.size();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The series (never {@code null}).
+&nbsp;     */
+&nbsp;    public XYSeries&lt;S&gt; getSeries(int series) {
+<b class="fc">&nbsp;        Args.requireInRange(series, &quot;series&quot;, 0, this.data.size() - 1);</b>
+<b class="fc">&nbsp;        return this.data.get(series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the key for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The key for a series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public S getSeriesKey(int series) {
+&nbsp;        // check arguments...delegated
+<b class="fc">&nbsp;        return getSeries(series).getKey();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of items in the specified series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The number of items in the specified series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount(int series) {
+&nbsp;        // check arguments...delegated
+<b class="fc">&nbsp;        return getSeries(series).getItemCount();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The x-value for the specified series and item.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getX(int series, int item) {
+<b class="fc">&nbsp;        XYSeries&lt;S&gt; s = this.data.get(series);</b>
+<b class="fc">&nbsp;        return s.getX(item);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the starting X value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The starting X value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartX(int series, int item) {
+<b class="fc">&nbsp;        return this.intervalDelegate.getStartX(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the ending X value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The ending X value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndX(int series, int item) {
+<b class="fc">&nbsp;        return this.intervalDelegate.getEndX(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param index  the index of the item of interest (zero-based).
+&nbsp;     *
+&nbsp;     * @return The y-value for the specified series and item (possibly
+&nbsp;     *         {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getY(int series, int index) {
+<b class="fc">&nbsp;        XYSeries&lt;S&gt; s = this.data.get(series);</b>
+<b class="fc">&nbsp;        return s.getY(index);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the starting Y value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The starting Y value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the ending Y value for the specified series and item.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The ending Y value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all the series from the collection and sends a
+&nbsp;     * {@link DatasetChangeEvent} to all registered listeners.
+&nbsp;     */
+&nbsp;    public void removeAllSeries() {
+&nbsp;
+&nbsp;        // Unregister the collection as a change listener to each series in
+&nbsp;        // the collection.
+<b class="fc">&nbsp;        for (XYSeries&lt;S&gt; series : this.data) {</b>
+<b class="fc">&nbsp;            series.removeChangeListener(this);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+&nbsp;        // Remove all the series from the collection and notify listeners.
+<b class="fc">&nbsp;        this.data.clear();</b>
+<b class="fc">&nbsp;        this.xPoints.clear();</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a series from the collection and sends a
+&nbsp;     * {@link DatasetChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public void removeSeries(XYSeries&lt;S&gt; series) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(series, &quot;series&quot;);</b>
+<b class="fc">&nbsp;        if (this.data.contains(series)) {</b>
+<b class="fc">&nbsp;            series.removeChangeListener(this);</b>
+<b class="fc">&nbsp;            this.data.remove(series);</b>
+<b class="fc">&nbsp;            if (this.data.isEmpty()) {</b>
+<b class="fc">&nbsp;                this.xPoints.clear();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            fireDatasetChanged();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a series from the collection and sends a
+&nbsp;     * {@link DatasetChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero based index).
+&nbsp;     */
+&nbsp;    public void removeSeries(int series) {
+<b class="fc">&nbsp;        Args.requireInRange(series, &quot;series&quot;, 0, this.data.size() - 1);</b>
+&nbsp;
+&nbsp;        // fetch the series, remove the change listener, then remove the series.
+<b class="fc">&nbsp;        XYSeries&lt;S&gt; s = this.data.get(series);</b>
+<b class="fc">&nbsp;        s.removeChangeListener(this);</b>
+<b class="fc">&nbsp;        this.data.remove(series);</b>
+<b class="fc">&nbsp;        if (this.data.isEmpty()) {</b>
+<b class="nc">&nbsp;            this.xPoints.clear();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        else if (this.autoPrune) {</b>
+<b class="fc">&nbsp;            prune();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the items from all series for a given x value.
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     */
+&nbsp;    public void removeAllValuesForX(Number x) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(x, &quot;x&quot;);</b>
+<b class="fc">&nbsp;        boolean savedState = this.propagateEvents;</b>
+<b class="fc">&nbsp;        this.propagateEvents = false;</b>
+<b class="fc">&nbsp;        for (int s = 0; s &lt; this.data.size(); s++) {</b>
+<b class="fc">&nbsp;            XYSeries&lt;S&gt; series = this.data.get(s);</b>
+<b class="fc">&nbsp;            series.remove(x);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.propagateEvents = savedState;</b>
+<b class="fc">&nbsp;        this.xPoints.remove(x);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if all the y-values for the specified x-value
+&nbsp;     * are {@code null} and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    protected boolean canPrune(Number x) {
+<b class="fc">&nbsp;        for (int s = 0; s &lt; this.data.size(); s++) {</b>
+<b class="fc">&nbsp;            XYSeries&lt;S&gt; series = this.data.get(s);</b>
+<b class="fc">&nbsp;            if (series.getY(series.indexOf(x)) != null) {</b>
+<b class="fc">&nbsp;                return false;</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all x-values for which all the y-values are {@code null}.
+&nbsp;     */
+&nbsp;    public void prune() {
+<b class="fc">&nbsp;        HashSet hs = (HashSet) this.xPoints.clone();</b>
+<b class="fc">&nbsp;        for (Object h : hs) {</b>
+<b class="fc">&nbsp;            Number x = (Number) h;</b>
+<b class="fc">&nbsp;            if (canPrune(x)) {</b>
+<b class="fc">&nbsp;                removeAllValuesForX(x);</b>
+&nbsp;            }
+<b class="fc">&nbsp;        }</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method receives notification when a series belonging to the dataset
+&nbsp;     * changes.  It responds by updating the x-points for the entire dataset
+&nbsp;     * and sending a {@link DatasetChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param event  information about the change.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void seriesChanged(SeriesChangeEvent event) {
+<b class="fc">&nbsp;        if (this.propagateEvents) {</b>
+<b class="fc">&nbsp;            updateXPoints();</b>
+<b class="fc">&nbsp;            fireDatasetChanged();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this collection for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof DefaultTableXYDataset)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DefaultTableXYDataset that = (DefaultTableXYDataset) obj;</b>
+<b class="fc">&nbsp;        if (this.autoPrune != that.autoPrune) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.propagateEvents != that.propagateEvents) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.intervalDelegate.equals(that.intervalDelegate)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.data, that.data)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+&nbsp;        int result;
+<b class="nc">&nbsp;        result = (this.data != null ? this.data.hashCode() : 0);</b>
+<b class="nc">&nbsp;        result = 29 * result</b>
+<b class="nc">&nbsp;                 + (this.xPoints != null ? this.xPoints.hashCode() : 0);</b>
+<b class="nc">&nbsp;        result = 29 * result + (this.propagateEvents ? 1 : 0);</b>
+<b class="nc">&nbsp;        result = 29 * result + (this.autoPrune ? 1 : 0);</b>
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns an independent copy of this dataset.
+&nbsp;     *
+&nbsp;     * @return A clone.
+&nbsp;     *
+&nbsp;     * @throws CloneNotSupportedException if there is some reason that cloning
+&nbsp;     *     cannot be performed.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Object clone() throws CloneNotSupportedException {
+<b class="fc">&nbsp;        DefaultTableXYDataset clone = (DefaultTableXYDataset) super.clone();</b>
+<b class="fc">&nbsp;        int seriesCount = this.data.size();</b>
+<b class="fc">&nbsp;        clone.data = new ArrayList&lt;&gt;(seriesCount);</b>
+<b class="fc">&nbsp;        for (XYSeries&lt;S&gt; series : this.data) {</b>
+<b class="fc">&nbsp;            clone.data.add(CloneUtils.clone(series));</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;
+<b class="fc">&nbsp;        clone.intervalDelegate = new IntervalXYDelegate(clone);</b>
+&nbsp;        // need to configure the intervalDelegate to match the original
+<b class="fc">&nbsp;        clone.intervalDelegate.setFixedIntervalWidth(getIntervalWidth());</b>
+<b class="fc">&nbsp;        clone.intervalDelegate.setAutoWidth(isAutoWidth());</b>
+<b class="fc">&nbsp;        clone.intervalDelegate.setIntervalPositionFactor(</b>
+<b class="fc">&nbsp;                getIntervalPositionFactor());</b>
+<b class="fc">&nbsp;        clone.updateXPoints();</b>
+<b class="fc">&nbsp;        return clone;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The minimum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainLowerBound(boolean includeInterval) {
+<b class="nc">&nbsp;        return this.intervalDelegate.getDomainLowerBound(includeInterval);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The maximum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainUpperBound(boolean includeInterval) {
+<b class="nc">&nbsp;        return this.intervalDelegate.getDomainUpperBound(includeInterval);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range of the values in this dataset&#39;s domain.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range getDomainBounds(boolean includeInterval) {
+<b class="nc">&nbsp;        if (includeInterval) {</b>
+<b class="nc">&nbsp;            return this.intervalDelegate.getDomainBounds(includeInterval);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            return DatasetUtils.iterateDomainBounds(this, includeInterval);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the interval position factor.
+&nbsp;     *
+&nbsp;     * @return The interval position factor.
+&nbsp;     */
+&nbsp;    public double getIntervalPositionFactor() {
+<b class="fc">&nbsp;        return this.intervalDelegate.getIntervalPositionFactor();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the interval position factor. Must be between 0.0 and 1.0 inclusive.
+&nbsp;     * If the factor is 0.5, the gap is in the middle of the x values. If it
+&nbsp;     * is lesser than 0.5, the gap is farther to the left and if greater than
+&nbsp;     * 0.5 it gets farther to the right.
+&nbsp;     *
+&nbsp;     * @param d the new interval position factor.
+&nbsp;     */
+&nbsp;    public void setIntervalPositionFactor(double d) {
+<b class="nc">&nbsp;        this.intervalDelegate.setIntervalPositionFactor(d);</b>
+<b class="nc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * returns the full interval width.
+&nbsp;     *
+&nbsp;     * @return The interval width to use.
+&nbsp;     */
+&nbsp;    public double getIntervalWidth() {
+<b class="fc">&nbsp;        return this.intervalDelegate.getIntervalWidth();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the interval width to a fixed value, and sends a
+&nbsp;     * {@link DatasetChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param d  the new interval width (must be &amp;gt; 0).
+&nbsp;     */
+&nbsp;    public void setIntervalWidth(double d) {
+<b class="nc">&nbsp;        this.intervalDelegate.setFixedIntervalWidth(d);</b>
+<b class="nc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns whether the interval width is automatically calculated or not.
+&nbsp;     *
+&nbsp;     * @return A flag that determines whether or not the interval width is
+&nbsp;     *         automatically calculated.
+&nbsp;     */
+&nbsp;    public boolean isAutoWidth() {
+<b class="fc">&nbsp;        return this.intervalDelegate.isAutoWidth();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that indicates whether the interval width is automatically
+&nbsp;     * calculated or not.
+&nbsp;     *
+&nbsp;     * @param b  a boolean.
+&nbsp;     */
+&nbsp;    public void setAutoWidth(boolean b) {
+<b class="fc">&nbsp;        this.intervalDelegate.setAutoWidth(b);</b>
+<b class="fc">&nbsp;        fireDatasetChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

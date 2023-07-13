@@ -1,0 +1,36 @@
+Pour ce troisième DM , nous avions ajouté plusieurs patrons de conceptions afin d’améliorer la qualité du Design. 
+
+Justifions la qualité de notre Design en nous basant sur notre diagramme de classe. 
+
+
+
+Nouveautés : 
+
+Fabrique: Les Véhicules des compagnies sont crées par des Fabriques. En effet, ceci est une bonne pratique , sinon on aurait été obligés de créer nos 
+objets dans les controllers. 
+
+Singleton : On veut une seule fabrique de chaque, donc on implémente cela avec un Singleton. Ceci est une bonne pratique, puisqu'on ne veut pas avoir plus 
+qu'une fabrique. 
+
+État : L'état des places sont implémentés avec des États. Ceci est primordial puisque, si on veut changer l'état d'une place, il est important de connaitre son 
+état précédent. Certains changement sont permis et d'autres non. Par exemple, pour mettre une place dans l'état "reservé", elle doit être préalablement libre. 
+
+Observateur : Puisqu'on le menu doit toujours être à jour des changements dans le modèle et ne pas montrer des informations éronnées à l'utilisateur, 
+on a implémenter un observateur d
+
+Commande : Puisqu'il existe plusieurs commandes qu'un utilisateur/administrateur et puisque l'utilisateur peut faire des erreurs, c'est une bonne pratique
+de garder un historiques de commandes pour qu'on puisse "undo". Dans notre cas, vu le grand nombre de commandes et vue qu'on peut faire des erreurs ou changer 
+d'avis. C'est une bonne pratique d'utiliser le patron de commandes. 
+
+Visiteur : Lorsqu'on shouaite consulter les informations sur un Voyage, on peut utiliser un visiteur qui visite le voyage shouaité et qui appel la bonne fonction.
+
+Façade : ici , puisque le menuUtilisateur n'a pas directement accès aux bâtiments et aux voyages (qui sont gerés par le menuAdministrateur), on utilise alors
+un patron de façade pour connecter le menuUtilisateur au voyageController. C'est une bonne pratique pour éviter un couplage trop fort. 
+
+
+
+Patrons déjà présents : 
+
+MVC : Notre modèle a été basé sur le MVC depuis le début du cours. En effet, Les Menu représentes les Vues qui communiquent avec différents Controllers qui eux 
+connaissent les classes internes (Modèle). Ici, ce modèle est très utile puisque des utilisateurs vont intéragir avec le système. On ne veut pas qu'il puisse
+directement accéder à la structure interne , ils pourraient faire des actions non permises. 

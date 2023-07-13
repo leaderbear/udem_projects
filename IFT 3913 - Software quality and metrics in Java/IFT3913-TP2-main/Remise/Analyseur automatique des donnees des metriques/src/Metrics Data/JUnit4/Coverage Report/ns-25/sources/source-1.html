@@ -1,0 +1,261 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > JSONArray</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.json.impl</a>
+</div>
+
+<h1>Coverage Summary for Class: JSONArray (org.jfree.data.json.impl)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">JSONArray</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * JSON.simple
+&nbsp; * -----------
+&nbsp; * The code in this file originates from the JSON.simple project by 
+&nbsp; * FangYidong&lt;fangyidong@yahoo.com.cn&gt;:
+&nbsp; * 
+&nbsp; *     https://code.google.com/p/json-simple/
+&nbsp; *  
+&nbsp; * which is licensed under the Apache Software License version 2.0.  
+&nbsp; * 
+&nbsp; * It has been modified locally and repackaged under 
+&nbsp; * org.jfree.data.json.impl.* to avoid conflicts with any other version that
+&nbsp; * may be present on the classpath.
+&nbsp; * 
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.json.impl;
+&nbsp;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.Writer;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Iterator;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;/**
+&nbsp; * A JSON array.  
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * This class is for internal use by JFreeChart, it is not 
+&nbsp; * part of the supported API and you should not call it directly.  If you need
+&nbsp; * JSON support in your project you should include JSON.simple 
+&nbsp; * (https://code.google.com/p/json-simple/) or some other JSON library directly
+&nbsp; * in your project.
+&nbsp; */
+<b class="nc">&nbsp;public class JSONArray extends ArrayList implements List, JSONAware, </b>
+&nbsp;        JSONStreamAware {
+&nbsp;
+&nbsp;    private static final long serialVersionUID = 3957988303675231981L;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Encode a list into JSON text and write it to out. 
+&nbsp;     * If this list is also a {@link JSONStreamAware} or a {@link JSONAware}, 
+&nbsp;     * {@code JSONStreamAware} and {@code JSONAware} specific 
+&nbsp;     * behaviours will be ignored at this top level.
+&nbsp;     * 
+&nbsp;     * @see org.jfree.data.json.impl.JSONValue#writeJSONString(Object, Writer)
+&nbsp;     * 
+&nbsp;     * @param list  the list ({@code null} permitted).
+&nbsp;     * @param out  the output writer ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @throws IOException if there is an I/O problem.
+&nbsp;     */
+&nbsp;    public static void writeJSONString(List list, Writer out) 
+&nbsp;            throws IOException {
+<b class="nc">&nbsp;        if (list == null) {</b>
+<b class="nc">&nbsp;            out.write(&quot;null&quot;);</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        boolean first = true;</b>
+<b class="nc">&nbsp;        Iterator iter = list.iterator();</b>
+<b class="nc">&nbsp;        out.write(&#39;[&#39;);</b>
+<b class="nc">&nbsp;        while (iter.hasNext()) {</b>
+<b class="nc">&nbsp;            if (first) {</b>
+<b class="nc">&nbsp;                first = false;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                out.write(&#39;,&#39;);</b>
+&nbsp;            }
+&nbsp;            
+<b class="nc">&nbsp;            Object value = iter.next();</b>
+<b class="nc">&nbsp;            if (value == null) {</b>
+<b class="nc">&nbsp;                out.write(&quot;null&quot;);</b>
+<b class="nc">&nbsp;                continue;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            JSONValue.writeJSONString(value, out);</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        out.write(&#39;]&#39;);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Writes this array to the specified output writer.
+&nbsp;     * 
+&nbsp;     * @param out  the output writer ({@code null} not permitted).
+&nbsp;     * 
+&nbsp;     * @throws IOException  if there is an I/O problem.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void writeJSONString(Writer out) throws IOException {
+<b class="nc">&nbsp;        writeJSONString(this, out);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Convert a list to JSON text. The result is a JSON array. 
+&nbsp;     * If this list is also a {@link JSONAware}, {@link JSONAware} specific 
+&nbsp;     * behaviours will be omitted at this top level.
+&nbsp;     * 
+&nbsp;     * @see org.jfree.data.json.impl.JSONValue#toJSONString(Object)
+&nbsp;     * 
+&nbsp;     * @param list  the list ({@code null} permitted).
+&nbsp;     * 
+&nbsp;     * @return JSON text, or &quot;null&quot; if list is null.
+&nbsp;     */
+&nbsp;    public static String toJSONString(List list){
+<b class="nc">&nbsp;        if (list == null) {</b>
+<b class="nc">&nbsp;            return &quot;null&quot;;</b>
+&nbsp;        }
+&nbsp;        
+<b class="nc">&nbsp;        boolean first = true;</b>
+<b class="nc">&nbsp;        StringBuilder sb = new StringBuilder();</b>
+<b class="nc">&nbsp;        Iterator iter = list.iterator();</b>
+<b class="nc">&nbsp;        sb.append(&#39;[&#39;);</b>
+<b class="nc">&nbsp;        while (iter.hasNext()) {</b>
+<b class="nc">&nbsp;            if (first) {</b>
+<b class="nc">&nbsp;                first = false;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                sb.append(&#39;,&#39;);</b>
+&nbsp;            }
+&nbsp;            
+<b class="nc">&nbsp;            Object value = iter.next();</b>
+<b class="nc">&nbsp;            if (value == null) {</b>
+<b class="nc">&nbsp;                sb.append(&quot;null&quot;);</b>
+<b class="nc">&nbsp;                continue;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            sb.append(JSONValue.toJSONString(value));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        sb.append(&#39;]&#39;);</b>
+<b class="nc">&nbsp;        return sb.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a JSON string representation of this list.
+&nbsp;     * 
+&nbsp;     * @return A string. 
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toJSONString(){
+<b class="nc">&nbsp;        return toJSONString(this);</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns a string representation of this list.
+&nbsp;     * 
+&nbsp;     * @return A string. 
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String toString() {
+<b class="nc">&nbsp;        return toJSONString();</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

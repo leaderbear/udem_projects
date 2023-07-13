@@ -1,0 +1,533 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DefaultHighLowDataset</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: DefaultHighLowDataset (org.jfree.data.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DefaultHighLowDataset</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    15,8%
+  </span>
+  <span class="absValue">
+    (3/19)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    45,7%
+  </span>
+  <span class="absValue">
+    (32/70)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------------------
+&nbsp; * DefaultHighLowDataset.java
+&nbsp; * --------------------------
+&nbsp; * (C) Copyright 2002-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.xy;
+&nbsp;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.Date;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;
+&nbsp;/**
+&nbsp; * A simple implementation of the {@link OHLCDataset} interface.  See also
+&nbsp; * the {@link DefaultOHLCDataset} class, which provides another implementation
+&nbsp; * that is very similar.
+&nbsp; */
+&nbsp;public class DefaultHighLowDataset extends AbstractXYDataset
+&nbsp;        implements OHLCDataset, PublicCloneable {
+&nbsp;
+&nbsp;    /** The series key. */
+&nbsp;    private Comparable seriesKey;
+&nbsp;
+&nbsp;    /** Storage for the dates. */
+&nbsp;    private Date[] date;
+&nbsp;
+&nbsp;    /** Storage for the high values. */
+&nbsp;    private Number[] high;
+&nbsp;
+&nbsp;    /** Storage for the low values. */
+&nbsp;    private Number[] low;
+&nbsp;
+&nbsp;    /** Storage for the open values. */
+&nbsp;    private Number[] open;
+&nbsp;
+&nbsp;    /** Storage for the close values. */
+&nbsp;    private Number[] close;
+&nbsp;
+&nbsp;    /** Storage for the volume values. */
+&nbsp;    private Number[] volume;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new high/low/open/close dataset.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The current implementation allows only one series in the dataset.
+&nbsp;     * This may be extended in a future version.
+&nbsp;     *
+&nbsp;     * @param seriesKey  the key for the series ({@code null} not
+&nbsp;     *     permitted).
+&nbsp;     * @param date  the dates ({@code null} not permitted).
+&nbsp;     * @param high  the high values ({@code null} not permitted).
+&nbsp;     * @param low  the low values ({@code null} not permitted).
+&nbsp;     * @param open  the open values ({@code null} not permitted).
+&nbsp;     * @param close  the close values ({@code null} not permitted).
+&nbsp;     * @param volume  the volume values ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public DefaultHighLowDataset(Comparable seriesKey, Date[] date,
+&nbsp;            double[] high, double[] low, double[] open, double[] close,
+<b class="fc">&nbsp;            double[] volume) {</b>
+&nbsp;
+<b class="fc">&nbsp;        Args.nullNotPermitted(seriesKey, &quot;seriesKey&quot;);</b>
+<b class="fc">&nbsp;        Args.nullNotPermitted(date, &quot;date&quot;);</b>
+<b class="fc">&nbsp;        this.seriesKey = seriesKey;</b>
+<b class="fc">&nbsp;        this.date = date;</b>
+<b class="fc">&nbsp;        this.high = createNumberArray(high);</b>
+<b class="fc">&nbsp;        this.low = createNumberArray(low);</b>
+<b class="fc">&nbsp;        this.open = createNumberArray(open);</b>
+<b class="fc">&nbsp;        this.close = createNumberArray(close);</b>
+<b class="fc">&nbsp;        this.volume = createNumberArray(volume);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the key for the series stored in this dataset.
+&nbsp;     *
+&nbsp;     * @param series  the index of the series (ignored, this dataset supports
+&nbsp;     *     only one series and this method always returns the key for series 0).
+&nbsp;     *
+&nbsp;     * @return The series key (never {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Comparable getSeriesKey(int series) {
+<b class="nc">&nbsp;        return this.seriesKey;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for one item in a series.  The value returned is a
+&nbsp;     * {@code Long} instance generated from the underlying
+&nbsp;     * {@code Date} object.  To avoid generating a new object instance,
+&nbsp;     * you might prefer to call {@link #getXValue(int, int)}.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The x-value.
+&nbsp;     *
+&nbsp;     * @see #getXValue(int, int)
+&nbsp;     * @see #getXDate(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getX(int series, int item) {
+<b class="nc">&nbsp;        return this.date[item].getTime();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for one item in a series, as a Date.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method is provided for convenience only.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The x-value as a Date.
+&nbsp;     *
+&nbsp;     * @see #getX(int, int)
+&nbsp;     */
+&nbsp;    public Date getXDate(int series, int item) {
+<b class="nc">&nbsp;        return this.date[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value for one item in a series.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This method (from the {@link XYDataset} interface) is mapped to the
+&nbsp;     * {@link #getCloseValue(int, int)} method.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The y-value.
+&nbsp;     *
+&nbsp;     * @see #getYValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getY(int series, int item) {
+<b class="nc">&nbsp;        return getClose(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the high-value for one item in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The high-value.
+&nbsp;     *
+&nbsp;     * @see #getHighValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getHigh(int series, int item) {
+<b class="nc">&nbsp;        return this.high[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the high-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The high-value.
+&nbsp;     *
+&nbsp;     * @see #getHigh(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getHighValue(int series, int item) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Number h = getHigh(series, item);</b>
+<b class="nc">&nbsp;        if (h != null) {</b>
+<b class="nc">&nbsp;            result = h.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the low-value for one item in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The low-value.
+&nbsp;     *
+&nbsp;     * @see #getLowValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getLow(int series, int item) {
+<b class="nc">&nbsp;        return this.low[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the low-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The low-value.
+&nbsp;     *
+&nbsp;     * @see #getLow(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getLowValue(int series, int item) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Number l = getLow(series, item);</b>
+<b class="nc">&nbsp;        if (l != null) {</b>
+<b class="nc">&nbsp;            result = l.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the open-value for one item in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The open-value.
+&nbsp;     *
+&nbsp;     * @see #getOpenValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getOpen(int series, int item) {
+<b class="nc">&nbsp;        return this.open[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the open-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The open-value.
+&nbsp;     *
+&nbsp;     * @see #getOpen(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getOpenValue(int series, int item) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Number open = getOpen(series, item);</b>
+<b class="nc">&nbsp;        if (open != null) {</b>
+<b class="nc">&nbsp;            result = open.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the close-value for one item in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The close-value.
+&nbsp;     *
+&nbsp;     * @see #getCloseValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getClose(int series, int item) {
+<b class="nc">&nbsp;        return this.close[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the close-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The close-value.
+&nbsp;     *
+&nbsp;     * @see #getClose(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getCloseValue(int series, int item) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Number c = getClose(series, item);</b>
+<b class="nc">&nbsp;        if (c != null) {</b>
+<b class="nc">&nbsp;            result = c.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the volume-value for one item in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The volume-value.
+&nbsp;     *
+&nbsp;     * @see #getVolumeValue(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getVolume(int series, int item) {
+<b class="nc">&nbsp;        return this.volume[item];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the volume-value (as a double primitive) for an item within a
+&nbsp;     * series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     * @param item  the item (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The volume-value.
+&nbsp;     *
+&nbsp;     * @see #getVolume(int, int)
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getVolumeValue(int series, int item) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        Number v = getVolume(series, item);</b>
+<b class="nc">&nbsp;        if (v != null) {</b>
+<b class="nc">&nbsp;            result = v.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of series in the dataset.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * This implementation only allows one series.
+&nbsp;     *
+&nbsp;     * @return The number of series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getSeriesCount() {
+<b class="nc">&nbsp;        return 1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of items in the specified series.
+&nbsp;     *
+&nbsp;     * @param series  the index (zero-based) of the series.
+&nbsp;     *
+&nbsp;     * @return The number of items in the specified series.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount(int series) {
+<b class="nc">&nbsp;        return this.date.length;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this dataset for equality with an arbitrary instance.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof DefaultHighLowDataset)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        DefaultHighLowDataset that = (DefaultHighLowDataset) obj;</b>
+<b class="fc">&nbsp;        if (!this.seriesKey.equals(that.seriesKey)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.date, that.date)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.open, that.open)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.high, that.high)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.low, that.low)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.close, that.close)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Arrays.equals(this.volume, that.volume)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs an array of Number objects from an array of doubles.
+&nbsp;     *
+&nbsp;     * @param data  the double values to convert ({@code null} not
+&nbsp;     *     permitted).
+&nbsp;     *
+&nbsp;     * @return The data as an array of Number objects.
+&nbsp;     */
+&nbsp;    public static Number[] createNumberArray(double[] data) {
+<b class="fc">&nbsp;        Number[] result = new Number[data.length];</b>
+<b class="fc">&nbsp;        for (int i = 0; i &lt; data.length; i++) {</b>
+<b class="fc">&nbsp;            result[i] = data[i];</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,1410 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > BarRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.category</a>
+</div>
+
+<h1>Coverage Summary for Class: BarRenderer (org.jfree.chart.renderer.category)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">BarRenderer</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    84%
+  </span>
+  <span class="absValue">
+    (42/50)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    64,6%
+  </span>
+  <span class="absValue">
+    (232/359)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ----------------
+&nbsp; * BarRenderer.java
+&nbsp; * ----------------
+&nbsp; * (C) Copyright 2002-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Christian W. Zuckschwerdt;
+&nbsp; *                   Peter Kolb (patches 2497611, 2791407);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.category;
+&nbsp;
+&nbsp;import java.awt.BasicStroke;
+&nbsp;import java.awt.Color;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Line2D;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.IOException;
+&nbsp;import java.io.ObjectInputStream;
+&nbsp;import java.io.ObjectOutputStream;
+&nbsp;import java.io.Serializable;
+&nbsp;import java.util.Objects;
+&nbsp;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.axis.CategoryAxis;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.entity.EntityCollection;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.labels.CategoryItemLabelGenerator;
+&nbsp;import org.jfree.chart.labels.ItemLabelAnchor;
+&nbsp;import org.jfree.chart.labels.ItemLabelPosition;
+&nbsp;import org.jfree.chart.plot.CategoryPlot;
+&nbsp;import org.jfree.chart.plot.PlotOrientation;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.text.TextUtils;
+&nbsp;import org.jfree.chart.util.GradientPaintTransformer;
+&nbsp;import org.jfree.chart.api.RectangleEdge;
+&nbsp;import org.jfree.chart.util.StandardGradientPaintTransformer;
+&nbsp;import org.jfree.chart.internal.PaintUtils;
+&nbsp;import org.jfree.chart.internal.Args;
+&nbsp;import org.jfree.chart.api.PublicCloneable;
+&nbsp;import org.jfree.chart.internal.SerialUtils;
+&nbsp;import org.jfree.data.KeyedValues2DItemKey;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.category.CategoryDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A {@link CategoryItemRenderer} that draws individual data items as bars.
+&nbsp; * The example shown here is generated by the {@code BarChartDemo1.java}
+&nbsp; * program included in the JFreeChart Demo Collection:
+&nbsp; * &lt;br&gt;&lt;br&gt;
+&nbsp; * &lt;img src=&quot;doc-files/BarChartDemo1.svg&quot; alt=&quot;BarChartDemo1.svg&quot;&gt;
+&nbsp; */
+&nbsp;public class BarRenderer extends AbstractCategoryItemRenderer
+&nbsp;        implements Cloneable, PublicCloneable, Serializable {
+&nbsp;
+&nbsp;    /** For serialization. */
+&nbsp;    private static final long serialVersionUID = 6000649414965887481L;
+&nbsp;
+&nbsp;    /** The default item margin percentage. */
+&nbsp;    public static final double DEFAULT_ITEM_MARGIN = 0.20;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constant that controls the minimum width before a bar has an outline
+&nbsp;     * drawn.
+&nbsp;     */
+&nbsp;    public static final double BAR_OUTLINE_WIDTH_THRESHOLD = 3.0;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default bar painter assigned to each new instance of this renderer.
+&nbsp;     */
+<b class="fc">&nbsp;    private static BarPainter defaultBarPainter = new GradientBarPainter();</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default bar painter.
+&nbsp;     *
+&nbsp;     * @return The default bar painter.
+&nbsp;     */
+&nbsp;    public static BarPainter getDefaultBarPainter() {
+<b class="fc">&nbsp;        return BarRenderer.defaultBarPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default bar painter.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    public static void setDefaultBarPainter(BarPainter painter) {
+<b class="nc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="nc">&nbsp;        BarRenderer.defaultBarPainter = painter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The default value for the initialisation of the shadowsVisible flag.
+&nbsp;     */
+<b class="fc">&nbsp;    private static boolean defaultShadowsVisible = true;</b>
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default value for the {@code shadowsVisible} flag.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setDefaultShadowsVisible(boolean)
+&nbsp;     */
+&nbsp;    public static boolean getDefaultShadowsVisible() {
+<b class="fc">&nbsp;        return BarRenderer.defaultShadowsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default value for the shadows visible flag.
+&nbsp;     *
+&nbsp;     * @param visible  the new value for the default.
+&nbsp;     *
+&nbsp;     * @see #getDefaultShadowsVisible()
+&nbsp;     */
+&nbsp;    public static void setDefaultShadowsVisible(boolean visible) {
+<b class="nc">&nbsp;        BarRenderer.defaultShadowsVisible = visible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** The margin between items (bars) within a category. */
+&nbsp;    private double itemMargin;
+&nbsp;
+&nbsp;    /** A flag that controls whether or not bar outlines are drawn. */
+&nbsp;    private boolean drawBarOutline;
+&nbsp;
+&nbsp;    /** The maximum bar width as a percentage of the available space. */
+&nbsp;    private double maximumBarWidth;
+&nbsp;
+&nbsp;    /** The minimum bar length (in Java2D units). */
+&nbsp;    private double minimumBarLength;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * An optional class used to transform gradient paint objects to fit each
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private GradientPaintTransformer gradientPaintTransformer;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The fallback position if a positive item label doesn&#39;t fit inside the
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private ItemLabelPosition positiveItemLabelPositionFallback;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The fallback position if a negative item label doesn&#39;t fit inside the
+&nbsp;     * bar.
+&nbsp;     */
+&nbsp;    private ItemLabelPosition negativeItemLabelPositionFallback;
+&nbsp;
+&nbsp;    /** The upper clip (axis) value for the axis. */
+&nbsp;    private double upperClip;
+&nbsp;    // TODO:  this needs to move into the renderer state
+&nbsp;
+&nbsp;    /** The lower clip (axis) value for the axis. */
+&nbsp;    private double lowerClip;
+&nbsp;    // TODO:  this needs to move into the renderer state
+&nbsp;
+&nbsp;    /** The base value for the bars (defaults to 0.0). */
+&nbsp;    private double base;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls whether the base value is included in the range
+&nbsp;     * returned by the findRangeBounds() method.
+&nbsp;     */
+&nbsp;    private boolean includeBaseInRange;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The bar painter (never {@code null}).
+&nbsp;     */
+&nbsp;    private BarPainter barPainter;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The flag that controls whether or not shadows are drawn for the bars.
+&nbsp;     */
+&nbsp;    private boolean shadowsVisible;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The shadow paint.
+&nbsp;     */
+&nbsp;    private transient Paint shadowPaint;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The x-offset for the shadow effect.
+&nbsp;     */
+&nbsp;    private double shadowXOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The y-offset for the shadow effect.
+&nbsp;     */
+&nbsp;    private double shadowYOffset;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new bar renderer with default settings.
+&nbsp;     */
+&nbsp;    public BarRenderer() {
+<b class="fc">&nbsp;        super();</b>
+<b class="fc">&nbsp;        this.base = 0.0;</b>
+<b class="fc">&nbsp;        this.includeBaseInRange = true;</b>
+<b class="fc">&nbsp;        this.itemMargin = DEFAULT_ITEM_MARGIN;</b>
+<b class="fc">&nbsp;        this.drawBarOutline = false;</b>
+<b class="fc">&nbsp;        this.maximumBarWidth = 1.0;</b>
+&nbsp;            // 100 percent, so it will not apply unless changed
+<b class="fc">&nbsp;        this.positiveItemLabelPositionFallback = null;</b>
+<b class="fc">&nbsp;        this.negativeItemLabelPositionFallback = null;</b>
+<b class="fc">&nbsp;        this.gradientPaintTransformer = new StandardGradientPaintTransformer();</b>
+<b class="fc">&nbsp;        this.minimumBarLength = 0.0;</b>
+<b class="fc">&nbsp;        setDefaultLegendShape(new Rectangle2D.Double(-4.0, -4.0, 8.0, 8.0));</b>
+<b class="fc">&nbsp;        this.barPainter = getDefaultBarPainter();</b>
+<b class="fc">&nbsp;        this.shadowsVisible = getDefaultShadowsVisible();</b>
+<b class="fc">&nbsp;        this.shadowPaint = Color.GRAY;</b>
+<b class="fc">&nbsp;        this.shadowXOffset = 4.0;</b>
+<b class="fc">&nbsp;        this.shadowYOffset = 4.0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the base value for the bars.  The default value is
+&nbsp;     * {@code 0.0}.
+&nbsp;     *
+&nbsp;     * @return The base value for the bars.
+&nbsp;     *
+&nbsp;     * @see #setBase(double)
+&nbsp;     */
+&nbsp;    public double getBase() {
+<b class="fc">&nbsp;        return this.base;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base value for the bars and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param base  the new base value.
+&nbsp;     *
+&nbsp;     * @see #getBase()
+&nbsp;     */
+&nbsp;    public void setBase(double base) {
+<b class="fc">&nbsp;        this.base = base;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item margin as a percentage of the available space for all
+&nbsp;     * bars.
+&nbsp;     *
+&nbsp;     * @return The margin percentage (where 0.10 is ten percent).
+&nbsp;     *
+&nbsp;     * @see #setItemMargin(double)
+&nbsp;     */
+&nbsp;    public double getItemMargin() {
+<b class="fc">&nbsp;        return this.itemMargin;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item margin and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.  The value is expressed as a percentage of the
+&nbsp;     * available width for plotting all the bars, with the resulting amount to
+&nbsp;     * be distributed between all the bars evenly.
+&nbsp;     *
+&nbsp;     * @param percent  the margin (where 0.10 is ten percent).
+&nbsp;     *
+&nbsp;     * @see #getItemMargin()
+&nbsp;     */
+&nbsp;    public void setItemMargin(double percent) {
+<b class="fc">&nbsp;        this.itemMargin = percent;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a flag that controls whether or not bar outlines are drawn.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     *
+&nbsp;     * @see #setDrawBarOutline(boolean)
+&nbsp;     */
+&nbsp;    public boolean isDrawBarOutline() {
+<b class="fc">&nbsp;        return this.drawBarOutline;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not bar outlines are drawn and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param draw  the flag.
+&nbsp;     *
+&nbsp;     * @see #isDrawBarOutline()
+&nbsp;     */
+&nbsp;    public void setDrawBarOutline(boolean draw) {
+<b class="fc">&nbsp;        this.drawBarOutline = draw;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum bar width, as a percentage of the available drawing
+&nbsp;     * space.
+&nbsp;     *
+&nbsp;     * @return The maximum bar width.
+&nbsp;     *
+&nbsp;     * @see #setMaximumBarWidth(double)
+&nbsp;     */
+&nbsp;    public double getMaximumBarWidth() {
+<b class="fc">&nbsp;        return this.maximumBarWidth;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the maximum bar width, which is specified as a percentage of the
+&nbsp;     * available space for all bars, and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param percent  the percent (where 0.05 is five percent).
+&nbsp;     *
+&nbsp;     * @see #getMaximumBarWidth()
+&nbsp;     */
+&nbsp;    public void setMaximumBarWidth(double percent) {
+<b class="fc">&nbsp;        this.maximumBarWidth = percent;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum bar length (in Java2D units).  The default value is
+&nbsp;     * 0.0.
+&nbsp;     *
+&nbsp;     * @return The minimum bar length.
+&nbsp;     *
+&nbsp;     * @see #setMinimumBarLength(double)
+&nbsp;     */
+&nbsp;    public double getMinimumBarLength() {
+<b class="fc">&nbsp;        return this.minimumBarLength;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the minimum bar length and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.  The minimum bar length is specified in Java2D
+&nbsp;     * units, and can be used to prevent bars that represent very small data
+&nbsp;     * values from disappearing when drawn on the screen.  Typically you would
+&nbsp;     * set this to (say) 0.5 or 1.0 Java 2D units.  Use this attribute with
+&nbsp;     * caution, however, because setting it to a non-zero value will
+&nbsp;     * artificially increase the length of bars representing small values,
+&nbsp;     * which may misrepresent your data.
+&nbsp;     *
+&nbsp;     * @param min  the minimum bar length (in Java2D units, must be &amp;gt;= 0.0).
+&nbsp;     *
+&nbsp;     * @see #getMinimumBarLength()
+&nbsp;     */
+&nbsp;    public void setMinimumBarLength(double min) {
+<b class="fc">&nbsp;        if (min &lt; 0.0) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires &#39;min&#39; &gt;= 0.0&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.minimumBarLength = min;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the gradient paint transformer (an object used to transform
+&nbsp;     * gradient paint objects to fit each bar).
+&nbsp;     *
+&nbsp;     * @return A transformer ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setGradientPaintTransformer(GradientPaintTransformer)
+&nbsp;     */
+&nbsp;    public GradientPaintTransformer getGradientPaintTransformer() {
+<b class="fc">&nbsp;        return this.gradientPaintTransformer;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the gradient paint transformer and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param transformer  the transformer ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getGradientPaintTransformer()
+&nbsp;     */
+&nbsp;    public void setGradientPaintTransformer(
+&nbsp;            GradientPaintTransformer transformer) {
+<b class="fc">&nbsp;        this.gradientPaintTransformer = transformer;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the fallback position for positive item labels that don&#39;t fit
+&nbsp;     * within a bar.
+&nbsp;     *
+&nbsp;     * @return The fallback position ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setPositiveItemLabelPositionFallback(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getPositiveItemLabelPositionFallback() {
+<b class="nc">&nbsp;        return this.positiveItemLabelPositionFallback;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the fallback position for positive item labels that don&#39;t fit
+&nbsp;     * within a bar, and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getPositiveItemLabelPositionFallback()
+&nbsp;     */
+&nbsp;    public void setPositiveItemLabelPositionFallback(
+&nbsp;            ItemLabelPosition position) {
+<b class="fc">&nbsp;        this.positiveItemLabelPositionFallback = position;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the fallback position for negative item labels that don&#39;t fit
+&nbsp;     * within a bar.
+&nbsp;     *
+&nbsp;     * @return The fallback position ({@code null} possible).
+&nbsp;     *
+&nbsp;     * @see #setPositiveItemLabelPositionFallback(ItemLabelPosition)
+&nbsp;     */
+&nbsp;    public ItemLabelPosition getNegativeItemLabelPositionFallback() {
+<b class="nc">&nbsp;        return this.negativeItemLabelPositionFallback;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the fallback position for negative item labels that don&#39;t fit
+&nbsp;     * within a bar, and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getNegativeItemLabelPositionFallback()
+&nbsp;     */
+&nbsp;    public void setNegativeItemLabelPositionFallback(
+&nbsp;            ItemLabelPosition position) {
+<b class="fc">&nbsp;        this.negativeItemLabelPositionFallback = position;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the base value for the
+&nbsp;     * bars is included in the range calculated by
+&nbsp;     * {@link #findRangeBounds(CategoryDataset)}.
+&nbsp;     *
+&nbsp;     * @return {@code true} if the base is included in the range, and
+&nbsp;     *         {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @see #setIncludeBaseInRange(boolean)
+&nbsp;     */
+&nbsp;    public boolean getIncludeBaseInRange() {
+<b class="nc">&nbsp;        return this.includeBaseInRange;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not the base value for the bars
+&nbsp;     * is included in the range calculated by
+&nbsp;     * {@link #findRangeBounds(CategoryDataset)}.  If the flag is changed,
+&nbsp;     * a {@link RendererChangeEvent} is sent to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param include  the new value for the flag.
+&nbsp;     *
+&nbsp;     * @see #getIncludeBaseInRange()
+&nbsp;     */
+&nbsp;    public void setIncludeBaseInRange(boolean include) {
+<b class="fc">&nbsp;        if (this.includeBaseInRange != include) {</b>
+<b class="fc">&nbsp;            this.includeBaseInRange = include;</b>
+<b class="fc">&nbsp;            fireChangeEvent();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the bar painter.
+&nbsp;     *
+&nbsp;     * @return The bar painter (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setBarPainter(BarPainter)
+&nbsp;     */
+&nbsp;    public BarPainter getBarPainter() {
+<b class="fc">&nbsp;        return this.barPainter;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the bar painter for this renderer and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param painter  the painter ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getBarPainter()
+&nbsp;     */
+&nbsp;    public void setBarPainter(BarPainter painter) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(painter, &quot;painter&quot;);</b>
+<b class="fc">&nbsp;        this.barPainter = painter;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not shadows are drawn for
+&nbsp;     * the bars.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    public boolean getShadowsVisible() {
+<b class="fc">&nbsp;        return this.shadowsVisible;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether or not shadows are
+&nbsp;     * drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param visible  the new flag value.
+&nbsp;     */
+&nbsp;    public void setShadowVisible(boolean visible) {
+<b class="fc">&nbsp;        this.shadowsVisible = visible;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow paint.
+&nbsp;     *
+&nbsp;     * @return The shadow paint.
+&nbsp;     *
+&nbsp;     * @see #setShadowPaint(Paint)
+&nbsp;     */
+&nbsp;    public Paint getShadowPaint() {
+<b class="fc">&nbsp;        return this.shadowPaint;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shadow paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getShadowPaint()
+&nbsp;     */
+&nbsp;    public void setShadowPaint(Paint paint) {
+<b class="fc">&nbsp;        Args.nullNotPermitted(paint, &quot;paint&quot;);</b>
+<b class="fc">&nbsp;        this.shadowPaint = paint;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow x-offset.
+&nbsp;     *
+&nbsp;     * @return The shadow x-offset.
+&nbsp;     */
+&nbsp;    public double getShadowXOffset() {
+<b class="fc">&nbsp;        return this.shadowXOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the x-offset for the bar shadow and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset.
+&nbsp;     */
+&nbsp;    public void setShadowXOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowXOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the shadow y-offset.
+&nbsp;     *
+&nbsp;     * @return The shadow y-offset.
+&nbsp;     */
+&nbsp;    public double getShadowYOffset() {
+<b class="fc">&nbsp;        return this.shadowYOffset;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the y-offset for the bar shadow and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param offset  the offset.
+&nbsp;     */
+&nbsp;    public void setShadowYOffset(double offset) {
+<b class="fc">&nbsp;        this.shadowYOffset = offset;</b>
+<b class="fc">&nbsp;        fireChangeEvent();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower clip value.  This value is recalculated in the
+&nbsp;     * initialise() method.
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    public double getLowerClip() {
+&nbsp;        // TODO:  this attribute should be transferred to the renderer state.
+<b class="fc">&nbsp;        return this.lowerClip;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the upper clip value.  This value is recalculated in the
+&nbsp;     * initialise() method.
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    public double getUpperClip() {
+&nbsp;        // TODO:  this attribute should be transferred to the renderer state.
+<b class="fc">&nbsp;        return this.upperClip;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the renderer and returns a state object that will be passed
+&nbsp;     * to subsequent calls to the drawItem method.  This method gets called
+&nbsp;     * once at the start of the process of drawing a chart.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area in which the data is to be plotted.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param rendererIndex  the renderer index.
+&nbsp;     * @param info  collects chart rendering information for return to caller.
+&nbsp;     *
+&nbsp;     * @return The renderer state.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public CategoryItemRendererState initialise(Graphics2D g2, 
+&nbsp;            Rectangle2D dataArea, CategoryPlot plot, int rendererIndex,
+&nbsp;            PlotRenderingInfo info) {
+&nbsp;
+<b class="fc">&nbsp;        CategoryItemRendererState state = super.initialise(g2, dataArea, plot,</b>
+&nbsp;                rendererIndex, info);
+&nbsp;
+&nbsp;        // get the clipping values...
+<b class="fc">&nbsp;        ValueAxis rangeAxis = plot.getRangeAxisForDataset(rendererIndex);</b>
+<b class="fc">&nbsp;        this.lowerClip = rangeAxis.getRange().getLowerBound();</b>
+<b class="fc">&nbsp;        this.upperClip = rangeAxis.getRange().getUpperBound();</b>
+&nbsp;
+&nbsp;        // calculate the bar width
+<b class="fc">&nbsp;        calculateBarWidth(plot, dataArea, rendererIndex, state);</b>
+&nbsp;
+<b class="fc">&nbsp;        return state;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the bar width and stores it in the renderer state.
+&nbsp;     *
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param rendererIndex  the renderer index.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     */
+&nbsp;    protected void calculateBarWidth(CategoryPlot plot,
+&nbsp;                                     Rectangle2D dataArea,
+&nbsp;                                     int rendererIndex,
+&nbsp;                                     CategoryItemRendererState state) {
+&nbsp;
+<b class="fc">&nbsp;        CategoryAxis domainAxis = getDomainAxis(plot, rendererIndex);</b>
+<b class="fc">&nbsp;        CategoryDataset dataset = plot.getDataset(rendererIndex);</b>
+<b class="fc">&nbsp;        if (dataset != null) {</b>
+<b class="fc">&nbsp;            int columns = dataset.getColumnCount();</b>
+<b class="fc">&nbsp;            int rows = state.getVisibleSeriesCount() &gt;= 0</b>
+<b class="fc">&nbsp;                    ? state.getVisibleSeriesCount() : dataset.getRowCount();</b>
+<b class="fc">&nbsp;            double space = 0.0;</b>
+<b class="fc">&nbsp;            PlotOrientation orientation = plot.getOrientation();</b>
+<b class="fc">&nbsp;            if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="fc">&nbsp;                space = dataArea.getHeight();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            else if (orientation == PlotOrientation.VERTICAL) {</b>
+<b class="fc">&nbsp;                space = dataArea.getWidth();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            double maxWidth = space * getMaximumBarWidth();</b>
+<b class="fc">&nbsp;            double categoryMargin = 0.0;</b>
+<b class="fc">&nbsp;            double currentItemMargin = 0.0;</b>
+<b class="fc">&nbsp;            if (columns &gt; 1) {</b>
+<b class="fc">&nbsp;                categoryMargin = domainAxis.getCategoryMargin();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            if (rows &gt; 1) {</b>
+<b class="fc">&nbsp;                currentItemMargin = getItemMargin();</b>
+&nbsp;            }
+<b class="fc">&nbsp;            double used = space * (1 - domainAxis.getLowerMargin()</b>
+<b class="fc">&nbsp;                                     - domainAxis.getUpperMargin()</b>
+&nbsp;                                     - categoryMargin - currentItemMargin);
+<b class="fc">&nbsp;            if ((rows * columns) &gt; 0) {</b>
+<b class="fc">&nbsp;                state.setBarWidth(Math.min(used / (rows * columns), maxWidth));</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                state.setBarWidth(Math.min(used, maxWidth));</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the coordinate of the first &quot;side&quot; of a bar.  This will be
+&nbsp;     * the minimum x-coordinate for a vertical bar, and the minimum
+&nbsp;     * y-coordinate for a horizontal bar.
+&nbsp;     *
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param orientation  the plot orientation.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param state  the renderer state (has the bar width precalculated).
+&nbsp;     * @param row  the row index.
+&nbsp;     * @param column  the column index.
+&nbsp;     *
+&nbsp;     * @return The coordinate.
+&nbsp;     */
+&nbsp;    protected double calculateBarW0(CategoryPlot plot, 
+&nbsp;            PlotOrientation orientation, Rectangle2D dataArea, 
+&nbsp;            CategoryAxis domainAxis, CategoryItemRendererState state,
+&nbsp;            int row, int column) {
+&nbsp;        // calculate bar width...
+&nbsp;        double space;
+<b class="fc">&nbsp;        if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="fc">&nbsp;            space = dataArea.getHeight();</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            space = dataArea.getWidth();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double barW0 = domainAxis.getCategoryStart(column, getColumnCount(),</b>
+<b class="fc">&nbsp;                dataArea, plot.getDomainAxisEdge());</b>
+<b class="fc">&nbsp;        int seriesCount = state.getVisibleSeriesCount() &gt;= 0</b>
+<b class="fc">&nbsp;                ? state.getVisibleSeriesCount() : getRowCount();</b>
+<b class="fc">&nbsp;        int categoryCount = getColumnCount();</b>
+<b class="fc">&nbsp;        if (seriesCount &gt; 1) {</b>
+<b class="fc">&nbsp;            double seriesGap = space * getItemMargin()</b>
+&nbsp;                               / (categoryCount * (seriesCount - 1));
+<b class="fc">&nbsp;            double seriesW = calculateSeriesWidth(space, domainAxis,</b>
+&nbsp;                    categoryCount, seriesCount);
+<b class="fc">&nbsp;            barW0 = barW0 + row * (seriesW + seriesGap)</b>
+<b class="fc">&nbsp;                          + (seriesW / 2.0) - (state.getBarWidth() / 2.0);</b>
+<b class="fc">&nbsp;        }</b>
+&nbsp;        else {
+<b class="fc">&nbsp;            barW0 = domainAxis.getCategoryMiddle(column, getColumnCount(),</b>
+<b class="fc">&nbsp;                    dataArea, plot.getDomainAxisEdge()) - state.getBarWidth()</b>
+&nbsp;                    / 2.0;
+&nbsp;        }
+<b class="fc">&nbsp;        return barW0;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the coordinates for the length of a single bar.
+&nbsp;     *
+&nbsp;     * @param value  the value represented by the bar.
+&nbsp;     *
+&nbsp;     * @return The coordinates for each end of the bar (or {@code null} if
+&nbsp;     *         the bar is not visible for the current axis range).
+&nbsp;     */
+&nbsp;    protected double[] calculateBarL0L1(double value) {
+<b class="fc">&nbsp;        double lclip = getLowerClip();</b>
+<b class="fc">&nbsp;        double uclip = getUpperClip();</b>
+<b class="fc">&nbsp;        double barLow = Math.min(this.base, value);</b>
+<b class="fc">&nbsp;        double barHigh = Math.max(this.base, value);</b>
+<b class="fc">&nbsp;        if (barHigh &lt; lclip) {  // bar is not visible</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (barLow &gt; uclip) {   // bar is not visible</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        barLow = Math.max(barLow, lclip);</b>
+<b class="fc">&nbsp;        barHigh = Math.min(barHigh, uclip);</b>
+<b class="fc">&nbsp;        return new double[] {barLow, barHigh};</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range of values the renderer requires to display all the
+&nbsp;     * items from the specified dataset.  This takes into account the range
+&nbsp;     * of values in the dataset, plus the flag that determines whether or not
+&nbsp;     * the base value for the bars should be included in the range.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     * @param includeInterval  include the interval if the dataset has one?
+&nbsp;     *
+&nbsp;     * @return The range (or {@code null} if the dataset is
+&nbsp;     *         {@code null} or empty).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range findRangeBounds(CategoryDataset dataset,
+&nbsp;            boolean includeInterval) {
+<b class="fc">&nbsp;        if (dataset == null) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        Range result = super.findRangeBounds(dataset, includeInterval);</b>
+<b class="fc">&nbsp;        if (result != null) {</b>
+<b class="fc">&nbsp;            if (this.includeBaseInRange) {</b>
+<b class="fc">&nbsp;                result = Range.expandToInclude(result, this.base);</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a legend item for a series.
+&nbsp;     *
+&nbsp;     * @param datasetIndex  the dataset index (zero-based).
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The legend item (possibly {@code null}).
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public LegendItem getLegendItem(int datasetIndex, int series) {
+&nbsp;
+<b class="fc">&nbsp;        CategoryPlot cp = getPlot();</b>
+<b class="fc">&nbsp;        if (cp == null) {</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // check that a legend item needs to be displayed...
+<b class="fc">&nbsp;        if (!isSeriesVisible(series) || !isSeriesVisibleInLegend(series)) {</b>
+<b class="fc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        CategoryDataset dataset = cp.getDataset(datasetIndex);</b>
+<b class="fc">&nbsp;        String label = getLegendItemLabelGenerator().generateLabel(dataset,</b>
+&nbsp;                series);
+<b class="fc">&nbsp;        String description = label;</b>
+<b class="fc">&nbsp;        String toolTipText = null;</b>
+<b class="fc">&nbsp;        if (getLegendItemToolTipGenerator() != null) {</b>
+<b class="nc">&nbsp;            toolTipText = getLegendItemToolTipGenerator().generateLabel(</b>
+&nbsp;                    dataset, series);
+&nbsp;        }
+<b class="fc">&nbsp;        String urlText = null;</b>
+<b class="fc">&nbsp;        if (getLegendItemURLGenerator() != null) {</b>
+<b class="nc">&nbsp;            urlText = getLegendItemURLGenerator().generateLabel(dataset,</b>
+&nbsp;                    series);
+&nbsp;        }
+<b class="fc">&nbsp;        Shape shape = lookupLegendShape(series);</b>
+<b class="fc">&nbsp;        Paint paint = lookupSeriesPaint(series);</b>
+<b class="fc">&nbsp;        Paint outlinePaint = lookupSeriesOutlinePaint(series);</b>
+<b class="fc">&nbsp;        Stroke outlineStroke = lookupSeriesOutlineStroke(series);</b>
+&nbsp;
+<b class="fc">&nbsp;        LegendItem result = new LegendItem(label, description, toolTipText,</b>
+<b class="fc">&nbsp;                urlText, true, shape, true, paint, isDrawBarOutline(),</b>
+&nbsp;                outlinePaint, outlineStroke, false, new Line2D.Float(),
+&nbsp;                new BasicStroke(1.0f), Color.BLACK);
+<b class="fc">&nbsp;        result.setLabelFont(lookupLegendTextFont(series));</b>
+<b class="fc">&nbsp;        Paint labelPaint = lookupLegendTextPaint(series);</b>
+<b class="fc">&nbsp;        if (labelPaint != null) {</b>
+<b class="nc">&nbsp;            result.setLabelPaint(labelPaint);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        result.setDataset(dataset);</b>
+<b class="fc">&nbsp;        result.setDatasetIndex(datasetIndex);</b>
+<b class="fc">&nbsp;        result.setSeriesKey(dataset.getRowKey(series));</b>
+<b class="fc">&nbsp;        result.setSeriesIndex(series);</b>
+<b class="fc">&nbsp;        if (this.gradientPaintTransformer != null) {</b>
+<b class="fc">&nbsp;            result.setFillPaintTransformer(this.gradientPaintTransformer);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the bar for a single (series, category) data item.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param row  the row index (zero-based).
+&nbsp;     * @param column  the column index (zero-based).
+&nbsp;     * @param pass  the pass index.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void drawItem(Graphics2D g2, CategoryItemRendererState state,
+&nbsp;            Rectangle2D dataArea, CategoryPlot plot, CategoryAxis domainAxis,
+&nbsp;            ValueAxis rangeAxis, CategoryDataset dataset, int row,
+&nbsp;            int column, int pass) {
+&nbsp;
+&nbsp;        // nothing is drawn if the row index is not included in the list with
+&nbsp;        // the indices of the visible rows...
+<b class="fc">&nbsp;        int visibleRow = state.getVisibleSeriesIndex(row);</b>
+<b class="fc">&nbsp;        if (visibleRow &lt; 0) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;        // nothing is drawn for null values...
+<b class="fc">&nbsp;        Number dataValue = dataset.getValue(row, column);</b>
+<b class="fc">&nbsp;        if (dataValue == null) {</b>
+&nbsp;            return;
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        final double value = dataValue.doubleValue();</b>
+<b class="fc">&nbsp;        PlotOrientation orientation = plot.getOrientation();</b>
+<b class="fc">&nbsp;        double barW0 = calculateBarW0(plot, orientation, dataArea, domainAxis,</b>
+&nbsp;                state, visibleRow, column);
+<b class="fc">&nbsp;        double[] barL0L1 = calculateBarL0L1(value);</b>
+<b class="fc">&nbsp;        if (barL0L1 == null) {</b>
+&nbsp;            return;  // the bar is not visible
+&nbsp;        }
+&nbsp;
+<b class="fc">&nbsp;        RectangleEdge edge = plot.getRangeAxisEdge();</b>
+<b class="fc">&nbsp;        double transL0 = rangeAxis.valueToJava2D(barL0L1[0], dataArea, edge);</b>
+<b class="fc">&nbsp;        double transL1 = rangeAxis.valueToJava2D(barL0L1[1], dataArea, edge);</b>
+&nbsp;
+&nbsp;        // in the following code, barL0 is (in Java2D coordinates) the LEFT
+&nbsp;        // end of the bar for a horizontal bar chart, and the TOP end of the
+&nbsp;        // bar for a vertical bar chart.  Whether this is the BASE of the bar
+&nbsp;        // or not depends also on (a) whether the data value is &#39;negative&#39;
+&nbsp;        // relative to the base value and (b) whether or not the range axis is
+&nbsp;        // inverted.  This only matters if/when we apply the minimumBarLength
+&nbsp;        // attribute, because we should extend the non-base end of the bar
+<b class="fc">&nbsp;        boolean positive = (value &gt;= this.base);</b>
+<b class="fc">&nbsp;        boolean inverted = rangeAxis.isInverted();</b>
+<b class="fc">&nbsp;        double barL0 = Math.min(transL0, transL1);</b>
+<b class="fc">&nbsp;        double barLength = Math.abs(transL1 - transL0);</b>
+<b class="fc">&nbsp;        double barLengthAdj = 0.0;</b>
+<b class="fc">&nbsp;        if (barLength &gt; 0.0 &amp;&amp; barLength &lt; getMinimumBarLength()) {</b>
+<b class="nc">&nbsp;            barLengthAdj = getMinimumBarLength() - barLength;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        double barL0Adj = 0.0;</b>
+&nbsp;        RectangleEdge barBase;
+<b class="fc">&nbsp;        if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;            if (positive &amp;&amp; inverted || !positive &amp;&amp; !inverted) {</b>
+<b class="nc">&nbsp;                barL0Adj = barLengthAdj;</b>
+<b class="nc">&nbsp;                barBase = RectangleEdge.RIGHT;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                barBase = RectangleEdge.LEFT;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            if (positive &amp;&amp; !inverted || !positive &amp;&amp; inverted) {</b>
+<b class="fc">&nbsp;                barL0Adj = barLengthAdj;</b>
+<b class="fc">&nbsp;                barBase = RectangleEdge.BOTTOM;</b>
+&nbsp;            }
+&nbsp;            else {
+<b class="nc">&nbsp;                barBase = RectangleEdge.TOP;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        // draw the bar...
+&nbsp;        Rectangle2D bar;
+<b class="fc">&nbsp;        if (orientation == PlotOrientation.HORIZONTAL) {</b>
+<b class="nc">&nbsp;            bar = new Rectangle2D.Double(barL0 - barL0Adj, barW0,</b>
+<b class="nc">&nbsp;                    barLength + barLengthAdj, state.getBarWidth());</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="fc">&nbsp;            bar = new Rectangle2D.Double(barW0, barL0 - barL0Adj,</b>
+<b class="fc">&nbsp;                    state.getBarWidth(), barLength + barLengthAdj);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (state.getElementHinting()) {</b>
+<b class="nc">&nbsp;            KeyedValues2DItemKey key = new KeyedValues2DItemKey(</b>
+<b class="nc">&nbsp;                    dataset.getRowKey(row), dataset.getColumnKey(column));</b>
+<b class="nc">&nbsp;            beginElementGroup(g2, key);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (getShadowsVisible()) {</b>
+<b class="fc">&nbsp;            this.barPainter.paintBarShadow(g2, this, row, column, bar, barBase,</b>
+&nbsp;                true);
+&nbsp;        }
+<b class="fc">&nbsp;        this.barPainter.paintBar(g2, this, row, column, bar, barBase);</b>
+<b class="fc">&nbsp;        if (state.getElementHinting()) {</b>
+<b class="nc">&nbsp;            endElementGroup(g2);</b>
+&nbsp;        }
+&nbsp;        
+<b class="fc">&nbsp;        CategoryItemLabelGenerator generator = getItemLabelGenerator(row,</b>
+&nbsp;                column);
+<b class="fc">&nbsp;        if (generator != null &amp;&amp; isItemLabelVisible(row, column)) {</b>
+<b class="nc">&nbsp;            drawItemLabel(g2, dataset, row, column, plot, generator, bar,</b>
+&nbsp;                    (value &lt; 0.0));
+&nbsp;        }
+&nbsp;
+&nbsp;        // submit the current data point as a crosshair candidate
+<b class="fc">&nbsp;        int datasetIndex = plot.indexOf(dataset);</b>
+<b class="fc">&nbsp;        updateCrosshairValues(state.getCrosshairState(),</b>
+<b class="fc">&nbsp;                dataset.getRowKey(row), dataset.getColumnKey(column), value,</b>
+&nbsp;                datasetIndex, barW0, barL0, orientation);
+&nbsp;
+&nbsp;        // add an item entity, if this information is being collected
+<b class="fc">&nbsp;        EntityCollection entities = state.getEntityCollection();</b>
+<b class="fc">&nbsp;        if (entities != null) {</b>
+<b class="nc">&nbsp;            addItemEntity(entities, dataset, row, column, bar);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Calculates the available space for each series.
+&nbsp;     *
+&nbsp;     * @param space  the space along the entire axis (in Java2D units).
+&nbsp;     * @param axis  the category axis.
+&nbsp;     * @param categories  the number of categories.
+&nbsp;     * @param series  the number of series.
+&nbsp;     *
+&nbsp;     * @return The width of one series.
+&nbsp;     */
+&nbsp;    protected double calculateSeriesWidth(double space, CategoryAxis axis,
+&nbsp;                                          int categories, int series) {
+<b class="fc">&nbsp;        double factor = 1.0 - getItemMargin() - axis.getLowerMargin()</b>
+<b class="fc">&nbsp;                            - axis.getUpperMargin();</b>
+<b class="fc">&nbsp;        if (categories &gt; 1) {</b>
+<b class="fc">&nbsp;            factor = factor - axis.getCategoryMargin();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return (space * factor) / (categories * series);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws an item label.  This method is overridden so that the bar can be
+&nbsp;     * used to calculate the label anchor point.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param data  the dataset.
+&nbsp;     * @param row  the row.
+&nbsp;     * @param column  the column.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param generator  the label generator.
+&nbsp;     * @param bar  the bar.
+&nbsp;     * @param negative  a flag indicating a negative value.
+&nbsp;     */
+&nbsp;    protected void drawItemLabel(Graphics2D g2,
+&nbsp;                                 CategoryDataset data,
+&nbsp;                                 int row,
+&nbsp;                                 int column,
+&nbsp;                                 CategoryPlot plot,
+&nbsp;                                 CategoryItemLabelGenerator generator,
+&nbsp;                                 Rectangle2D bar,
+&nbsp;                                 boolean negative) {
+&nbsp;
+<b class="nc">&nbsp;        String label = generator.generateLabel(data, row, column);</b>
+<b class="nc">&nbsp;        if (label == null) {</b>
+&nbsp;            return;  // nothing to do
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        Font labelFont = getItemLabelFont(row, column);</b>
+<b class="nc">&nbsp;        g2.setFont(labelFont);</b>
+<b class="nc">&nbsp;        Paint paint = getItemLabelPaint(row, column);</b>
+<b class="nc">&nbsp;        g2.setPaint(paint);</b>
+&nbsp;
+&nbsp;        // find out where to place the label...
+&nbsp;        ItemLabelPosition position;
+<b class="nc">&nbsp;        if (!negative) {</b>
+<b class="nc">&nbsp;            position = getPositiveItemLabelPosition(row, column);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            position = getNegativeItemLabelPosition(row, column);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        // work out the label anchor point...
+<b class="nc">&nbsp;        Point2D anchorPoint = calculateLabelAnchorPoint(</b>
+<b class="nc">&nbsp;                position.getItemLabelAnchor(), bar, plot.getOrientation());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (isInternalAnchor(position.getItemLabelAnchor())) {</b>
+<b class="nc">&nbsp;            Shape bounds = TextUtils.calculateRotatedStringBounds(label,</b>
+<b class="nc">&nbsp;                    g2, (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="nc">&nbsp;                    position.getTextAnchor(), position.getAngle(),</b>
+<b class="nc">&nbsp;                    position.getRotationAnchor());</b>
+&nbsp;
+<b class="nc">&nbsp;            if (bounds != null) {</b>
+<b class="nc">&nbsp;                if (!bar.contains(bounds.getBounds2D())) {</b>
+<b class="nc">&nbsp;                    if (!negative) {</b>
+<b class="nc">&nbsp;                        position = getPositiveItemLabelPositionFallback();</b>
+&nbsp;                    }
+&nbsp;                    else {
+<b class="nc">&nbsp;                        position = getNegativeItemLabelPositionFallback();</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    if (position != null) {</b>
+<b class="nc">&nbsp;                        anchorPoint = calculateLabelAnchorPoint(</b>
+<b class="nc">&nbsp;                                position.getItemLabelAnchor(), bar,</b>
+<b class="nc">&nbsp;                                plot.getOrientation());</b>
+&nbsp;                    }
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (position != null) {</b>
+<b class="nc">&nbsp;            TextUtils.drawRotatedString(label, g2,</b>
+<b class="nc">&nbsp;                    (float) anchorPoint.getX(), (float) anchorPoint.getY(),</b>
+<b class="nc">&nbsp;                    position.getTextAnchor(), position.getAngle(),</b>
+<b class="nc">&nbsp;                    position.getRotationAnchor());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Calculates the item label anchor point.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor.
+&nbsp;     * @param bar  the bar.
+&nbsp;     * @param orientation  the plot orientation.
+&nbsp;     *
+&nbsp;     * @return The anchor point.
+&nbsp;     */
+&nbsp;    private Point2D calculateLabelAnchorPoint(ItemLabelAnchor anchor,
+&nbsp;                                              Rectangle2D bar,
+&nbsp;                                              PlotOrientation orientation) {
+&nbsp;
+<b class="nc">&nbsp;        Point2D result = null;</b>
+<b class="nc">&nbsp;        double offset = getItemLabelAnchorOffset();</b>
+<b class="nc">&nbsp;        double x0 = bar.getX() - offset;</b>
+<b class="nc">&nbsp;        double x1 = bar.getX();</b>
+<b class="nc">&nbsp;        double x2 = bar.getX() + offset;</b>
+<b class="nc">&nbsp;        double x3 = bar.getCenterX();</b>
+<b class="nc">&nbsp;        double x4 = bar.getMaxX() - offset;</b>
+<b class="nc">&nbsp;        double x5 = bar.getMaxX();</b>
+<b class="nc">&nbsp;        double x6 = bar.getMaxX() + offset;</b>
+&nbsp;
+<b class="nc">&nbsp;        double y0 = bar.getMaxY() + offset;</b>
+<b class="nc">&nbsp;        double y1 = bar.getMaxY();</b>
+<b class="nc">&nbsp;        double y2 = bar.getMaxY() - offset;</b>
+<b class="nc">&nbsp;        double y3 = bar.getCenterY();</b>
+<b class="nc">&nbsp;        double y4 = bar.getMinY() + offset;</b>
+<b class="nc">&nbsp;        double y5 = bar.getMinY();</b>
+<b class="nc">&nbsp;        double y6 = bar.getMinY() - offset;</b>
+&nbsp;
+<b class="nc">&nbsp;        if (anchor == ItemLabelAnchor.CENTER) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE1) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE2) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE3) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE4) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE5) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x4, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE6) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE7) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE8) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y2);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE9) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE10) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE11) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x2, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.INSIDE12) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y4);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE1) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x5, y6);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE2) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y5);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE3) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE4) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x6, y1);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE5) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x5, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE6) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE7) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x1, y0);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE8) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y1);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE9) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y3);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE10) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x0, y5);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE11) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x1, y6);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (anchor == ItemLabelAnchor.OUTSIDE12) {</b>
+<b class="nc">&nbsp;            result = new Point2D.Double(x3, y6);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the specified anchor point is inside a bar.
+&nbsp;     *
+&nbsp;     * @param anchor  the anchor point.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    private boolean isInternalAnchor(ItemLabelAnchor anchor) {
+<b class="nc">&nbsp;        return anchor == ItemLabelAnchor.CENTER</b>
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE1
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE2
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE3
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE4
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE5
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE6
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE7
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE8
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE9
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE10
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE11
+&nbsp;               || anchor == ItemLabelAnchor.INSIDE12;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this instance for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (obj == this) {</b>
+<b class="fc">&nbsp;            return true;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!(obj instanceof BarRenderer)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        BarRenderer that = (BarRenderer) obj;</b>
+<b class="fc">&nbsp;        if (this.base != that.base) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.itemMargin != that.itemMargin) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.drawBarOutline != that.drawBarOutline) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.maximumBarWidth != that.maximumBarWidth) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.minimumBarLength != that.minimumBarLength) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.gradientPaintTransformer, that.gradientPaintTransformer)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.positiveItemLabelPositionFallback, that.positiveItemLabelPositionFallback)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!Objects.equals(this.negativeItemLabelPositionFallback, that.negativeItemLabelPositionFallback)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!this.barPainter.equals(that.barPainter)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowsVisible != that.shadowsVisible) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (!PaintUtils.equal(this.shadowPaint, that.shadowPaint)) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowXOffset != that.shadowXOffset) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.shadowYOffset != that.shadowYOffset) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return super.equals(obj);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the output stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     */
+&nbsp;    private void writeObject(ObjectOutputStream stream) throws IOException {
+<b class="fc">&nbsp;        stream.defaultWriteObject();</b>
+<b class="fc">&nbsp;        SerialUtils.writePaint(this.shadowPaint, stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides serialization support.
+&nbsp;     *
+&nbsp;     * @param stream  the input stream.
+&nbsp;     *
+&nbsp;     * @throws IOException  if there is an I/O error.
+&nbsp;     * @throws ClassNotFoundException  if there is a classpath problem.
+&nbsp;     */
+&nbsp;    private void readObject(ObjectInputStream stream)
+&nbsp;            throws IOException, ClassNotFoundException {
+<b class="fc">&nbsp;        stream.defaultReadObject();</b>
+<b class="fc">&nbsp;        this.shadowPaint = SerialUtils.readPaint(stream);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

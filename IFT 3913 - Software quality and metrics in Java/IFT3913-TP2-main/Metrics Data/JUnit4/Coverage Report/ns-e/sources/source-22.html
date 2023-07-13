@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > Pannable</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.plot</a>
+</div>
+
+<h1>Coverage Summary for Class: Pannable (org.jfree.chart.plot)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Pannable</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -------------
+&nbsp; * Pannable.java
+&nbsp; * -------------
+&nbsp; *
+&nbsp; * (C) Copyright 2009-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  Ulrich Voigt - patch 2686040;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.plot;
+&nbsp;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;
+&nbsp;/**
+&nbsp; * An interface that user interface components can make use of to communicate 
+&nbsp; * with plots that support panning.
+&nbsp; */
+&nbsp;public interface Pannable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the orientation of the plot.
+&nbsp;     *
+&nbsp;     * @return The orientation (never {@code null}).
+&nbsp;     */
+&nbsp;    PlotOrientation getOrientation();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Evaluates if the domain axis can be panned.
+&nbsp;     *
+&nbsp;     * @return {@code true} if the domain axis is pannable.
+&nbsp;     */
+&nbsp;    boolean isDomainPannable();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Evaluates if the range axis can be panned.
+&nbsp;     *
+&nbsp;     * @return {@code true} if the range axis is pannable.
+&nbsp;     */
+&nbsp;    boolean isRangePannable();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Pans the domain axes by the specified percentage.
+&nbsp;     *
+&nbsp;     * @param percent  the distance to pan (as a percentage of the axis length).
+&nbsp;     * @param info the plot info
+&nbsp;     * @param source the source point where the pan action started.
+&nbsp;     */
+&nbsp;    void panDomainAxes(double percent, PlotRenderingInfo info,
+&nbsp;            Point2D source);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Pans the range axes by the specified percentage.
+&nbsp;     *
+&nbsp;     * @param percent  the distance to pan (as a percentage of the axis length).
+&nbsp;     * @param info the plot info
+&nbsp;     * @param source the source point where the pan action started.
+&nbsp;     */
+&nbsp;    void panRangeAxes(double percent, PlotRenderingInfo info,
+&nbsp;            Point2D source);
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PowerFunction2D</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.function</a>
+</div>
+
+<h1>Coverage Summary for Class: PowerFunction2D (org.jfree.data.function)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">PowerFunction2D</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (15/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------------
+&nbsp; * PowerFunction2D.java
+&nbsp; * --------------------
+&nbsp; * (C) Copyright 2002-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.function;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;import org.jfree.chart.internal.HashUtils;
+&nbsp;
+&nbsp;/**
+&nbsp; * A function of the form y = a * x ^ b.
+&nbsp; */
+&nbsp;public class PowerFunction2D implements Function2D, Serializable {
+&nbsp;
+&nbsp;    /** The &#39;a&#39; coefficient. */
+&nbsp;    private double a;
+&nbsp;
+&nbsp;    /** The &#39;b&#39; coefficient. */
+&nbsp;    private double b;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new power function.
+&nbsp;     *
+&nbsp;     * @param a  the &#39;a&#39; coefficient.
+&nbsp;     * @param b  the &#39;b&#39; coefficient.
+&nbsp;     */
+<b class="fc">&nbsp;    public PowerFunction2D(double a, double b) {</b>
+<b class="fc">&nbsp;        this.a = a;</b>
+<b class="fc">&nbsp;        this.b = b;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the &#39;a&#39; coefficient that was specified in the constructor.
+&nbsp;     *
+&nbsp;     * @return The &#39;a&#39; coefficient.
+&nbsp;     *
+&nbsp;     * @since 1.0.14
+&nbsp;     */
+&nbsp;    public double getA() {
+<b class="fc">&nbsp;        return this.a;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the &#39;b&#39; coefficient that was specified in the constructor.
+&nbsp;     *
+&nbsp;     * @return The &#39;b&#39; coefficient.
+&nbsp;     *
+&nbsp;     * @since 1.0.14
+&nbsp;     */
+&nbsp;    public double getB() {
+<b class="fc">&nbsp;        return this.b;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the value of the function for a given input (&#39;x&#39;).
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getValue(double x) {
+<b class="nc">&nbsp;        return this.a * Math.pow(x, this.b);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this function for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (!(obj instanceof PowerFunction2D)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        PowerFunction2D that = (PowerFunction2D) obj;</b>
+<b class="fc">&nbsp;        if (this.a != that.a) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.b != that.b) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this instance.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        int result = 29;</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.a);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.b);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

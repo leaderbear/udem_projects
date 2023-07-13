@@ -1,0 +1,1077 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > DynamicTimeSeriesCollection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.time</a>
+</div>
+
+<h1>Coverage Summary for Class: DynamicTimeSeriesCollection (org.jfree.data.time)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">DynamicTimeSeriesCollection</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/42)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/190)
+  </span>
+</td>
+</tr>
+  <tr>
+    <td class="name">DynamicTimeSeriesCollection$ValueSequence</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/46)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/197)
+  </span>
+</td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------------------------
+&nbsp; * DynamicTimeSeriesCollection.java
+&nbsp; * --------------------------------
+&nbsp; * (C) Copyright 2002-2020, by I. H. Thomae and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  I. H. Thomae (ithomae@ists.dartmouth.edu);
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *                   Ricardo JL Rufino (patch #310);
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.time;
+&nbsp;
+&nbsp;import java.util.Calendar;
+&nbsp;import java.util.TimeZone;
+&nbsp;
+&nbsp;import org.jfree.data.DomainInfo;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.RangeInfo;
+&nbsp;import org.jfree.data.general.SeriesChangeEvent;
+&nbsp;import org.jfree.data.xy.AbstractIntervalXYDataset;
+&nbsp;import org.jfree.data.xy.IntervalXYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * A dynamic dataset.
+&nbsp; * &lt;p&gt;
+&nbsp; * Like FastTimeSeriesCollection, this class is a functional replacement
+&nbsp; * for JFreeChart&#39;s TimeSeriesCollection _and_ TimeSeries classes.
+&nbsp; * FastTimeSeriesCollection is appropriate for a fixed time range; for
+&nbsp; * real-time applications this subclass adds the ability to append new
+&nbsp; * data and discard the oldest.
+&nbsp; * In this class, the arrays used in FastTimeSeriesCollection become FIFO&#39;s.
+&nbsp; * NOTE:As presented here, all data is assumed &amp;gt;= 0, an assumption which is
+&nbsp; * embodied only in methods associated with interface RangeInfo.
+&nbsp; */
+&nbsp;public class DynamicTimeSeriesCollection extends AbstractIntervalXYDataset
+&nbsp;        implements IntervalXYDataset, DomainInfo, RangeInfo {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Useful constant for controlling the x-value returned for a time
+&nbsp;     * period.
+&nbsp;     */
+&nbsp;    public static final int START = 0;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Useful constant for controlling the x-value returned for a time period.
+&nbsp;     */
+&nbsp;    public static final int MIDDLE = 1;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Useful constant for controlling the x-value returned for a time period.
+&nbsp;     */
+&nbsp;    public static final int END = 2;
+&nbsp;
+&nbsp;    /** The maximum number of items for each series (can be overridden). */
+<b class="nc">&nbsp;    private int maximumItemCount = 2000;  // an arbitrary safe default value</b>
+&nbsp;
+&nbsp;    /** The history count. */
+&nbsp;    protected int historyCount;
+&nbsp;
+&nbsp;    /** Storage for the series keys. */
+&nbsp;    private Comparable[] seriesKeys;
+&nbsp;
+&nbsp;    /** The time period class - barely used, and could be removed (DG). */
+<b class="nc">&nbsp;    private Class timePeriodClass = Minute.class;   // default value;</b>
+&nbsp;
+&nbsp;    /** Storage for the x-values. */
+&nbsp;    protected RegularTimePeriod[] pointsInTime;
+&nbsp;
+&nbsp;    /** The number of series. */
+&nbsp;    private int seriesCount;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A wrapper for a fixed array of float values.
+&nbsp;     */
+&nbsp;    protected class ValueSequence {
+&nbsp;
+&nbsp;        /** Storage for the float values. */
+&nbsp;        float[] dataPoints;
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Default constructor:
+&nbsp;         */
+&nbsp;        public ValueSequence() {
+<b class="nc">&nbsp;            this(DynamicTimeSeriesCollection.this.maximumItemCount);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Creates a sequence with the specified length.
+&nbsp;         *
+&nbsp;         * @param length  the length.
+&nbsp;         */
+<b class="nc">&nbsp;        public ValueSequence(int length) {</b>
+<b class="nc">&nbsp;            this.dataPoints = new float[length];</b>
+<b class="nc">&nbsp;            for (int i = 0; i &lt; length; i++) {</b>
+<b class="nc">&nbsp;                this.dataPoints[i] = 0.0f;</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Enters data into the storage array.
+&nbsp;         *
+&nbsp;         * @param index  the index.
+&nbsp;         * @param value  the value.
+&nbsp;         */
+&nbsp;        public void enterData(int index, float value) {
+<b class="nc">&nbsp;            this.dataPoints[index] = value;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        /**
+&nbsp;         * Returns a value from the storage array.
+&nbsp;         *
+&nbsp;         * @param index  the index.
+&nbsp;         *
+&nbsp;         * @return The value.
+&nbsp;         */
+&nbsp;        public float getData(int index) {
+<b class="nc">&nbsp;            return this.dataPoints[index];</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /** An array for storing the objects that represent each series. */
+&nbsp;    protected ValueSequence[] valueHistory;
+&nbsp;
+&nbsp;    /** A working calendar (to recycle) */
+&nbsp;    protected Calendar workingCalendar;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The position within a time period to return as the x-value (START,
+&nbsp;     * MIDDLE or END).
+&nbsp;     */
+&nbsp;    private int position;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that indicates that the domain is &#39;points in time&#39;.  If this flag
+&nbsp;     * is true, only the x-value is used to determine the range of values in
+&nbsp;     * the domain, the start and end x-values are ignored.
+&nbsp;     */
+&nbsp;    private boolean domainIsPointsInTime;
+&nbsp;
+&nbsp;    /** index for mapping: points to the oldest valid time and data. */
+&nbsp;    private int oldestAt;  // as a class variable, initializes == 0
+&nbsp;
+&nbsp;    /** Index of the newest data item. */
+&nbsp;    private int newestAt;
+&nbsp;
+&nbsp;    // cached values used for interface DomainInfo:
+&nbsp;
+&nbsp;    /** the # of msec by which time advances. */
+&nbsp;    private long deltaTime;
+&nbsp;
+&nbsp;    /** Cached domain start (for use by DomainInfo). */
+&nbsp;    private Long domainStart;
+&nbsp;
+&nbsp;    /** Cached domain end (for use by DomainInfo). */
+&nbsp;    private Long domainEnd;
+&nbsp;
+&nbsp;    /** Cached domain range (for use by DomainInfo). */
+&nbsp;    private Range domainRange;
+&nbsp;
+&nbsp;    // Cached values used for interface RangeInfo: (note minValue pinned at 0)
+&nbsp;    //   A single set of extrema covers the entire SeriesCollection
+&nbsp;
+&nbsp;    /** The minimum value. */
+<b class="nc">&nbsp;    private Float minValue = 0.0f;</b>
+&nbsp;
+&nbsp;    /** The maximum value. */
+<b class="nc">&nbsp;    private Float maxValue = null;</b>
+&nbsp;
+&nbsp;    /** The value range. */
+&nbsp;    private Range valueRange;  // autoinit&#39;s to null.
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a dataset with capacity for N series, tied to default
+&nbsp;     * timezone.
+&nbsp;     *
+&nbsp;     * @param nSeries the number of series to be accommodated.
+&nbsp;     * @param nMoments the number of TimePeriods to be spanned.
+&nbsp;     */
+&nbsp;    public DynamicTimeSeriesCollection(int nSeries, int nMoments) {
+<b class="nc">&nbsp;        this(nSeries, nMoments, new Millisecond(), TimeZone.getDefault());</b>
+<b class="nc">&nbsp;        this.newestAt = nMoments - 1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs an empty dataset, tied to a specific timezone.
+&nbsp;     *
+&nbsp;     * @param nSeries the number of series to be accommodated
+&nbsp;     * @param nMoments the number of TimePeriods to be spanned
+&nbsp;     * @param zone the timezone.
+&nbsp;     */
+&nbsp;    public DynamicTimeSeriesCollection(int nSeries, int nMoments,
+&nbsp;            TimeZone zone) {
+<b class="nc">&nbsp;        this(nSeries, nMoments, new Millisecond(), zone);</b>
+<b class="nc">&nbsp;        this.newestAt = nMoments - 1;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new dataset.
+&nbsp;     *
+&nbsp;     * @param nSeries  the number of series.
+&nbsp;     * @param nMoments  the number of items per series.
+&nbsp;     * @param timeSample  a time period sample.
+&nbsp;     */
+&nbsp;    public DynamicTimeSeriesCollection(int nSeries, int nMoments,
+&nbsp;            RegularTimePeriod timeSample) {
+<b class="nc">&nbsp;        this(nSeries, nMoments, timeSample, TimeZone.getDefault());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates a new dataset.
+&nbsp;     *
+&nbsp;     * @param nSeries  the number of series.
+&nbsp;     * @param nMoments  the number of items per series.
+&nbsp;     * @param timeSample  a time period sample.
+&nbsp;     * @param zone  the time zone.
+&nbsp;     */
+&nbsp;    public DynamicTimeSeriesCollection(int nSeries, int nMoments,
+<b class="nc">&nbsp;            RegularTimePeriod timeSample, TimeZone zone) {</b>
+&nbsp;
+&nbsp;        // the first initialization must precede creation of the ValueSet array:
+<b class="nc">&nbsp;        this.maximumItemCount = nMoments;  // establishes length of each array</b>
+<b class="nc">&nbsp;        this.historyCount = nMoments;</b>
+<b class="nc">&nbsp;        this.seriesKeys = new Comparable[nSeries];</b>
+&nbsp;        // initialize the members of &quot;seriesNames&quot; array so they won&#39;t be null:
+<b class="nc">&nbsp;        for (int i = 0; i &lt; nSeries; i++) {</b>
+<b class="nc">&nbsp;            this.seriesKeys[i] = &quot;&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        this.newestAt = nMoments - 1;</b>
+<b class="nc">&nbsp;        this.valueHistory = new ValueSequence[nSeries];</b>
+<b class="nc">&nbsp;        this.timePeriodClass = timeSample.getClass();</b>
+&nbsp;
+&nbsp;        /// Expand the following for all defined TimePeriods:
+<b class="nc">&nbsp;        if (this.timePeriodClass == Millisecond.class) {</b>
+<b class="nc">&nbsp;            this.pointsInTime = new Millisecond[nMoments];</b>
+<b class="nc">&nbsp;        } else if (this.timePeriodClass == Second.class) {</b>
+<b class="nc">&nbsp;            this.pointsInTime = new Second[nMoments];</b>
+<b class="nc">&nbsp;        } else if (this.timePeriodClass == Minute.class) {</b>
+<b class="nc">&nbsp;            this.pointsInTime = new Minute[nMoments];</b>
+<b class="nc">&nbsp;        } else if (this.timePeriodClass == Hour.class) {</b>
+<b class="nc">&nbsp;            this.pointsInTime = new Hour[nMoments];</b>
+&nbsp;        }
+&nbsp;        ///  .. etc....
+<b class="nc">&nbsp;        this.workingCalendar = Calendar.getInstance(zone);</b>
+<b class="nc">&nbsp;        this.position = START;</b>
+<b class="nc">&nbsp;        this.domainIsPointsInTime = true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fill the pointsInTime with times using TimePeriod.next():
+&nbsp;     * Will silently return if the time array was already populated.
+&nbsp;     *
+&nbsp;     * Also computes the data cached for later use by
+&nbsp;     * methods implementing the DomainInfo interface:
+&nbsp;     *
+&nbsp;     * @param start  the start.
+&nbsp;     *
+&nbsp;     * @return ??.
+&nbsp;     */
+&nbsp;    public synchronized long setTimeBase(RegularTimePeriod start) {
+<b class="nc">&nbsp;        if (this.pointsInTime[0] == null) {</b>
+<b class="nc">&nbsp;            this.pointsInTime[0] = start;</b>
+<b class="nc">&nbsp;            for (int i = 1; i &lt; this.historyCount; i++) {</b>
+<b class="nc">&nbsp;                this.pointsInTime[i] = this.pointsInTime[i - 1].next();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        long oldestL = this.pointsInTime[0].getFirstMillisecond(</b>
+&nbsp;                this.workingCalendar);
+<b class="nc">&nbsp;        long nextL = this.pointsInTime[1].getFirstMillisecond(</b>
+&nbsp;                this.workingCalendar);
+<b class="nc">&nbsp;        this.deltaTime = nextL - oldestL;</b>
+<b class="nc">&nbsp;        this.oldestAt = 0;</b>
+<b class="nc">&nbsp;        this.newestAt = this.historyCount - 1;</b>
+<b class="nc">&nbsp;        findDomainLimits();</b>
+<b class="nc">&nbsp;        return this.deltaTime;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Finds the domain limits.  Note: this doesn&#39;t need to be synchronized
+&nbsp;     * because it&#39;s called from within another method that already is.
+&nbsp;     */
+&nbsp;    protected void findDomainLimits() {
+<b class="nc">&nbsp;        long startL = getOldestTime().getFirstMillisecond(this.workingCalendar);</b>
+&nbsp;        long endL;
+<b class="nc">&nbsp;        if (this.domainIsPointsInTime) {</b>
+<b class="nc">&nbsp;            endL = getNewestTime().getFirstMillisecond(this.workingCalendar);</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            endL = getNewestTime().getLastMillisecond(this.workingCalendar);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        this.domainStart = startL;</b>
+<b class="nc">&nbsp;        this.domainEnd = endL;</b>
+<b class="nc">&nbsp;        this.domainRange = new Range(startL, endL);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x position type (START, MIDDLE or END).
+&nbsp;     *
+&nbsp;     * @return The x position type.
+&nbsp;     */
+&nbsp;    public int getPosition() {
+<b class="nc">&nbsp;        return this.position;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the x position type (START, MIDDLE or END).
+&nbsp;     *
+&nbsp;     * @param position The x position type.
+&nbsp;     */
+&nbsp;    public void setPosition(int position) {
+<b class="nc">&nbsp;        this.position = position;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a series to the dataset.  Only the y-values are supplied, the
+&nbsp;     * x-values are specified elsewhere.
+&nbsp;     *
+&nbsp;     * @param values  the y-values.
+&nbsp;     * @param seriesNumber  the series index (zero-based).
+&nbsp;     * @param seriesKey  the series key.
+&nbsp;     *
+&nbsp;     * Use this as-is during setup only, or add the synchronized keyword around
+&nbsp;     * the copy loop.
+&nbsp;     */
+&nbsp;    public void addSeries(float[] values, int seriesNumber, 
+&nbsp;            Comparable seriesKey) {
+&nbsp;
+<b class="nc">&nbsp;        invalidateRangeInfo();</b>
+&nbsp;        int i;
+<b class="nc">&nbsp;        if (values == null) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;TimeSeriesDataset.addSeries(): &quot;</b>
+&nbsp;                + &quot;cannot add null array of values.&quot;);
+&nbsp;        }
+<b class="nc">&nbsp;        if (seriesNumber &gt;= this.valueHistory.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;TimeSeriesDataset.addSeries(): &quot;</b>
+&nbsp;                + &quot;cannot add more series than specified in c&#39;tor&quot;);
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.valueHistory[seriesNumber] == null) {</b>
+<b class="nc">&nbsp;            this.valueHistory[seriesNumber]</b>
+&nbsp;                = new ValueSequence(this.historyCount);
+<b class="nc">&nbsp;            this.seriesCount++;</b>
+&nbsp;        }
+&nbsp;        // But if that series array already exists, just overwrite its contents
+&nbsp;
+&nbsp;        // Avoid IndexOutOfBoundsException:
+<b class="nc">&nbsp;        int srcLength = values.length;</b>
+<b class="nc">&nbsp;        int copyLength = this.historyCount;</b>
+<b class="nc">&nbsp;        boolean fillNeeded = false;</b>
+<b class="nc">&nbsp;        if (srcLength &lt; this.historyCount) {</b>
+<b class="nc">&nbsp;            fillNeeded = true;</b>
+<b class="nc">&nbsp;            copyLength = srcLength;</b>
+&nbsp;        }
+&nbsp;        //{
+<b class="nc">&nbsp;        for (i = 0; i &lt; copyLength; i++) { // deep copy from values[], caller</b>
+&nbsp;                                           // can safely discard that array
+<b class="nc">&nbsp;            this.valueHistory[seriesNumber].enterData(i, values[i]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (fillNeeded) {</b>
+<b class="nc">&nbsp;            for (i = copyLength; i &lt; this.historyCount; i++) {</b>
+<b class="nc">&nbsp;                this.valueHistory[seriesNumber].enterData(i, 0.0f);</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;      //}
+<b class="nc">&nbsp;        if (seriesKey != null) {</b>
+<b class="nc">&nbsp;            this.seriesKeys[seriesNumber] = seriesKey;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        fireSeriesChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the name of a series.  If planning to add values individually.
+&nbsp;     *
+&nbsp;     * @param seriesNumber  the series.
+&nbsp;     * @param key  the new key.
+&nbsp;     */
+&nbsp;    public void setSeriesKey(int seriesNumber, Comparable key) {
+<b class="nc">&nbsp;        this.seriesKeys[seriesNumber] = key;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds a value to a series.
+&nbsp;     *
+&nbsp;     * @param seriesNumber  the series index.
+&nbsp;     * @param index  ??.
+&nbsp;     * @param value  the value.
+&nbsp;     */
+&nbsp;    public void addValue(int seriesNumber, int index, float value) {
+<b class="nc">&nbsp;        invalidateRangeInfo();</b>
+<b class="nc">&nbsp;        if (seriesNumber &gt;= this.valueHistory.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                &quot;TimeSeriesDataset.addValue(): series #&quot;
+&nbsp;                + seriesNumber + &quot;unspecified in c&#39;tor&quot;
+&nbsp;            );
+&nbsp;        }
+<b class="nc">&nbsp;        if (this.valueHistory[seriesNumber] == null) {</b>
+<b class="nc">&nbsp;            this.valueHistory[seriesNumber]</b>
+&nbsp;                = new ValueSequence(this.historyCount);
+<b class="nc">&nbsp;            this.seriesCount++;</b>
+&nbsp;        }
+&nbsp;        // But if that series array already exists, just overwrite its contents
+&nbsp;        //synchronized(this)
+&nbsp;        //{
+<b class="nc">&nbsp;            this.valueHistory[seriesNumber].enterData(index, value);</b>
+&nbsp;        //}
+<b class="nc">&nbsp;        fireSeriesChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of series in the collection.
+&nbsp;     *
+&nbsp;     * @return The series count.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getSeriesCount() {
+<b class="nc">&nbsp;        return this.seriesCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of items in a series.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * For this implementation, all series have the same number of items.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item count.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int getItemCount(int series) {  // all arrays equal length,
+&nbsp;                                           // so ignore argument:
+<b class="nc">&nbsp;        return this.historyCount;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // Methods for managing the FIFO&#39;s:
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Re-map an index, for use in retrieving data.
+&nbsp;     *
+&nbsp;     * @param toFetch  the index.
+&nbsp;     *
+&nbsp;     * @return The translated index.
+&nbsp;     */
+&nbsp;    protected int translateGet(int toFetch) {
+<b class="nc">&nbsp;        if (this.oldestAt == 0) {</b>
+<b class="nc">&nbsp;            return toFetch;  // no translation needed</b>
+&nbsp;        }
+&nbsp;        // else  [implicit here]
+<b class="nc">&nbsp;        int newIndex = toFetch + this.oldestAt;</b>
+<b class="nc">&nbsp;        if (newIndex &gt;= this.historyCount) {</b>
+<b class="nc">&nbsp;            newIndex -= this.historyCount;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return newIndex;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the actual index to a time offset by &quot;delta&quot; from newestAt.
+&nbsp;     *
+&nbsp;     * @param delta  the delta.
+&nbsp;     *
+&nbsp;     * @return The offset.
+&nbsp;     */
+&nbsp;    public int offsetFromNewest(int delta) {
+<b class="nc">&nbsp;        return wrapOffset(this.newestAt + delta);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * ??
+&nbsp;     *
+&nbsp;     * @param delta ??
+&nbsp;     *
+&nbsp;     * @return The offset.
+&nbsp;     */
+&nbsp;    public int offsetFromOldest(int delta) {
+<b class="nc">&nbsp;        return wrapOffset(this.oldestAt + delta);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * ??
+&nbsp;     *
+&nbsp;     * @param protoIndex  the index.
+&nbsp;     *
+&nbsp;     * @return The offset.
+&nbsp;     */
+&nbsp;    protected int wrapOffset(int protoIndex) {
+<b class="nc">&nbsp;        int tmp = protoIndex;</b>
+<b class="nc">&nbsp;        if (tmp &gt;= this.historyCount) {</b>
+<b class="nc">&nbsp;            tmp -= this.historyCount;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        else if (tmp &lt; 0) {</b>
+<b class="nc">&nbsp;            tmp += this.historyCount;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return tmp;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adjust the array offset as needed when a new time-period is added:
+&nbsp;     * Increments the indices &quot;oldestAt&quot; and &quot;newestAt&quot;, mod(array length),
+&nbsp;     * zeroes the series values at newestAt, returns the new TimePeriod.
+&nbsp;     *
+&nbsp;     * @return The new time period.
+&nbsp;     */
+&nbsp;    public synchronized RegularTimePeriod advanceTime() {
+<b class="nc">&nbsp;        RegularTimePeriod nextInstant = this.pointsInTime[this.newestAt].next();</b>
+<b class="nc">&nbsp;        this.newestAt = this.oldestAt;  // newestAt takes value previously held</b>
+&nbsp;                                        // by oldestAT
+&nbsp;        /***
+&nbsp;         * The next 10 lines or so should be expanded if data can be negative
+&nbsp;         ***/
+&nbsp;        // if the oldest data contained a maximum Y-value, invalidate the stored
+&nbsp;        //   Y-max and Y-range data:
+<b class="nc">&nbsp;        boolean extremaChanged = false;</b>
+<b class="nc">&nbsp;        float oldMax = 0.0f;</b>
+<b class="nc">&nbsp;        if (this.maxValue != null) {</b>
+<b class="nc">&nbsp;            oldMax = this.maxValue;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        for (int s = 0; s &lt; getSeriesCount(); s++) {</b>
+<b class="nc">&nbsp;            if (this.valueHistory[s].getData(this.oldestAt) == oldMax) {</b>
+<b class="nc">&nbsp;                extremaChanged = true;</b>
+&nbsp;            }
+<b class="nc">&nbsp;            if (extremaChanged) {</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            }
+&nbsp;        }  /*** If data can be &lt; 0, add code here to check the minimum    **/
+<b class="nc">&nbsp;        if (extremaChanged) {</b>
+<b class="nc">&nbsp;            invalidateRangeInfo();</b>
+&nbsp;        }
+&nbsp;        //  wipe the next (about to be used) set of data slots
+<b class="nc">&nbsp;        float wiper = (float) 0.0;</b>
+<b class="nc">&nbsp;        for (int s = 0; s &lt; getSeriesCount(); s++) {</b>
+<b class="nc">&nbsp;            this.valueHistory[s].enterData(this.newestAt, wiper);</b>
+&nbsp;        }
+&nbsp;        // Update the array of TimePeriods:
+<b class="nc">&nbsp;        this.pointsInTime[this.newestAt] = nextInstant;</b>
+&nbsp;        // Now advance &quot;oldestAt&quot;, wrapping at end of the array
+<b class="nc">&nbsp;        this.oldestAt++;</b>
+<b class="nc">&nbsp;        if (this.oldestAt &gt;= this.historyCount) {</b>
+<b class="nc">&nbsp;            this.oldestAt = 0;</b>
+&nbsp;        }
+&nbsp;        // Update the domain limits:
+<b class="nc">&nbsp;        long startL = this.domainStart;  //(time is kept in msec)</b>
+<b class="nc">&nbsp;        this.domainStart = startL + this.deltaTime;</b>
+<b class="nc">&nbsp;        long endL = this.domainEnd;</b>
+<b class="nc">&nbsp;        this.domainEnd = endL + this.deltaTime;</b>
+<b class="nc">&nbsp;        this.domainRange = new Range(startL, endL);</b>
+<b class="nc">&nbsp;        fireSeriesChanged();</b>
+<b class="nc">&nbsp;        return nextInstant;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    //  If data can be &lt; 0, the next 2 methods should be modified
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Invalidates the range info.
+&nbsp;     */
+&nbsp;    public void invalidateRangeInfo() {
+<b class="nc">&nbsp;        this.maxValue = null;</b>
+<b class="nc">&nbsp;        this.valueRange = null;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum value.
+&nbsp;     *
+&nbsp;     * @return The maximum value.
+&nbsp;     */
+&nbsp;    protected double findMaxValue() {
+<b class="nc">&nbsp;        double max = 0.0f;</b>
+<b class="nc">&nbsp;        for (int s = 0; s &lt; getSeriesCount(); s++) {</b>
+<b class="nc">&nbsp;            for (int i = 0; i &lt; this.historyCount; i++) {</b>
+<b class="nc">&nbsp;                double tmp = getYValue(s, i);</b>
+<b class="nc">&nbsp;                if (tmp &gt; max) {</b>
+<b class="nc">&nbsp;                    max = tmp;</b>
+&nbsp;                }
+&nbsp;            }
+&nbsp;        }
+<b class="nc">&nbsp;        return max;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /** End, positive-data-only code  **/
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the index of the oldest data item.
+&nbsp;     *
+&nbsp;     * @return The index.
+&nbsp;     */
+&nbsp;    public int getOldestIndex() {
+<b class="nc">&nbsp;        return this.oldestAt;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the index of the newest data item.
+&nbsp;     *
+&nbsp;     * @return The index.
+&nbsp;     */
+&nbsp;    public int getNewestIndex() {
+<b class="nc">&nbsp;        return this.newestAt;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // appendData() writes new data at the index position given by newestAt/
+&nbsp;    // When adding new data dynamically, use advanceTime(), followed by this:
+&nbsp;    /**
+&nbsp;     * Appends new data.
+&nbsp;     *
+&nbsp;     * @param newData  the data.
+&nbsp;     */
+&nbsp;    public void appendData(float[] newData) {
+<b class="nc">&nbsp;        int nDataPoints = newData.length;</b>
+<b class="nc">&nbsp;        if (nDataPoints &gt; this.valueHistory.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                    &quot;More data than series to put them in&quot;);
+&nbsp;        }
+&nbsp;        int s;   // index to select the &quot;series&quot;
+<b class="nc">&nbsp;        for (s = 0; s &lt; nDataPoints; s++) {</b>
+&nbsp;            // check whether the &quot;valueHistory&quot; array member exists; if not,
+&nbsp;            // create them:
+<b class="nc">&nbsp;            if (this.valueHistory[s] == null) {</b>
+<b class="nc">&nbsp;                this.valueHistory[s] = new ValueSequence(this.historyCount);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            this.valueHistory[s].enterData(this.newestAt, newData[s]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        fireSeriesChanged();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Appends data at specified index, for loading up with data from file(s).
+&nbsp;     *
+&nbsp;     * @param  newData  the data
+&nbsp;     * @param  insertionIndex  the index value at which to put it
+&nbsp;     * @param  refresh  value of n in &quot;refresh the display on every nth call&quot;
+&nbsp;     *                 (ignored if &amp;lt;= 0 )
+&nbsp;     */
+&nbsp;    public void appendData(float[] newData, int insertionIndex, int refresh) {
+<b class="nc">&nbsp;        int nDataPoints = newData.length;</b>
+<b class="nc">&nbsp;        if (nDataPoints &gt; this.valueHistory.length) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(</b>
+&nbsp;                    &quot;More data than series to put them in&quot;);
+&nbsp;        }
+<b class="nc">&nbsp;        for (int s = 0; s &lt; nDataPoints; s++) {</b>
+<b class="nc">&nbsp;            if (this.valueHistory[s] == null) {</b>
+<b class="nc">&nbsp;                this.valueHistory[s] = new ValueSequence(this.historyCount);</b>
+&nbsp;            }
+<b class="nc">&nbsp;            this.valueHistory[s].enterData(insertionIndex, newData[s]);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (refresh &gt; 0) {</b>
+<b class="nc">&nbsp;            insertionIndex++;</b>
+<b class="nc">&nbsp;            if (insertionIndex % refresh == 0) {</b>
+<b class="nc">&nbsp;                fireSeriesChanged();</b>
+&nbsp;            }
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the newest time.
+&nbsp;     *
+&nbsp;     * @return The newest time.
+&nbsp;     */
+&nbsp;    public RegularTimePeriod getNewestTime() {
+<b class="nc">&nbsp;        return this.pointsInTime[this.newestAt];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the oldest time.
+&nbsp;     *
+&nbsp;     * @return The oldest time.
+&nbsp;     */
+&nbsp;    public RegularTimePeriod getOldestTime() {
+<b class="nc">&nbsp;        return this.pointsInTime[this.oldestAt];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    // getXxx() ftns can ignore the &quot;series&quot; argument:
+&nbsp;    // Don&#39;t synchronize this!! Instead, synchronize the loop that calls it.
+&nbsp;    @Override
+&nbsp;    public Number getX(int series, int item) {
+<b class="nc">&nbsp;        RegularTimePeriod tp = this.pointsInTime[translateGet(item)];</b>
+<b class="nc">&nbsp;        return getX(tp);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getYValue(int series, int item) {
+&nbsp;        // Don&#39;t synchronize this!!
+&nbsp;        // Instead, synchronize the loop that calls it.
+<b class="nc">&nbsp;        ValueSequence values = this.valueHistory[series];</b>
+<b class="nc">&nbsp;        return values.getData(translateGet(item));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the y-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getY(int series, int item) {
+<b class="nc">&nbsp;        return getYValue(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the start x-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartX(int series, int item) {
+<b class="nc">&nbsp;        RegularTimePeriod tp = this.pointsInTime[translateGet(item)];</b>
+<b class="nc">&nbsp;        return tp.getFirstMillisecond(this.workingCalendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the end x-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndX(int series, int item) {
+<b class="nc">&nbsp;        RegularTimePeriod tp = this.pointsInTime[translateGet(item)];</b>
+<b class="nc">&nbsp;        return tp.getLastMillisecond(this.workingCalendar);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the start y-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getStartY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the end y-value.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Number getEndY(int series, int item) {
+<b class="nc">&nbsp;        return getY(series, item);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /* // &quot;Extras&quot; found useful when analyzing/verifying class behavior:
+&nbsp;    public Number getUntranslatedXValue(int series, int item)
+&nbsp;    {
+&nbsp;      return super.getXValue(series, item);
+&nbsp;    }
+&nbsp;
+&nbsp;    public float getUntranslatedY(int series, int item)
+&nbsp;    {
+&nbsp;      return super.getY(series, item);
+&nbsp;    }  */
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the key for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The key.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Comparable getSeriesKey(int series) {
+<b class="nc">&nbsp;        return this.seriesKeys[series];</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sends a {@link SeriesChangeEvent} to all registered listeners.
+&nbsp;     */
+&nbsp;    protected void fireSeriesChanged() {
+<b class="nc">&nbsp;        seriesChanged(new SeriesChangeEvent(this));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    // The next 3 functions override the base-class implementation of
+&nbsp;    // the DomainInfo interface.  Using saved limits (updated by
+&nbsp;    // each updateTime() call), improves performance.
+&nbsp;    //
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The minimum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainLowerBound(boolean includeInterval) {
+<b class="nc">&nbsp;        return this.domainStart.doubleValue();</b>
+&nbsp;        // a Long kept updated by advanceTime()
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum x-value in the dataset.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The maximum value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getDomainUpperBound(boolean includeInterval) {
+<b class="nc">&nbsp;        return this.domainEnd.doubleValue();</b>
+&nbsp;        // a Long kept updated by advanceTime()
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the range of the values in this dataset&#39;s domain.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         x-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range getDomainBounds(boolean includeInterval) {
+<b class="nc">&nbsp;        if (this.domainRange == null) {</b>
+<b class="nc">&nbsp;            findDomainLimits();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return this.domainRange;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the x-value for a time period.
+&nbsp;     *
+&nbsp;     * @param period  the period.
+&nbsp;     *
+&nbsp;     * @return The x-value.
+&nbsp;     */
+&nbsp;    private long getX(RegularTimePeriod period) {
+<b class="nc">&nbsp;        switch (this.position) {</b>
+&nbsp;            case (START) :
+<b class="nc">&nbsp;                return period.getFirstMillisecond(this.workingCalendar);</b>
+&nbsp;            case (MIDDLE) :
+<b class="nc">&nbsp;                return period.getMiddleMillisecond(this.workingCalendar);</b>
+&nbsp;            case (END) :
+<b class="nc">&nbsp;                return period.getLastMillisecond(this.workingCalendar);</b>
+&nbsp;            default:
+<b class="nc">&nbsp;                return period.getMiddleMillisecond(this.workingCalendar);</b>
+&nbsp;        }
+&nbsp;     }
+&nbsp;
+&nbsp;    // The next 3 functions implement the RangeInfo interface.
+&nbsp;    // Using saved limits (updated by each updateTime() call) significantly
+&nbsp;    // improves performance.  WARNING: this code makes the simplifying
+&nbsp;    // assumption that data is never negative.  Expand as needed for the
+&nbsp;    // general case.
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the minimum range value.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         y-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The minimum range value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getRangeLowerBound(boolean includeInterval) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        if (this.minValue != null) {</b>
+<b class="nc">&nbsp;            result = this.minValue.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the maximum range value.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         y-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The maximum range value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getRangeUpperBound(boolean includeInterval) {
+<b class="nc">&nbsp;        double result = Double.NaN;</b>
+<b class="nc">&nbsp;        if (this.maxValue != null) {</b>
+<b class="nc">&nbsp;            result = this.maxValue.doubleValue();</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the value range.
+&nbsp;     *
+&nbsp;     * @param includeInterval  a flag that determines whether or not the
+&nbsp;     *                         y-interval is taken into account.
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Range getRangeBounds(boolean includeInterval) {
+<b class="nc">&nbsp;        if (this.valueRange == null) {</b>
+<b class="nc">&nbsp;            double max = getRangeUpperBound(includeInterval);</b>
+<b class="nc">&nbsp;            this.valueRange = new Range(0.0, max);</b>
+&nbsp;        }
+<b class="nc">&nbsp;        return this.valueRange;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

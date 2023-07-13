@@ -1,0 +1,28 @@
+Identification des modules réutilisables 
+
+
+
+Module 1 (Gestion Batiments) : menu + BatimentController + Batiment 
+
+Ces classes sont auto-suffisantes et permettent de gérer une liste de Batiments ( aéroport, ports et gares). 
+
+
+
+Module 2 (Gestion Véhicule et séction) : menuCompagnie + CompagnieController + Compagnie + VehiculeController + Vehicule + SectionController + Section  
+
+Ces classes sont auto-suffisantes et permettent de gérer les vehicules d'une compagnie et leur sections. 
+
+
+
+Module 3 (Gestion Voyages) :  menuCompagnie + CompagnieController + Compagnie + VehiculeController + Vehicule + SectionController + Section + VoyageController + Voyage   +  Module 1 
+
+Ces classes sont auto-suffisantes et permettent à une compagnie de se gérer elle-même dans un contexte d'un système de gestion de voyages où la liste de Batiments. 
+De plus, ce module permet de gérer les voyages dans le système, ce qui est indispensable pour le module de réservation. 
+
+
+
+Module 4 (Gestion Réservation) : Module 3 + Menu utilisateur + UtilisateurController + Utilisateur + Réservation 
+
+Si on voit le système dans son entièreté, on peut le réutiliser. Ceci démontre que le modèle de gestion des réservations a besoin du module de gestion des voyages pour fonctionner.
+
+

@@ -1,0 +1,55 @@
+
+----------------------------------
+---- TP no 6 ---------------------
+----------------------------------
+
+Creer un repertoire TP6 et copier les differents progs dans ce repertoire
+  
+Le programme Tp6_IFT3205_2-1a.c lira le signal MOTEUR1.DAT et le chargera dans un vecteur 1D 
+et calculera sa TF  (cad qu'il repondra à la question 2.1(a)).
+
+Bon Tp,
+Max
+
+ 
+
+-------------
+
+
+==========
+Conseils
+===========
+
+Pour la question Q2.1(b):
+
+Je trouve: NbTours/min = 5854 tours/min
+
+A vous de trouver le bon raisonement permettant 
+d'arriver a ce résultat !
+
+
+J'ai oublié de diviser l'amplitude du periodogramme 
+par mon nombre de fenetre (Question 3.3) donc le
+spectre qui apparait en Figure 3.b est bon mais n'a pas
+la bonne amplitude. C'est donc normal que vous ayez une amplitude 
+plus petite que moi pour ce spectre.
+
+=========
+Conseils
+=========
+
+Ps: Si le fichier viewsig.sh ne marche pas alors 
+faites:
+mv  viewsig.txt  viewsig.sh
+chmod 700 viewsig.sh
+
+
+
+
+
+
+ 
+
+
+
+

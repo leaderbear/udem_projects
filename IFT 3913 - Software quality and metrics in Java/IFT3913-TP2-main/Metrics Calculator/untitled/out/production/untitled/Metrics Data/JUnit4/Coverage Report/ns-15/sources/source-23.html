@@ -1,0 +1,1559 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > XYItemRenderer</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.renderer.xy</a>
+</div>
+
+<h1>Coverage Summary for Class: XYItemRenderer (org.jfree.chart.renderer.xy)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">XYItemRenderer</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * -------------------
+&nbsp; * XYItemRenderer.java
+&nbsp; * -------------------
+&nbsp; * (C) Copyright 2001-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   Mark Watson (www.markwatson.com);
+&nbsp; *                   Sylvain Vieujot;
+&nbsp; *                   Focus Computer Services Limited;
+&nbsp; *                   Richard Atkinson;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.renderer.xy;
+&nbsp;
+&nbsp;import java.awt.Font;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.Shape;
+&nbsp;import java.awt.Stroke;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.util.Collection;
+&nbsp;import org.jfree.chart.ChartElement;
+&nbsp;
+&nbsp;import org.jfree.chart.legend.LegendItem;
+&nbsp;import org.jfree.chart.legend.LegendItemSource;
+&nbsp;import org.jfree.chart.annotations.XYAnnotation;
+&nbsp;import org.jfree.chart.axis.ValueAxis;
+&nbsp;import org.jfree.chart.event.RendererChangeEvent;
+&nbsp;import org.jfree.chart.event.RendererChangeListener;
+&nbsp;import org.jfree.chart.labels.ItemLabelPosition;
+&nbsp;import org.jfree.chart.labels.XYItemLabelGenerator;
+&nbsp;import org.jfree.chart.labels.XYSeriesLabelGenerator;
+&nbsp;import org.jfree.chart.labels.XYToolTipGenerator;
+&nbsp;import org.jfree.chart.plot.CrosshairState;
+&nbsp;import org.jfree.chart.plot.Marker;
+&nbsp;import org.jfree.chart.plot.PlotRenderingInfo;
+&nbsp;import org.jfree.chart.plot.XYPlot;
+&nbsp;import org.jfree.chart.api.Layer;
+&nbsp;import org.jfree.chart.urls.XYURLGenerator;
+&nbsp;import org.jfree.data.Range;
+&nbsp;import org.jfree.data.xy.XYDataset;
+&nbsp;
+&nbsp;/**
+&nbsp; * Interface for rendering the visual representation of a single (x, y) item on
+&nbsp; * an {@link XYPlot}.
+&nbsp; * &lt;p&gt;
+&nbsp; * To support cloning charts, it is recommended that renderers implement both
+&nbsp; * the {@link Cloneable} and {@code PublicCloneable} interfaces.
+&nbsp; */
+&nbsp;public interface XYItemRenderer extends ChartElement, LegendItemSource {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the plot that this renderer has been assigned to.
+&nbsp;     *
+&nbsp;     * @return The plot.
+&nbsp;     */
+&nbsp;    XYPlot getPlot();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the plot that this renderer is assigned to.  This method will be
+&nbsp;     * called by the plot class...you do not need to call it yourself.
+&nbsp;     *
+&nbsp;     * @param plot  the plot.
+&nbsp;     */
+&nbsp;    void setPlot(XYPlot plot);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the number of passes through the data required by the renderer.
+&nbsp;     *
+&nbsp;     * @return The pass count.
+&nbsp;     */
+&nbsp;    int getPassCount();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower and upper bounds (range) of the x-values in the
+&nbsp;     * specified dataset.
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The range.
+&nbsp;     */
+&nbsp;    Range findDomainBounds(XYDataset dataset);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the lower and upper bounds (range) of the y-values in the
+&nbsp;     * specified dataset.  The implementation of this method will take
+&nbsp;     * into account the presentation used by the renderers (for example,
+&nbsp;     * a renderer that &quot;stacks&quot; values will return a bigger range than
+&nbsp;     * a renderer that doesn&#39;t).
+&nbsp;     *
+&nbsp;     * @param dataset  the dataset ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return The range (or {@code null} if the dataset is
+&nbsp;     *         {@code null} or empty).
+&nbsp;     */
+&nbsp;    Range findRangeBounds(XYDataset dataset);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Add a renderer change listener.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     *
+&nbsp;     * @see #removeChangeListener(RendererChangeListener)
+&nbsp;     */
+&nbsp;    void addChangeListener(RendererChangeListener listener);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes a change listener.
+&nbsp;     *
+&nbsp;     * @param listener  the listener.
+&nbsp;     *
+&nbsp;     * @see #addChangeListener(RendererChangeListener)
+&nbsp;     */
+&nbsp;    void removeChangeListener(RendererChangeListener listener);
+&nbsp;
+&nbsp;
+&nbsp;    //// VISIBLE //////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a boolean that indicates whether or not the specified item
+&nbsp;     * should be drawn (this is typically used to hide an entire series).
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param item  the item index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean getItemVisible(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a boolean that indicates whether or not the specified series
+&nbsp;     * should be drawn (this is typically used to hide an entire series).
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isSeriesVisible(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether a series is visible.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesVisible(int, Boolean)
+&nbsp;     */
+&nbsp;    Boolean getSeriesVisible(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisible(int)
+&nbsp;     */
+&nbsp;    void setSeriesVisible(int series, Boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible and, if
+&nbsp;     * requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisible(int)
+&nbsp;     */
+&nbsp;    void setSeriesVisible(int series, Boolean visible, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default visibility for all series.
+&nbsp;     *
+&nbsp;     * @return The default visibility.
+&nbsp;     *
+&nbsp;     * @see #setDefaultSeriesVisible(boolean)
+&nbsp;     */
+&nbsp;    boolean getDefaultSeriesVisible();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisible()
+&nbsp;     */
+&nbsp;    void setDefaultSeriesVisible(boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility and, if requested, sends
+&nbsp;     * a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the visibility.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisible()
+&nbsp;     */
+&nbsp;    void setDefaultSeriesVisible(boolean visible, boolean notify);
+&nbsp;
+&nbsp;    // SERIES VISIBLE IN LEGEND (not yet respected by all renderers)
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the series should be shown in the legend,
+&nbsp;     * and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isSeriesVisibleInLegend(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether a series is visible in the
+&nbsp;     * legend.  This method returns only the &quot;per series&quot; settings - to
+&nbsp;     * incorporate the override and base settings as well, you need to use the
+&nbsp;     * {@link #isSeriesVisibleInLegend(int)} method.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesVisibleInLegend(int, Boolean)
+&nbsp;     */
+&nbsp;    Boolean getSeriesVisibleInLegend(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible in the legend
+&nbsp;     * and sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisibleInLegend(int)
+&nbsp;     */
+&nbsp;    void setSeriesVisibleInLegend(int series, Boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the flag that controls whether a series is visible in the legend
+&nbsp;     * and, if requested, sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index.
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getSeriesVisibleInLegend(int)
+&nbsp;     */
+&nbsp;    void setSeriesVisibleInLegend(int series, Boolean visible, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default visibility in the legend for all series.
+&nbsp;     *
+&nbsp;     * @return The default visibility.
+&nbsp;     *
+&nbsp;     * @see #setDefaultSeriesVisibleInLegend(boolean)
+&nbsp;     */
+&nbsp;    boolean getDefaultSeriesVisibleInLegend();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility in the legend and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisibleInLegend()
+&nbsp;     */
+&nbsp;    void setDefaultSeriesVisibleInLegend(boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility in the legend and, if requested, sends
+&nbsp;     * a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the visibility.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     *
+&nbsp;     * @see #getDefaultSeriesVisibleInLegend()
+&nbsp;     */
+&nbsp;    void setDefaultSeriesVisibleInLegend(boolean visible, boolean notify);
+&nbsp;
+&nbsp;
+&nbsp;    //// PAINT ////////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to color data items as they are drawn.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getItemPaint(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to color an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesPaint(int, Paint)
+&nbsp;     */
+&nbsp;    Paint getSeriesPaint(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesPaint(int)
+&nbsp;     */
+&nbsp;    void setSeriesPaint(int series, Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getSeriesPaint(int)
+&nbsp;     */
+&nbsp;    void setSeriesPaint(int series, Paint paint, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default paint.
+&nbsp;     *
+&nbsp;     * @return The default paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultPaint(Paint)
+&nbsp;     */
+&nbsp;    Paint getDefaultPaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultPaint()
+&nbsp;     */
+&nbsp;    void setDefaultPaint(Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getDefaultPaint()
+&nbsp;     */
+&nbsp;    void setDefaultPaint(Paint paint, boolean notify);
+&nbsp;
+&nbsp;    // FILL PAINT
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill data items as they are drawn.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getItemFillPaint(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to fill an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     */
+&nbsp;    Paint getSeriesFillPaint(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     */
+&nbsp;    void setSeriesFillPaint(int series, Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     */
+&nbsp;    void setSeriesFillPaint(int series, Paint paint, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default paint.
+&nbsp;     *
+&nbsp;     * @return The default paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getDefaultFillPaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void setDefaultFillPaint(Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default paint and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     */
+&nbsp;    void setDefaultFillPaint(Paint paint, boolean notify);
+&nbsp;
+&nbsp;    //// OUTLINE PAINT ////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to outline data items as they are drawn.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getItemOutlinePaint(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to outline an item drawn by the renderer.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesOutlinePaint(int, Paint)
+&nbsp;     */
+&nbsp;    Paint getSeriesOutlinePaint(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series outline and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlinePaint(int)
+&nbsp;     */
+&nbsp;    void setSeriesOutlinePaint(int series, Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the paint used for a series outline and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlinePaint(int)
+&nbsp;     */
+&nbsp;    void setSeriesOutlinePaint(int series, Paint paint, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default outline paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultOutlinePaint(Paint)
+&nbsp;     */
+&nbsp;    Paint getDefaultOutlinePaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline paint and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlinePaint()
+&nbsp;     */
+&nbsp;    void setDefaultOutlinePaint(Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default outline paint and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlinePaint()
+&nbsp;     */
+&nbsp;    void setDefaultOutlinePaint(Paint paint, boolean notify);
+&nbsp;
+&nbsp;    //// STROKE ///////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to draw data items.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    Stroke getItemStroke(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to draw the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesStroke(int, Stroke)
+&nbsp;     */
+&nbsp;    Stroke getSeriesStroke(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesStroke(int)
+&nbsp;     */
+&nbsp;    void setSeriesStroke(int series, Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the stroke used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getSeriesStroke(int)
+&nbsp;     */
+&nbsp;    void setSeriesStroke(int series, Stroke stroke, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default stroke.
+&nbsp;     *
+&nbsp;     * @return The default stroke (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultStroke(Stroke)
+&nbsp;     */
+&nbsp;    Stroke getDefaultStroke();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default stroke and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultStroke()
+&nbsp;     */
+&nbsp;    void setDefaultStroke(Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default stroke and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getDefaultStroke()
+&nbsp;     */
+&nbsp;    void setDefaultStroke(Stroke stroke, boolean notify);
+&nbsp;
+&nbsp;    //// OUTLINE STROKE ///////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline data items.  The default
+&nbsp;     * implementation passes control to the lookupSeriesOutlineStroke method.
+&nbsp;     * You can override this method if you require different behaviour.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     */
+&nbsp;    Stroke getItemOutlineStroke(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the stroke used to outline the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The stroke (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesOutlineStroke(int, Stroke)
+&nbsp;     */
+&nbsp;    Stroke getSeriesOutlineStroke(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline stroke used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlineStroke(int)
+&nbsp;     */
+&nbsp;    void setSeriesOutlineStroke(int series, Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the outline stroke used for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param stroke  the stroke ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getSeriesOutlineStroke(int)
+&nbsp;     */
+&nbsp;    void setSeriesOutlineStroke(int series, Stroke stroke, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default outline stroke.
+&nbsp;     *
+&nbsp;     * @return The stroke (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultOutlineStroke(Stroke)
+&nbsp;     */
+&nbsp;    Stroke getDefaultOutlineStroke();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base outline stroke and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlineStroke()
+&nbsp;     */
+&nbsp;    void setDefaultOutlineStroke(Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the base outline stroke and sends a {@link RendererChangeEvent} to
+&nbsp;     * all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event.
+&nbsp;     *
+&nbsp;     * @see #getDefaultOutlineStroke()
+&nbsp;     */
+&nbsp;    void setDefaultOutlineStroke(Stroke stroke, boolean notify);
+&nbsp;
+&nbsp;    //// SHAPE ////////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a shape used to represent a data item.
+&nbsp;     *
+&nbsp;     * @param row  the row (or series) index (zero-based).
+&nbsp;     * @param column  the column (or category) index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     */
+&nbsp;    Shape getItemShape(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a shape used to represent the items in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The shape (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesShape(int, Shape)
+&nbsp;     */
+&nbsp;    Shape getSeriesShape(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesShape(int)
+&nbsp;     */
+&nbsp;    void setSeriesShape(int series, Shape shape);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the shape used for a series and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param shape  the shape ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getSeriesShape(int)
+&nbsp;     */
+&nbsp;    void setSeriesShape(int series, Shape shape, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default shape.
+&nbsp;     *
+&nbsp;     * @return The shape (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultShape(Shape)
+&nbsp;     */
+&nbsp;    Shape getDefaultShape();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default shape and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultShape()
+&nbsp;     */
+&nbsp;    void setDefaultShape(Shape shape);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default shape and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners if requested.
+&nbsp;     *
+&nbsp;     * @param shape  the shape ({@code null} not permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     *
+&nbsp;     * @see #getDefaultShape()
+&nbsp;     */
+&nbsp;    void setDefaultShape(Shape shape, boolean notify);
+&nbsp;
+&nbsp;
+&nbsp;    //// LEGEND ITEMS /////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a legend item for a series from a dataset.
+&nbsp;     *
+&nbsp;     * @param datasetIndex  the dataset index.
+&nbsp;     * @param series  the series (zero-based index).
+&nbsp;     *
+&nbsp;     * @return The legend item (possibly {@code null}).
+&nbsp;     */
+&nbsp;    LegendItem getLegendItem(int datasetIndex, int series);
+&nbsp;
+&nbsp;
+&nbsp;    //// LEGEND ITEM LABEL GENERATOR //////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the legend item label generator.
+&nbsp;     *
+&nbsp;     * @return The legend item label generator (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setLegendItemLabelGenerator(XYSeriesLabelGenerator)
+&nbsp;     */
+&nbsp;    XYSeriesLabelGenerator getLegendItemLabelGenerator();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the legend item label generator and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void setLegendItemLabelGenerator(XYSeriesLabelGenerator generator);
+&nbsp;
+&nbsp;
+&nbsp;    //// TOOL TIP GENERATOR ///////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tool tip generator for a data item.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero based).
+&nbsp;     * @param column  the column index (zero based).
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     */
+&nbsp;    XYToolTipGenerator getToolTipGenerator(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the tool tip generator for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesToolTipGenerator(int, XYToolTipGenerator)
+&nbsp;     */
+&nbsp;    XYToolTipGenerator getSeriesToolTipGenerator(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the tool tip generator for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesToolTipGenerator(int)
+&nbsp;     */
+&nbsp;    void setSeriesToolTipGenerator(int series, XYToolTipGenerator generator);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default tool tip generator.
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultToolTipGenerator(XYToolTipGenerator)
+&nbsp;     */
+&nbsp;    XYToolTipGenerator getDefaultToolTipGenerator();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default tool tip generator and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultToolTipGenerator()
+&nbsp;     */
+&nbsp;    void setDefaultToolTipGenerator(XYToolTipGenerator generator);
+&nbsp;
+&nbsp;    //// URL GENERATOR ////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the URL generator for HTML image maps.
+&nbsp;     *
+&nbsp;     * @return The URL generator (possibly null).
+&nbsp;     */
+&nbsp;    XYURLGenerator getURLGenerator();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the URL generator for HTML image maps.
+&nbsp;     *
+&nbsp;     * @param urlGenerator the URL generator (null permitted).
+&nbsp;     */
+&nbsp;    void setURLGenerator(XYURLGenerator urlGenerator);
+&nbsp;
+&nbsp;    //// ITEM LABELS VISIBLE //////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if an item label is visible, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero-based).
+&nbsp;     * @param column  the column index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isItemLabelVisible(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if the item labels for a series are visible,
+&nbsp;     * and {@code false} otherwise.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean isSeriesItemLabelsVisible(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls the visibility of the item labels for a
+&nbsp;     * series and sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #isSeriesItemLabelsVisible(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelsVisible(int series, boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that controls the visibility of the item labels for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the flag ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #isSeriesItemLabelsVisible(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelsVisible(int series, Boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the visibility of item labels for a series and, if requested,
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param visible  the visible flag.
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #isSeriesItemLabelsVisible(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelsVisible(int series, Boolean visible, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default setting for item label visibility.
+&nbsp;     *
+&nbsp;     * @return A flag (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelsVisible(boolean)
+&nbsp;     */
+&nbsp;    boolean getDefaultItemLabelsVisible();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default flag that controls whether or not item labels are visible.
+&nbsp;     *
+&nbsp;     * @param visible  the flag.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelsVisible()
+&nbsp;     */
+&nbsp;    void setDefaultItemLabelsVisible(boolean visible);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default visibility for item labels and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param visible  the visibility flag.
+&nbsp;     * @param notify  a flag that controls whether or not listeners are
+&nbsp;     *                notified.
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelsVisible()
+&nbsp;     */
+&nbsp;    void setDefaultItemLabelsVisible(boolean visible, boolean notify);
+&nbsp;
+&nbsp;
+&nbsp;    //// ITEM LABEL GENERATOR /////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label generator for a data item.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero based).
+&nbsp;     * @param column  the column index (zero based).
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     */
+&nbsp;    XYItemLabelGenerator getItemLabelGenerator(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label generator for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesItemLabelGenerator(int, XYItemLabelGenerator)
+&nbsp;     */
+&nbsp;    XYItemLabelGenerator getSeriesItemLabelGenerator(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label generator for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelGenerator(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelGenerator(int series, XYItemLabelGenerator generator);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label generator.
+&nbsp;     *
+&nbsp;     * @return The generator (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelGenerator(XYItemLabelGenerator)
+&nbsp;     */
+&nbsp;    XYItemLabelGenerator getDefaultItemLabelGenerator();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label generator and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param generator  the generator ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelGenerator()
+&nbsp;     */
+&nbsp;    void setDefaultItemLabelGenerator(XYItemLabelGenerator generator);
+&nbsp;
+&nbsp;    //// ITEM LABEL FONT ///////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for an item label.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero-based).
+&nbsp;     * @param column  the column index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     */
+&nbsp;    Font getItemLabelFont(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the font for all the item labels in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The font (possibly {@code null}).
+&nbsp;     */
+&nbsp;    Font getSeriesItemLabelFont(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label font for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param font  the font ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelFont(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelFont(int series, Font font);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label font (this is used when no other font
+&nbsp;     * setting is available).
+&nbsp;     *
+&nbsp;     * @return The font (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setDefaultItemLabelFont(Font)
+&nbsp;     */
+&nbsp;    Font getDefaultItemLabelFont();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label font and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param font  the font ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getDefaultItemLabelFont()
+&nbsp;     */
+&nbsp;    void setDefaultItemLabelFont(Font font);
+&nbsp;
+&nbsp;    //// ITEM LABEL PAINT  /////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to draw an item label.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero based).
+&nbsp;     * @param column  the column index (zero based).
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getItemLabelPaint(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the paint used to draw the item labels for a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero based).
+&nbsp;     *
+&nbsp;     * @return The paint (possibly {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setSeriesItemLabelPaint(int, Paint)
+&nbsp;     */
+&nbsp;    Paint getSeriesItemLabelPaint(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label paint for a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series (zero based index).
+&nbsp;     * @param paint  the paint ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @see #getSeriesItemLabelPaint(int)
+&nbsp;     */
+&nbsp;    void setSeriesItemLabelPaint(int series, Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label paint.
+&nbsp;     *
+&nbsp;     * @return The paint (never {@code null}).
+&nbsp;     */
+&nbsp;    Paint getDefaultItemLabelPaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label paint and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void setDefaultItemLabelPaint(Paint paint);
+&nbsp;
+&nbsp;    // POSITIVE ITEM LABEL POSITION...
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for positive values.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero-based).
+&nbsp;     * @param column  the column index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getPositiveItemLabelPosition(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for all positive values in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getSeriesPositiveItemLabelPosition(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for all positive values in a series and
+&nbsp;     * sends a {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     */
+&nbsp;    void setSeriesPositiveItemLabelPosition(int series, ItemLabelPosition position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for all positive values in a series and (if
+&nbsp;     * requested) sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     */
+&nbsp;    void setSeriesPositiveItemLabelPosition(int series, ItemLabelPosition position, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default positive item label position.
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getDefaultPositiveItemLabelPosition();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default positive item label position.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void setDefaultPositiveItemLabelPosition(ItemLabelPosition position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default positive item label position and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     */
+&nbsp;    void setDefaultPositiveItemLabelPosition(ItemLabelPosition position, boolean notify);
+&nbsp;
+&nbsp;
+&nbsp;    // NEGATIVE ITEM LABEL POSITION...
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for negative values.  This method can be
+&nbsp;     * overridden to provide customisation of the item label position for
+&nbsp;     * individual data items.
+&nbsp;     *
+&nbsp;     * @param row  the row index (zero-based).
+&nbsp;     * @param column  the column (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getNegativeItemLabelPosition(int row, int column);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the item label position for all negative values in a series.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     *
+&nbsp;     * @return The item label position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getSeriesNegativeItemLabelPosition(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for negative values in a series and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     */
+&nbsp;    void setSeriesNegativeItemLabelPosition(int series, ItemLabelPosition position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the item label position for negative values in a series and (if
+&nbsp;     * requested) sends a {@link RendererChangeEvent} to all registered
+&nbsp;     * listeners.
+&nbsp;     *
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param position  the position ({@code null} permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     */
+&nbsp;    void setSeriesNegativeItemLabelPosition(int series, ItemLabelPosition position, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default item label position for negative values.
+&nbsp;     *
+&nbsp;     * @return The position (never {@code null}).
+&nbsp;     */
+&nbsp;    ItemLabelPosition getDefaultNegativeItemLabelPosition();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default item label position for negative values and sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void setDefaultNegativeItemLabelPosition(ItemLabelPosition position);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default negative item label position and, if requested, sends a
+&nbsp;     * {@link RendererChangeEvent} to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param position  the position ({@code null} not permitted).
+&nbsp;     * @param notify  notify registered listeners?
+&nbsp;     */
+&nbsp;    void setDefaultNegativeItemLabelPosition(ItemLabelPosition position, boolean notify);
+&nbsp;
+&nbsp;
+&nbsp;    // CREATE ENTITIES
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if an entity should be created for an item, and
+&nbsp;     * {@code false} otherwise.
+&nbsp;     * 
+&nbsp;     * @param series  the series.
+&nbsp;     * @param item  the item.
+&nbsp;     * 
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean getItemCreateEntity(int series, int item);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns {@code true} if entities should be created for a series, and
+&nbsp;     * {@code false} otherwise.  This method can return {@code null} in which
+&nbsp;     * case the renderering framework will look at the default setting.
+&nbsp;     * 
+&nbsp;     * @param series  the series.
+&nbsp;     * 
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    Boolean getSeriesCreateEntities(int series);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that specifies whether or not entities should be created for
+&nbsp;     * a series during rendering, and sends a change event to registered 
+&nbsp;     * listeners.
+&nbsp;     * 
+&nbsp;     * @param series  the series.
+&nbsp;     * @param create  the flag value ({@code null} permitted).
+&nbsp;     */
+&nbsp;    void setSeriesCreateEntities(int series, Boolean create);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets a flag that specifies whether or not entities should be created for
+&nbsp;     * a series during rendering, and sends a change event to registered 
+&nbsp;     * listeners.
+&nbsp;     * 
+&nbsp;     * @param series  the series.
+&nbsp;     * @param create  the flag value ({@code null} permitted).
+&nbsp;     * @param notify  send a change event?
+&nbsp;     */
+&nbsp;    void setSeriesCreateEntities(int series, Boolean create, boolean notify);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the default value determining whether or not entities should be
+&nbsp;     * created by the renderer.
+&nbsp;     * 
+&nbsp;     * @return A boolean. 
+&nbsp;     */
+&nbsp;    boolean getDefaultCreateEntities();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default value determining whether or not entities should be
+&nbsp;     * created by the renderer, and sends a change event to all registered
+&nbsp;     * listeners.
+&nbsp;     * 
+&nbsp;     * @param create  the flag value.
+&nbsp;     */
+&nbsp;    void setDefaultCreateEntities(boolean create);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the default value determining whether or not entities should be
+&nbsp;     * created by the renderer, and sends a change event to all registered
+&nbsp;     * listeners.
+&nbsp;     * 
+&nbsp;     * @param create  the flag value.
+&nbsp;     * @param notify  notify listeners?
+&nbsp;     */
+&nbsp;    void setDefaultCreateEntities(boolean create, boolean notify);
+&nbsp;
+&nbsp;    //// ANNOTATIONS //////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds an annotation and sends a {@link RendererChangeEvent} to all
+&nbsp;     * registered listeners.  The annotation is added to the foreground
+&nbsp;     * layer.
+&nbsp;     *
+&nbsp;     * @param annotation  the annotation ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void addAnnotation(XYAnnotation annotation);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Adds an annotation to the specified layer.
+&nbsp;     *
+&nbsp;     * @param annotation  the annotation ({@code null} not permitted).
+&nbsp;     * @param layer  the layer ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void addAnnotation(XYAnnotation annotation, Layer layer);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the specified annotation and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     *
+&nbsp;     * @param annotation  the annotation to remove ({@code null} not
+&nbsp;     *                    permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean to indicate whether or not the annotation was
+&nbsp;     *         successfully removed.
+&nbsp;     */
+&nbsp;    boolean removeAnnotation(XYAnnotation annotation);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes all annotations and sends a {@link RendererChangeEvent}
+&nbsp;     * to all registered listeners.
+&nbsp;     */
+&nbsp;    void removeAnnotations();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws all the annotations for the specified layer.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param layer  the layer.
+&nbsp;     * @param info  the plot rendering info.
+&nbsp;     */
+&nbsp;    void drawAnnotations(Graphics2D g2, Rectangle2D dataArea, ValueAxis domainAxis, ValueAxis rangeAxis,
+&nbsp;            Layer layer, PlotRenderingInfo info);
+&nbsp;
+&nbsp;    //// DRAWING //////////////////////////////////////////////////////////////
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Initialises the renderer then returns the number of &#39;passes&#39; through the
+&nbsp;     * data that the renderer will require (usually just one).  This method
+&nbsp;     * will be called before the first item is rendered, giving the renderer
+&nbsp;     * an opportunity to initialise any state information it wants to maintain.
+&nbsp;     * The renderer can do nothing if it chooses.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param dataArea  the area inside the axes.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param info  an optional info collection object to return data back to
+&nbsp;     *              the caller.
+&nbsp;     *
+&nbsp;     * @return The number of passes the renderer requires.
+&nbsp;     */
+&nbsp;    XYItemRendererState initialise(Graphics2D g2, Rectangle2D dataArea, XYPlot plot, XYDataset dataset,
+&nbsp;            PlotRenderingInfo info);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Called for each item to be plotted.
+&nbsp;     * &lt;p&gt;
+&nbsp;     * The {@link XYPlot} can make multiple passes through the dataset,
+&nbsp;     * depending on the value returned by the renderer&#39;s initialise() method.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param state  the renderer state.
+&nbsp;     * @param dataArea  the area within which the data is being rendered.
+&nbsp;     * @param info  collects drawing info.
+&nbsp;     * @param plot  the plot (can be used to obtain standard color
+&nbsp;     *              information etc).
+&nbsp;     * @param domainAxis  the domain axis.
+&nbsp;     * @param rangeAxis  the range axis.
+&nbsp;     * @param dataset  the dataset.
+&nbsp;     * @param series  the series index (zero-based).
+&nbsp;     * @param item  the item index (zero-based).
+&nbsp;     * @param crosshairState  crosshair information for the plot
+&nbsp;     *                        ({@code null} permitted).
+&nbsp;     * @param pass  the pass index.
+&nbsp;     */
+&nbsp;    void drawItem(Graphics2D g2, XYItemRendererState state, Rectangle2D dataArea, PlotRenderingInfo info,
+&nbsp;            XYPlot plot, ValueAxis domainAxis, ValueAxis rangeAxis, XYDataset dataset, int series, int item,
+&nbsp;            CrosshairState crosshairState, int pass);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fills a band between two values on the axis.  This can be used to color
+&nbsp;     * bands between the grid lines.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the domain axis.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param start  the start value.
+&nbsp;     * @param end  the end value.
+&nbsp;     */
+&nbsp;    void fillDomainGridBand(Graphics2D g2, XYPlot plot, ValueAxis axis, Rectangle2D dataArea, double start,
+&nbsp;            double end);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Fills a band between two values on the range axis.  This can be used to
+&nbsp;     * color bands between the grid lines.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the range axis.
+&nbsp;     * @param dataArea  the data area.
+&nbsp;     * @param start  the start value.
+&nbsp;     * @param end  the end value.
+&nbsp;     */
+&nbsp;    void fillRangeGridBand(Graphics2D g2, XYPlot plot, ValueAxis axis, Rectangle2D dataArea, double start,
+&nbsp;            double end);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a grid line against the domain axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the value axis.
+&nbsp;     * @param dataArea  the area for plotting data.
+&nbsp;     * @param value  the value.
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void drawDomainLine(Graphics2D g2, XYPlot plot, ValueAxis axis, Rectangle2D dataArea, double value,
+&nbsp;            Paint paint, Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a line perpendicular to the range axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the value axis.
+&nbsp;     * @param dataArea  the area for plotting data.
+&nbsp;     * @param value  the data value.
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     * @param stroke  the stroke ({@code null} not permitted).
+&nbsp;     */
+&nbsp;    void drawRangeLine(Graphics2D g2, XYPlot plot, ValueAxis axis, Rectangle2D dataArea, double value,
+&nbsp;            Paint paint, Stroke stroke);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws the specified {@code marker} against the domain axis.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the value axis.
+&nbsp;     * @param marker  the marker.
+&nbsp;     * @param dataArea  the axis data area.
+&nbsp;     */
+&nbsp;    void drawDomainMarker(Graphics2D g2, XYPlot plot, ValueAxis axis, Marker marker, Rectangle2D dataArea);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws a horizontal line across the chart to represent a &#39;range marker&#39;.
+&nbsp;     *
+&nbsp;     * @param g2  the graphics device.
+&nbsp;     * @param plot  the plot.
+&nbsp;     * @param axis  the value axis.
+&nbsp;     * @param marker  the marker line.
+&nbsp;     * @param dataArea  the axis data area.
+&nbsp;     */
+&nbsp;    void drawRangeMarker(Graphics2D g2, XYPlot plot, ValueAxis axis, Marker marker, Rectangle2D dataArea);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the annotations for the renderer.
+&nbsp;     * 
+&nbsp;     * @return The annotations (possibly empty, but never {@code null}).
+&nbsp;     * 
+&nbsp;     * @since 2.0.0
+&nbsp;     */
+&nbsp;    Collection&lt;XYAnnotation&gt; getAnnotations();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>

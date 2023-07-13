@@ -1,0 +1,31 @@
+Ajouter Métrique : âge du plus vieux fichier dans un dossier. 
+	
+	1. utiliser JLS pour ouvrir tous fichiers dans un dossier. 
+	2. utiliser fonction pour obtenir l'âge de chaque fichier.
+	3. garder en mémoire et retourner la date la plus récente. 
+	4. ou garder en mémoire toutes les dates et les retourner en ordre du plus récent au plus vieux. 
+
+
+
+
+JUnit : Créer une nouvelle fonction : 
+
+	1. Lire un document html "Coverage Report". 
+	2. Chercher la première ligne qui contient "all classes".
+	3. Si trouvée, chercher les deux prochaines lignes qui contiennent "%". 
+	4. Garder en mémoire ces deux lignes, car il s'agit de :  Class% Method% couvertes par les tests. 
+
+
+	1. Lire fichier XML Test Results - All_in_jfreechart 
+	2. Trouver dans la première ligne "duration" et retourner le nombre associé. 
+
+
+ 
+CommentDensity : 
+	
+	Faire la moyenne ?
+
+
+ck : 
+	
+	Parcourir le fichier csv et garder que les bonnes informations ? Faire une moyenne ? 

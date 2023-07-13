@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > NormalDistributionFunction2D</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.data.function</a>
+</div>
+
+<h1>Coverage Summary for Class: NormalDistributionFunction2D (org.jfree.data.function)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">NormalDistributionFunction2D</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83,3%
+  </span>
+  <span class="absValue">
+    (5/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    78,3%
+  </span>
+  <span class="absValue">
+    (18/23)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * ---------------------------------
+&nbsp; * NormalDistributionFunction2D.java
+&nbsp; * ---------------------------------
+&nbsp; * (C) Copyright 2004-2022, by David Gilbert.
+&nbsp; *
+&nbsp; * Original Author:  David Gilbert;
+&nbsp; * Contributor(s):   -;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.data.function;
+&nbsp;
+&nbsp;import java.io.Serializable;
+&nbsp;
+&nbsp;import org.jfree.chart.internal.HashUtils;
+&nbsp;
+&nbsp;/**
+&nbsp; * A normal distribution function.  See
+&nbsp; * http://en.wikipedia.org/wiki/Normal_distribution.
+&nbsp; */
+&nbsp;public class NormalDistributionFunction2D implements Function2D, Serializable {
+&nbsp;
+&nbsp;    /** The mean. */
+&nbsp;    private double mean;
+&nbsp;
+&nbsp;    /** The standard deviation. */
+&nbsp;    private double std;
+&nbsp;
+&nbsp;    /** Precomputed factor for the function value. */
+&nbsp;    private double factor;
+&nbsp;
+&nbsp;    /** Precomputed denominator for the function value. */
+&nbsp;    private double denominator;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Constructs a new normal distribution function.
+&nbsp;     *
+&nbsp;     * @param mean  the mean.
+&nbsp;     * @param std  the standard deviation (&amp;gt; 0).
+&nbsp;     */
+<b class="fc">&nbsp;    public NormalDistributionFunction2D(double mean, double std) {</b>
+<b class="fc">&nbsp;        if (std &lt;= 0) {</b>
+<b class="nc">&nbsp;            throw new IllegalArgumentException(&quot;Requires &#39;std&#39; &gt; 0.&quot;);</b>
+&nbsp;        }
+<b class="fc">&nbsp;        this.mean = mean;</b>
+<b class="fc">&nbsp;        this.std = std;</b>
+&nbsp;        // calculate constant values
+<b class="fc">&nbsp;        this.factor = 1 / (std * Math.sqrt(2.0 * Math.PI));</b>
+<b class="fc">&nbsp;        this.denominator = 2 * std * std;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the mean for the function.
+&nbsp;     *
+&nbsp;     * @return The mean.
+&nbsp;     */
+&nbsp;    public double getMean() {
+<b class="fc">&nbsp;        return this.mean;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    /**
+&nbsp;     * Returns the standard deviation for the function.
+&nbsp;     *
+&nbsp;     * @return The standard deviation.
+&nbsp;     */
+&nbsp;    public double getStandardDeviation() {
+<b class="fc">&nbsp;        return this.std;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the function value.
+&nbsp;     *
+&nbsp;     * @param x  the x-value.
+&nbsp;     *
+&nbsp;     * @return The value.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public double getValue(double x) {
+<b class="nc">&nbsp;        double z = x - this.mean;</b>
+<b class="nc">&nbsp;        return this.factor * Math.exp(-z * z / this.denominator);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Tests this function for equality with an arbitrary object.
+&nbsp;     *
+&nbsp;     * @param obj  the object ({@code null} permitted).
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public boolean equals(Object obj) {
+<b class="fc">&nbsp;        if (!(obj instanceof NormalDistributionFunction2D)) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        NormalDistributionFunction2D that = (NormalDistributionFunction2D) obj;</b>
+<b class="fc">&nbsp;        if (this.mean != that.mean) {</b>
+<b class="fc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        if (this.std != that.std) {</b>
+<b class="nc">&nbsp;            return false;</b>
+&nbsp;        }
+<b class="fc">&nbsp;        return true;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns a hash code for this instance.
+&nbsp;     *
+&nbsp;     * @return A hash code.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public int hashCode() {
+<b class="fc">&nbsp;        int result = 29;</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.mean);</b>
+<b class="fc">&nbsp;        result = HashUtils.hashCode(result, this.std);</b>
+<b class="fc">&nbsp;        return result;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:57</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > SelectionZoomStrategy</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.jfree.chart.swing</a>
+</div>
+
+<h1>Coverage Summary for Class: SelectionZoomStrategy (org.jfree.chart.swing)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">SelectionZoomStrategy</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;/* ===========================================================
+&nbsp; * JFreeChart : a free chart library for the Java(tm) platform
+&nbsp; * ===========================================================
+&nbsp; *
+&nbsp; * (C) Copyright 2000-2022, by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Project Info:  http://www.jfree.org/jfreechart/index.html
+&nbsp; *
+&nbsp; * This library is free software; you can redistribute it and/or modify it
+&nbsp; * under the terms of the GNU Lesser General Public License as published by
+&nbsp; * the Free Software Foundation; either version 2.1 of the License, or
+&nbsp; * (at your option) any later version.
+&nbsp; *
+&nbsp; * This library is distributed in the hope that it will be useful, but
+&nbsp; * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+&nbsp; * or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+&nbsp; * License for more details.
+&nbsp; *
+&nbsp; * You should have received a copy of the GNU Lesser General Public
+&nbsp; * License along with this library; if not, write to the Free Software
+&nbsp; * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301,
+&nbsp; * USA.
+&nbsp; *
+&nbsp; * [Oracle and Java are registered trademarks of Oracle and/or its affiliates. 
+&nbsp; * Other names may be trademarks of their respective owners.]
+&nbsp; *
+&nbsp; * --------------------------
+&nbsp; * SelectionZoomStrategy.java
+&nbsp; * --------------------------
+&nbsp; * (C) Copyright 2021-2022 by David Gilbert and Contributors.
+&nbsp; *
+&nbsp; * Original Author:  -;
+&nbsp; * Contributor(s):   David Gilbert;
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;package org.jfree.chart.swing;
+&nbsp;
+&nbsp;import java.awt.Graphics2D;
+&nbsp;import java.awt.Paint;
+&nbsp;import java.awt.event.MouseEvent;
+&nbsp;import java.awt.geom.Point2D;
+&nbsp;import java.awt.geom.Rectangle2D;
+&nbsp;import java.io.Serializable;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * A strategy for zooming plots on the chart panel by selecting a smaller region on the initial screen.
+&nbsp; *
+&nbsp; * See {@link ChartPanel#setSelectionZoomStrategy(SelectionZoomStrategy)}
+&nbsp; */
+&nbsp;public interface SelectionZoomStrategy extends Serializable {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * If controller currently tracking zoom rectangle
+&nbsp;     *
+&nbsp;     * @return {@code true} if zoomRectangle exists for this controller
+&nbsp;     *          and {@code false} otherwise
+&nbsp;     */
+&nbsp;    boolean isActivated();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * The zoom rectangle starting point (selected by the user with a mouse
+&nbsp;     * click).  This is a point on the screen, not the chart (which may have
+&nbsp;     * been scaled up or down to fit the panel).
+&nbsp;     */
+&nbsp;    Point2D getZoomPoint();
+&nbsp;
+&nbsp;    void setZoomPoint(Point2D zoomPoint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom trigger distance.  This controls how far the mouse must
+&nbsp;     * move before a zoom action is triggered.
+&nbsp;     *
+&nbsp;     * @param distance  the distance (in Java2D units).
+&nbsp;     */
+&nbsp;    void setZoomTriggerDistance(int distance);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom trigger distance.  This controls how far the mouse must
+&nbsp;     * move before a zoom action is triggered.
+&nbsp;     *
+&nbsp;     * @return The distance (in Java2D units).
+&nbsp;     */
+&nbsp;    int getZoomTriggerDistance();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom rectangle outline paint.
+&nbsp;     *
+&nbsp;     * @return The zoom rectangle outline paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setZoomOutlinePaint(java.awt.Paint)
+&nbsp;     * @see #setFillZoomRectangle(boolean)
+&nbsp;     */
+&nbsp;    Paint getZoomOutlinePaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom rectangle outline paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getZoomOutlinePaint()
+&nbsp;     * @see #getFillZoomRectangle()
+&nbsp;     */
+&nbsp;    void setZoomOutlinePaint(Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the zoom rectangle fill paint.
+&nbsp;     *
+&nbsp;     * @return The zoom rectangle fill paint (never {@code null}).
+&nbsp;     *
+&nbsp;     * @see #setZoomFillPaint(Paint)
+&nbsp;     * @see #setFillZoomRectangle(boolean)
+&nbsp;     */
+&nbsp;    Paint getZoomFillPaint();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Sets the zoom rectangle fill paint.
+&nbsp;     *
+&nbsp;     * @param paint  the paint ({@code null} not permitted).
+&nbsp;     *
+&nbsp;     * @see #getZoomFillPaint()
+&nbsp;     * @see #getFillZoomRectangle()
+&nbsp;     */
+&nbsp;    void setZoomFillPaint(Paint paint);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Returns the flag that controls whether or not the zoom rectangle is
+&nbsp;     * filled when drawn.
+&nbsp;     *
+&nbsp;     * @return A boolean.
+&nbsp;     */
+&nbsp;    boolean getFillZoomRectangle();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * A flag that controls how the zoom rectangle is drawn.
+&nbsp;     *
+&nbsp;     * @param flag  {@code true} instructs to fill the rectangle on
+&nbsp;     *              zoom, otherwise it will be outlined.
+&nbsp;     */
+&nbsp;    void setFillZoomRectangle(boolean flag);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Updates zoom rectangle with new mouse position
+&nbsp;
+&nbsp;     * @param e mouse event
+&nbsp;     * @param hZoom if horizontal zoom allowed
+&nbsp;     * @param vZoom if vertical zoom allowed
+&nbsp;     * @param scaledDataArea plot area in screen coordinates
+&nbsp;     */
+&nbsp;    void updateZoomRectangleSelection(MouseEvent e, boolean hZoom, boolean vZoom, Rectangle2D scaledDataArea);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Creates and returns current zoom rectangle
+&nbsp;     *
+&nbsp;     * @param hZoom if horizontal zoom acceptable
+&nbsp;     * @param vZoom if vertical zoom acceptable
+&nbsp;     * @param screenDataArea rectangle that describes plot on the screen
+&nbsp;     *
+&nbsp;     * @return rectangle in java2d screen coordinates selected by user
+&nbsp;     */
+&nbsp;    Rectangle2D getZoomRectangle(boolean hZoom, boolean vZoom, Rectangle2D screenDataArea);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes zoom rectangle
+&nbsp;     */
+&nbsp;    void reset();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Draws zoom rectangle (if present).
+&nbsp;     * The drawing is performed in XOR mode, therefore
+&nbsp;     * when this method is called twice in a row,
+&nbsp;     * the second call will completely restore the state
+&nbsp;     * of the canvas.
+&nbsp;     *
+&nbsp;     *  @param g2 the graphics device.
+&nbsp;     * @param xor  use XOR for drawing?
+&nbsp;     */
+&nbsp;    void drawZoomRectangle(Graphics2D g2, boolean xor);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2022-10-20 10:56</div>
+</div>
+</body>
+</html>
